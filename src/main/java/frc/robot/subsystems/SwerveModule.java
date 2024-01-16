@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.opencv.core.Core;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.core.CoreCANcoder;
@@ -33,7 +35,11 @@ public class SwerveModule {
     public static final double STEER_KI = 0.0;
     public static final double STEER_KD = 0.0;
     public static final double MAX_VOLTAGE = 10;
-    public static final int COUNTS_PER_ROTATION = 0;
+    public static final double COUNTS_PER_ROTATION = 0;
+    public static final double WHEEL_CIRCUMFERENCE = 0;
+    public static final double GEAR_RATIO_MOTOR_TO_WHEEL = 0;
+    public static final double DISTANCE_PER_ENCODER_COUNT = 0;
+    public static final double STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE = 0;
   }
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
@@ -128,8 +134,8 @@ public class SwerveModule {
    * @return drive motor velocity in meters per second
    */
   public double getDriveMotorVelocity() {
-    return ((driveMotor.getSelectedSensorVelocity() / DriveConstants.GEAR_RATIO_MOTOR_TO_WHEEL) *
-        (10.0 / ModuleConstants.COUNTS_PER_ROTATION) * DriveConstants.WHEEL_CIRCUMFERENCE);
+    return ((driveMotor.getVelocity().getValue() / ModuleConstants.GEAR_RATIO_MOTOR_TO_WHEEL) *
+        (10.0 / ModuleConstants.COUNTS_PER_ROTATION) * ModuleConstants.WHEEL_CIRCUMFERENCE);
   }
 
   /**
@@ -139,7 +145,7 @@ public class SwerveModule {
    * @return applied motor voltage in volts
    */
   public double getDriveMotorVoltage() {
-    return driveMotor.getMotorOutputVoltage();
+    return driveMotor.getMotorVoltage().getValue();
   }
 
   /**
@@ -149,7 +155,7 @@ public class SwerveModule {
    * @return drive motor distance in meters
    */
   public double getDriveMotorDistance() {
-    return driveMotor.getSelectedSensorPosition() * DriveConstants.DISTANCE_PER_ENCODER_COUNT;
+    return driveMotor.getValue() * ModuleConstants.DISTANCE_PER_ENCODER_COUNT;
   }
 
   /**
@@ -159,7 +165,7 @@ public class SwerveModule {
    * @return drive encoder velocity in meters per second
    */
   public double getDriveMotorEncoderVelocity() {
-    return driveMotor.getSelectedSensorVelocity() * 10 * DriveConstants.DISTANCE_PER_ENCODER_COUNT;
+    return driveMotor.getSelectedSensorVelocity() * 10 *  ModuleConstants.DISTANCE_PER_ENCODER_COUNT;
   }
 
   // STEER MOTOR METHODS \\
@@ -170,7 +176,7 @@ public class SwerveModule {
    */
   public void setSteerMotorToAbsolute() {
     double currentAngle = steerEncoder.getAbsolutePosition();
-    double absolutePosition = currentAngle * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    double absolutePosition = currentAngle * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
     steerMotor.setSelectedSensorPosition(absolutePosition);
   }
 
@@ -178,6 +184,10 @@ public class SwerveModule {
    * Gets the steer motor's current angle in degrees
    * @return steer motor's angle in degrees
    */
+
+   //STOP
+
+
   public double getSteerMotorEncoderAngle() {
     return steerMotor.getSelectedSensorPosition() / ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
   }
