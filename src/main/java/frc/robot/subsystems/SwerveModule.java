@@ -5,6 +5,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.core.CoreCANcoder;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -34,6 +38,10 @@ public class SwerveModule {
     public static final double STEER_KD = 0.0;
     public static final double MAX_VOLTAGE = 10;
     public static final int COUNTS_PER_ROTATION = 0;
+
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 0;
+    public static final double STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE = 0;
+    public static final double DISTANCE_PER_ENCODER_COUNT = 0;
   }
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
@@ -174,12 +182,16 @@ public class SwerveModule {
     steerMotor.setSelectedSensorPosition(absolutePosition);
   }
 
+  // Error free below this comment. however, logic errors most certainly are still present
+
   /**
    * Gets the steer motor's current angle in degrees
    * @return steer motor's angle in degrees
    */
+  //TODO: determine if a conversion is needed and if so what that conversion is
   public double getSteerMotorEncoderAngle() {
-    return steerMotor.getSelectedSensorPosition() / ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    return steerMotor.getRotorPosition().getValue();
+    // ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
   }
 
   // CANCODER METHODS \\
@@ -190,7 +202,7 @@ public class SwerveModule {
    * @return wheel angle in radians
    */
   public double getCANcoderRadians() {
-    return Math.toRadians(steerEncoder.getAbsolutePosition());
+    return Math.toRadians(steerEncoder.getAbsolutePosition().getValue());
   }
 
   /**
@@ -214,18 +226,20 @@ public class SwerveModule {
     SwerveModuleState state = customOptimize(desiredState, new Rotation2d(Math.toRadians(getSteerMotorEncoderAngle())));
 
     // Calculate percent of max drive velocity
-    double driveOutput = (state.speedMetersPerSecond / DriveConstants.MAX_VELOCITY_METERS_PER_SECOND);
+    double driveOutput = (state.speedMetersPerSecond / ModuleConstants.MAX_VELOCITY_METERS_PER_SECOND);
 
     // Calculate steer motor output
-    double steerPositionOutput = state.angle.getDegrees() * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    double steerPositionOutput = state.angle.getDegrees() * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
 
     // if(driverController.povLeft().getAsBoolean()){ 
     //   steerPositionOutput =  (state.angle.getDegrees() + 90 - state.angle.getDegrees() % 360) * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
     // }
 
     // Apply PID outputs
-    driveMotor.set(ControlMode.PercentOutput, driveOutput);
-    steerMotor.set(ControlMode.Position, steerPositionOutput);
+    //driveMotor.set(ControlMode.PercentOutput, driveOutput);
+    driveMotor.setControl(new DutyCycleOut(driveOutput));
+    steerMotor.setControl(new PositionVoltage(steerPositionOutput));
+    
   }
 
   /**
@@ -239,19 +253,27 @@ public class SwerveModule {
     SwerveModuleState state = customOptimize(desiredState, new Rotation2d(Math.toRadians(getSteerMotorEncoderAngle())));
 
     // Calculate percent of max drive velocity
-    double driveOutput = state.speedMetersPerSecond / DriveConstants.DISTANCE_PER_ENCODER_COUNT / 10;
+    double driveOutput = state.speedMetersPerSecond / ModuleConstants.DISTANCE_PER_ENCODER_COUNT / 10;
 
     // Calculate steer motor output
-    double steerPositionOutput = state.angle.getDegrees() * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    double steerPositionOutput = state.angle.getDegrees() * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
 
     // Apply PID outputs
-    driveMotor.set(ControlMode.Velocity, driveOutput, DemandType.ArbitraryFeedForward, feedforward.calculate(state.speedMetersPerSecond));
-    steerMotor.set(ControlMode.Position, steerPositionOutput);
+    //driveMotor.set(ControlMode.Velocity, driveOutput, DemandType.ArbitraryFeedForward, feedforward.calculate(state.speedMetersPerSecond));
+    //steerMotor.set(ControlMode.Position, steerPositionOutput);
+
+    //TODO: feed forward?
+    driveMotor.setControl(new VelocityDutyCycle(driveOutput));
+    steerMotor.setControl(new PositionDutyCycle(steerPositionOutput));
   }
 
 
   public void resetEncoders() {
-    driveMotorConfig.setSelectedSensorPosition    setSelectedSensorPosition(0);
+    //driveMotor.setSelectedSensorPosition(0);
+
+    //TODO: determine what to do for drive motor reset
+
+    driveMotor.setPosition(0);
     steerEncoder.setPosition(0);
   }
 
