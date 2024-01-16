@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 
 /** Add your docs here. */
 public class SwerveModule {
@@ -26,6 +27,11 @@ public class SwerveModule {
     public static final double DRIVE_KI = 0.0;
     public static final double DRIVE_KD = 0.0;
 
+    public static final double STEER_KS = 0.0;
+    public static final double STEER_KV = 0.0;
+    public static final double STEER_KP = 0.0;
+    public static final double STEER_KI = 0.0;
+    public static final double STEER_KD = 0.0;
     public static final double MAX_VOLTAGE = 10;
   }
   private final TalonFX driveMotor;
@@ -59,7 +65,7 @@ public class SwerveModule {
     driveMotorConfig.Slot0.kI = ModuleConstants.DRIVE_KI;
     driveMotorConfig.Slot0.kD = ModuleConstants.DRIVE_KD;
     
-    // TODO Verify if there s=is a deadband config.
+    // TODO Verify if there is a deadband config.
     //driveMotor.configNeutralDeadband(ModuleConstants.PERCENT_DEADBAND);
     driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 35;
     driveMotorConfig.CurrentLimits.SupplyCurrentThreshold = 60;
@@ -73,25 +79,36 @@ public class SwerveModule {
     steerEncoder = new CoreCANcoder(steerEncoderID, ModuleConstants.RIO_NAME);
     steerEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
     steerEncoder.configSensorDirection(false); // Counter Clockwise
-    steerEncoder.configMagnetOffrotation);
+    steerEncoder.configMagnetOffrotation();
     steerEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 
     steerMotor = new TalonFX(steerMotorID, ModuleConstants.RIO_NAME);
     steerMotorConfig = new TalonFXConfiguration();
-    
-    steerMotor.setInverted(true);
-    steerMotor.setNeutralMode(NeutralMode.Coast);
-    steerMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    steerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    // unknown solution
+    //steerMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    //steerMotorConfig.Feedback.sensor = 
 
     // For position control 
-    steerMotor.config_kP(0, ModuleConstants.MODULE_STEER_P);
-    steerMotor.config_kI(0, ModuleConstants.MODULE_STEER_I);
-    steerMotor.config_kD(0, ModuleConstants.MODULE_STEER_D);
+    steerMotorConfig.Slot0.kS = ModuleConstants.STEER_KS;
+    steerMotorConfig.Slot0.kV = ModuleConstants.STEER_KV;
+    steerMotorConfig.Slot0.kP = ModuleConstants.STEER_KP;
+    steerMotorConfig.Slot0.kI = ModuleConstants.STEER_KI;
+    steerMotorConfig.Slot0.kD = ModuleConstants.STEER_KD;
 
-    steerMotor.configAllowableClosedloopError(0, 0.5 * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE);
-    steerMotor.configNeutralDeadband(ModuleConstants.PERCENT_DEADBAND);
-    steerMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 40, 0.1));
+    // Unsure how to fix this line
+    //steerMotor.configAllowableClosedloopError(0, 0.5 * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE);
+    // Same deadband error
+    //steerMotor.configNeutralDeadband(ModuleConstants.PERCENT_DEADBAND);
 
+    steerMotorConfig.CurrentLimits.SupplyCurrentLimit = 35;
+    steerMotorConfig.CurrentLimits.SupplyCurrentThreshold = 60;
+    steerMotorConfig.CurrentLimits.SupplyTimeThreshold = 1.0;
+    steerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    steerMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
+    steerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    
     Timer.delay(1.0);
     setSteerMotorToAbsolute();
   }
@@ -121,6 +138,7 @@ public class SwerveModule {
    * @return applied motor voltage in volts
    */
   public double getDriveMotorVoltage() {
+    return drivemotorconfig.MotorOutput.voltage
     return driveMotor.getMotorOutputVoltage();
   }
 
@@ -161,7 +179,7 @@ public class SwerveModule {
    * @return steer motor's angle in degrees
    */
   public double getSteerMotorEncoderAngle() {
-    return steerMotor.getSelectedSensorPosition() / DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    return steerMotor.getSelectedSensorPosition() / ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
   }
 
   // CANCODER METHODS \\
@@ -233,7 +251,7 @@ public class SwerveModule {
 
 
   public void resetEncoders() {
-    driveMotor.setSelectedSensorPosition(0);
+    driveMotorConfig.setSelectedSensorPosition    setSelectedSensorPosition(0);
     steerEncoder.setPosition(0);
   }
 
