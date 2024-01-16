@@ -171,7 +171,7 @@ public class SwerveModule {
   }
 
   // STEER MOTOR METHODS \\ 
-
+  
 
   /**
    * Sets the of the steer motor encoder to the value of the CANcoder
