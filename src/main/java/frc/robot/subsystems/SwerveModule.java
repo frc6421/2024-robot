@@ -33,6 +33,7 @@ public class SwerveModule {
     public static final double STEER_KI = 0.0;
     public static final double STEER_KD = 0.0;
     public static final double MAX_VOLTAGE = 10;
+    public static final int COUNTS_PER_ROTATION = 0;
   }
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
@@ -128,7 +129,7 @@ public class SwerveModule {
    */
   public double getDriveMotorVelocity() {
     return ((driveMotor.getSelectedSensorVelocity() / DriveConstants.GEAR_RATIO_MOTOR_TO_WHEEL) *
-        (10.0 / DriveConstants.COUNTS_PER_ROTATION) * DriveConstants.WHEEL_CIRCUMFERENCE);
+        (10.0 / ModuleConstants.COUNTS_PER_ROTATION) * DriveConstants.WHEEL_CIRCUMFERENCE);
   }
 
   /**
@@ -138,7 +139,6 @@ public class SwerveModule {
    * @return applied motor voltage in volts
    */
   public double getDriveMotorVoltage() {
-    return drivemotorconfig.MotorOutput.voltage
     return driveMotor.getMotorOutputVoltage();
   }
 
