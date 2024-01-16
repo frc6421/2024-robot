@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.opencv.core.Core;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
@@ -38,11 +40,13 @@ public class SwerveModule {
     public static final double STEER_KI = 0.0;
     public static final double STEER_KD = 0.0;
     public static final double MAX_VOLTAGE = 10;
-    public static final int COUNTS_PER_ROTATION = 0;
-
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 0;
-    public static final double STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE = 0;
+    public static final double COUNTS_PER_ROTATION = 0;
+    public static final double WHEEL_CIRCUMFERENCE = 0;
+    public static final double GEAR_RATIO_MOTOR_TO_WHEEL = 0;
     public static final double DISTANCE_PER_ENCODER_COUNT = 0;
+    public static final double STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE = 0;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 0;
+
   }
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
@@ -183,9 +187,9 @@ public class SwerveModule {
    * 
    */
   public void setSteerMotorToAbsolute() {
-    double currentAngle = steerEncoder.getAbsolutePosition().getValue();
+    double currentAngle = steerEncoder.getPosition().getValue();
     double absolutePosition = currentAngle * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
-    steerMotor.setControl(new PositionVoltage(absolutePosition));
+    steerMotor.setPosition(absolutePosition);
   }
 
   // Error free below this comment. however, logic errors most certainly are still present
