@@ -170,7 +170,8 @@ public class SwerveModule {
     return driveMotor.getSelectedSensorVelocity() * 10 * DriveConstants.DISTANCE_PER_ENCODER_COUNT;
   }
 
-  // STEER MOTOR METHODS \\
+  // STEER MOTOR METHODS \\ 
+
 
   /**
    * Sets the of the steer motor encoder to the value of the CANcoder
