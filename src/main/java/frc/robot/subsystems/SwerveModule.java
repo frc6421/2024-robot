@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.core.CoreCANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -59,7 +60,7 @@ public class SwerveModule {
 
     driveMotor = new TalonFX(driveMotorID, ModuleConstants.RIO_NAME);
     driveMotorConfig = new TalonFXConfiguration();
-    driveMotor.getConfigurator().apply(driveMotorConfig);
+    driveMotor.getConfigurator().apply(new TalonFXConfiguration());
 
     driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -86,13 +87,16 @@ public class SwerveModule {
     driveMotor.getConfigurator().apply(driveMotorConfig);
 
     steerEncoder = new CoreCANcoder(steerEncoderID, ModuleConstants.RIO_NAME);
-    steerEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
-    steerEncoder.configSensorDirection(false); // Counter Clockwise
-    steerEncoder.configMagnetOffrotation();
-    steerEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+    
+    //TODO: usure of what to do with the steer encoder
+    //steerEncoder.configAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1);
+    //steerEncoder.configSensorDirection(false); // Counter Clockwise
+    //steerEncoder.configMagnetOffrotation();
+    //steerEncoder.configSensorInitializationStrategy(configSensorInitializationStrategy.BootToAbsolutePosition);
 
     steerMotor = new TalonFX(steerMotorID, ModuleConstants.RIO_NAME);
     steerMotorConfig = new TalonFXConfiguration();
+    steerMotor.getConfigurator().apply(new TalonFXConfiguration());
     steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     steerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // unknown solution
@@ -117,6 +121,8 @@ public class SwerveModule {
     steerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     steerMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
     steerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    steerMotor.getConfigurator().apply(steerMotorConfig);
     
     Timer.delay(1.0);
     setSteerMotorToAbsolute();
@@ -136,8 +142,8 @@ public class SwerveModule {
    * @return drive motor velocity in meters per second
    */
   public double getDriveMotorVelocity() {
-    return ((driveMotor.getSelectedSensorVelocity() / DriveConstants.GEAR_RATIO_MOTOR_TO_WHEEL) *
-        (10.0 / ModuleConstants.COUNTS_PER_ROTATION) * DriveConstants.WHEEL_CIRCUMFERENCE);
+    return driveMotor.getVelocity().getValue();
+    //((driveMotor.getSelectedSensorVelocity() / DriveConstants.GEAR_RATIO_MOTOR_TO_WHEEL) * (10.0 / ModuleConstants.COUNTS_PER_ROTATION) * DriveConstants.WHEEL_CIRCUMFERENCE);
   }
 
   /**
@@ -147,7 +153,7 @@ public class SwerveModule {
    * @return applied motor voltage in volts
    */
   public double getDriveMotorVoltage() {
-    return driveMotor.getMotorOutputVoltage();
+    return driveMotor.getMotorVoltage().getValue();
   }
 
   /**
@@ -157,7 +163,7 @@ public class SwerveModule {
    * @return drive motor distance in meters
    */
   public double getDriveMotorDistance() {
-    return driveMotor.getSelectedSensorPosition() * DriveConstants.DISTANCE_PER_ENCODER_COUNT;
+    return driveMotor.getPosition().getValue() * ModuleConstants.DISTANCE_PER_ENCODER_COUNT;
   }
 
   /**
@@ -167,19 +173,19 @@ public class SwerveModule {
    * @return drive encoder velocity in meters per second
    */
   public double getDriveMotorEncoderVelocity() {
-    return driveMotor.getSelectedSensorVelocity() * 10 * DriveConstants.DISTANCE_PER_ENCODER_COUNT;
+    return driveMotor.getVelocity().getValue() * 10 * ModuleConstants.DISTANCE_PER_ENCODER_COUNT;
   }
 
   // STEER MOTOR METHODS \\ 
-  
+
   /**
    * Sets the of the steer motor encoder to the value of the CANcoder
    * 
    */
   public void setSteerMotorToAbsolute() {
-    double currentAngle = steerEncoder.getAbsolutePosition();
-    double absolutePosition = currentAngle * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
-    steerMotor.setSelectedSensorPosition(absolutePosition);
+    double currentAngle = steerEncoder.getAbsolutePosition().getValue();
+    double absolutePosition = currentAngle * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    steerMotor.setControl(new PositionVoltage(absolutePosition));
   }
 
   // Error free below this comment. however, logic errors most certainly are still present
@@ -273,7 +279,7 @@ public class SwerveModule {
 
     //TODO: determine what to do for drive motor reset
 
-    driveMotor.setPosition(0);
+    driveMotor.setControl(new PositionVoltage(0));
     steerEncoder.setPosition(0);
   }
 
