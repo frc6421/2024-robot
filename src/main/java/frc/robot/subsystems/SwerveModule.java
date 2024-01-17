@@ -4,27 +4,29 @@
 
 package frc.robot.subsystems;
 
-import org.opencv.core.Core;
-
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.core.CoreCANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 /** Add your docs here. */
-public class SwerveModule {
+public class SwerveModule implements Sendable{
   public static class ModuleConstants{
     public static final String RIO_NAME = "rio";
 
@@ -34,41 +36,57 @@ public class SwerveModule {
     public static final double DRIVE_KI = 0.0;
     public static final double DRIVE_KD = 0.0;
 
+    public static final double SUPPLY_CURRENT_LIMIT_AMPS = 35;
+    public static final double SUPPLY_CURRENT_THRESHOLD_AMPS = 60;
+    public static final double SUPPLY_TIME_THRESHOLD_SEC = 1.0;
+    public static final double STATOR_CURRENT_LIMIT_AMPS = 35;
+
     public static final double STEER_KS = 0.0;
     public static final double STEER_KV = 0.0;
     public static final double STEER_KP = 0.0;
     public static final double STEER_KI = 0.0;
     public static final double STEER_KD = 0.0;
-    public static final double MAX_VOLTAGE = 10;
-    public static final double COUNTS_PER_ROTATION = 0;
-    public static final double WHEEL_CIRCUMFERENCE = 0;
-    public static final double GEAR_RATIO_MOTOR_TO_WHEEL = 0;
-    public static final double DISTANCE_PER_ENCODER_COUNT = 0;
-    public static final double STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE = 0;
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 0;
 
+    public static final double MAX_VOLTAGE = 10;
+    public static final double WHEEL_DIAMETER_IN = 3.82;
+    public static final double WHEEL_CIRCUMFERENCE_METERS = Units.inchesToMeters(WHEEL_DIAMETER_IN * Math.PI);
+    public static final double GEAR_RATIO_MOTOR_TO_WHEEL = 6.75;
+    public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
+    public static final double DUTY_CYCLE_DEADBAND = 0.045;
+    //TODO Verify actual velocity
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.4;
+    public static final double TIMEOUT_mS = 50;
   }
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
 
-  private final CoreCANcoder steerEncoder;
+  private final CANcoder steerEncoder;
 
   private final String moduleName;
+  private final double rotationOffset; 
 
   private final TalonFXConfiguration driveMotorConfig;
 
   private final TalonFXConfiguration steerMotorConfig;
+
+  private final CANcoderConfiguration steerEncoderConfig;
+
+  private final DutyCycleOut driveDutyCycle;
+  private final PositionVoltage steerPosition;
+  private final VelocityDutyCycle driveVelocity;
+
   /** Creates a new ModuleSubsystem. */
   public SwerveModule(int driveMotorID, int steerMotorID, int steerEncoderID, double rotationOffset, String name) {
     moduleName = name;
+    this.rotationOffset = rotationOffset;
 
     driveMotor = new TalonFX(driveMotorID, ModuleConstants.RIO_NAME);
     driveMotorConfig = new TalonFXConfiguration();
-    driveMotor.getConfigurator().apply(new TalonFXConfiguration());
+    driveMotor.getConfigurator().apply(driveMotorConfig, ModuleConstants.TIMEOUT_mS);
 
     driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
+    driveMotorConfig.MotorOutput.DutyCycleNeutralDeadband = ModuleConstants.DUTY_CYCLE_DEADBAND;
     driveMotorConfig.Voltage.PeakForwardVoltage = ModuleConstants.MAX_VOLTAGE;
     driveMotorConfig.Voltage.PeakReverseVoltage = - 1.0 * ModuleConstants.MAX_VOLTAGE;
     
@@ -79,33 +97,39 @@ public class SwerveModule {
     driveMotorConfig.Slot0.kI = ModuleConstants.DRIVE_KI;
     driveMotorConfig.Slot0.kD = ModuleConstants.DRIVE_KD;
     
-    // TODO Verify if there is a deadband config.
-    //driveMotor.configNeutralDeadband(ModuleConstants.PERCENT_DEADBAND);
-    driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 35;
-    driveMotorConfig.CurrentLimits.SupplyCurrentThreshold = 60;
-    driveMotorConfig.CurrentLimits.SupplyTimeThreshold = 1.0;
+    driveMotorConfig.CurrentLimits.SupplyCurrentLimit = ModuleConstants.SUPPLY_CURRENT_LIMIT_AMPS;
+    driveMotorConfig.CurrentLimits.SupplyCurrentThreshold = ModuleConstants.SUPPLY_CURRENT_THRESHOLD_AMPS;
+    driveMotorConfig.CurrentLimits.SupplyTimeThreshold = ModuleConstants.SUPPLY_TIME_THRESHOLD_SEC;
     driveMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    driveMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
+    driveMotorConfig.CurrentLimits.StatorCurrentLimit = ModuleConstants.STATOR_CURRENT_LIMIT_AMPS;
     driveMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    driveMotor.getConfigurator().apply(driveMotorConfig);
+    driveMotorConfig.Feedback.SensorToMechanismRatio = ModuleConstants.GEAR_RATIO_MOTOR_TO_WHEEL;
 
-    steerEncoder = new CoreCANcoder(steerEncoderID, ModuleConstants.RIO_NAME);
-    
-    //TODO: usure of what to do with the steer encoder
-    //steerEncoder.configAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1);
-    //steerEncoder.configSensorDirection(false); // Counter Clockwise
-    //steerEncoder.configMagnetOffrotation();
-    //steerEncoder.configSensorInitializationStrategy(configSensorInitializationStrategy.BootToAbsolutePosition);
+    driveMotor.getConfigurator().apply(driveMotorConfig, ModuleConstants.TIMEOUT_mS);
+
+    steerEncoder = new CANcoder(steerEncoderID, ModuleConstants.RIO_NAME);
+
+    steerEncoderConfig = new CANcoderConfiguration();
+    steerEncoder.getConfigurator().apply(steerEncoderConfig, ModuleConstants.TIMEOUT_mS);
+
+    steerEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+    steerEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    steerEncoderConfig.MagnetSensor.MagnetOffset = rotationOffset;
 
     steerMotor = new TalonFX(steerMotorID, ModuleConstants.RIO_NAME);
     steerMotorConfig = new TalonFXConfiguration();
-    steerMotor.getConfigurator().apply(new TalonFXConfiguration());
+    steerMotor.getConfigurator().apply(steerMotorConfig, ModuleConstants.TIMEOUT_mS);
+
+    steerMotorConfig.Voltage.PeakForwardVoltage = ModuleConstants.MAX_VOLTAGE;
+    steerMotorConfig.Voltage.PeakReverseVoltage = - 1.0 * ModuleConstants.MAX_VOLTAGE;
+
     steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    steerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    // unknown solution
-    //steerMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    //steerMotorConfig.Feedback.sensor = 
+    steerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+    steerMotorConfig.Feedback.SensorToMechanismRatio = ModuleConstants.STEER_GEAR_RATIO;
+
+    steerMotorConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
     // For position control 
     steerMotorConfig.Slot0.kS = ModuleConstants.STEER_KS;
@@ -114,22 +138,23 @@ public class SwerveModule {
     steerMotorConfig.Slot0.kI = ModuleConstants.STEER_KI;
     steerMotorConfig.Slot0.kD = ModuleConstants.STEER_KD;
 
-    // Unsure how to fix this line
-    //steerMotor.configAllowableClosedloopError(0, 0.5 * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE);
-    // Same deadband error
-    //steerMotor.configNeutralDeadband(ModuleConstants.PERCENT_DEADBAND);
-
-    steerMotorConfig.CurrentLimits.SupplyCurrentLimit = 35;
+    steerMotorConfig.CurrentLimits.SupplyCurrentLimit = ModuleConstants.SUPPLY_CURRENT_LIMIT_AMPS;
     steerMotorConfig.CurrentLimits.SupplyCurrentThreshold = 60;
     steerMotorConfig.CurrentLimits.SupplyTimeThreshold = 1.0;
     steerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     steerMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
     steerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    steerMotor.getConfigurator().apply(steerMotorConfig);
+    steerMotor.getConfigurator().apply(steerMotorConfig, ModuleConstants.TIMEOUT_mS);
     
     Timer.delay(1.0);
     setSteerMotorToAbsolute();
+
+    driveDutyCycle = new DutyCycleOut(0);
+    steerPosition = new PositionVoltage(0);
+    driveVelocity = new VelocityDutyCycle(0);
+
+    Shuffleboard.getTab(moduleName).add(this);
   }
 
   // @Override
@@ -139,6 +164,10 @@ public class SwerveModule {
 
   // DRIVE MOTOR METHODS \\
 
+  public double getDriveMotorDutyCycle(){
+    return driveMotor.getDutyCycle().refresh().getValue();
+  }
+
   /**
    * Returns the drive motor velocity using encoder counts
    * Not currently used
@@ -146,8 +175,7 @@ public class SwerveModule {
    * @return drive motor velocity in meters per second
    */
   public double getDriveMotorVelocity() {
-    return driveMotor.getVelocity().getValue();
-    //((driveMotor.getSelectedSensorVelocity() / DriveConstants.GEAR_RATIO_MOTOR_TO_WHEEL) * (10.0 / ModuleConstants.COUNTS_PER_ROTATION) * DriveConstants.WHEEL_CIRCUMFERENCE);
+    return driveMotor.getVelocity().refresh().getValue() * ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
   }
 
   /**
@@ -157,7 +185,7 @@ public class SwerveModule {
    * @return applied motor voltage in volts
    */
   public double getDriveMotorVoltage() {
-    return driveMotor.getMotorVoltage().getValue();
+    return driveMotor.getMotorVoltage().refresh().getValue();
   }
 
   /**
@@ -167,17 +195,7 @@ public class SwerveModule {
    * @return drive motor distance in meters
    */
   public double getDriveMotorDistance() {
-    return driveMotor.getPosition().getValue() * ModuleConstants.DISTANCE_PER_ENCODER_COUNT;
-  }
-
-  /**
-   * Converts the drive encoder velocity from counts per 100 ms to meters per
-   * second
-   * 
-   * @return drive encoder velocity in meters per second
-   */
-  public double getDriveMotorEncoderVelocity() {
-    return driveMotor.getVelocity().getValue() * 10 * ModuleConstants.DISTANCE_PER_ENCODER_COUNT;
+    return driveMotor.getPosition().refresh().getValue() * ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
   }
 
   // STEER MOTOR METHODS \\ 
@@ -187,32 +205,35 @@ public class SwerveModule {
    * 
    */
   public void setSteerMotorToAbsolute() {
-    double currentAngle = steerEncoder.getPosition().getValue();
-    double absolutePosition = currentAngle * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    double currentRotations = steerEncoder.getAbsolutePosition().refresh().getValue();
+    double absolutePosition = currentRotations - rotationOffset;
     steerMotor.setPosition(absolutePosition);
   }
 
-  // Error free below this comment. however, logic errors most certainly are still present
-
   /**
-   * Gets the steer motor's current angle in degrees
-   * @return steer motor's angle in degrees
+   * Gets the steer motor's current position in rotations
+   * @return steer motor's position in rotations
    */
-  //TODO: determine if a conversion is needed and if so what that conversion is
-  public double getSteerMotorEncoderAngle() {
-    return steerMotor.getRotorPosition().getValue();
-    // ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+  public double getSteerMotorRotations() {
+    return steerMotor.getPosition().refresh().getValue();
+  }
+
+  public double getSteerMotorDegrees(){
+    return getSteerMotorRotations() * 360;
   }
 
   // CANCODER METHODS \\
 
+  public double getCANcoderAngle() {
+    return steerEncoder.getAbsolutePosition().refresh().getValue() * 180;
+  }
   /**
    * Returns the angle measured on the CANcoder (steering encoder)
    * 
    * @return wheel angle in radians
    */
   public double getCANcoderRadians() {
-    return Math.toRadians(steerEncoder.getAbsolutePosition().getValue());
+    return Math.toRadians(getCANcoderAngle());
   }
 
   /**
@@ -231,15 +252,15 @@ public class SwerveModule {
    * 
    * @param desiredState
    */
-  public void setDesiredState(SwerveModuleState desiredState) {
+  public void setTeleopDesiredState(SwerveModuleState desiredState) {
     // Optimize the desired state to avoid spinning modules more than 90 degrees
-    SwerveModuleState state = customOptimize(desiredState, new Rotation2d(Math.toRadians(getSteerMotorEncoderAngle())));
+    SwerveModuleState state = SwerveModuleState.optimize(desiredState, new Rotation2d(Math.toRadians(getSteerMotorDegrees())));
 
     // Calculate percent of max drive velocity
-    double driveOutput = (state.speedMetersPerSecond / ModuleConstants.MAX_VELOCITY_METERS_PER_SECOND);
+    driveDutyCycle.Output = (state.speedMetersPerSecond / ModuleConstants.MAX_VELOCITY_METERS_PER_SECOND);
 
-    // Calculate steer motor output
-    double steerPositionOutput = state.angle.getDegrees() * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    // Calculate steer motor position in rotations
+    steerPosition.Position = state.angle.getDegrees() / 360;
 
     // if(driverController.povLeft().getAsBoolean()){ 
     //   steerPositionOutput =  (state.angle.getDegrees() + 90 - state.angle.getDegrees() % 360) * DriveConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
@@ -247,8 +268,8 @@ public class SwerveModule {
 
     // Apply PID outputs
     //driveMotor.set(ControlMode.PercentOutput, driveOutput);
-    driveMotor.setControl(new DutyCycleOut(driveOutput));
-    steerMotor.setControl(new PositionVoltage(steerPositionOutput));
+    driveMotor.setControl(driveDutyCycle);
+    steerMotor.setControl(steerPosition);
     
   }
 
@@ -258,87 +279,38 @@ public class SwerveModule {
    * 
    * @param desiredState
    */
-  public void autoSetDesiredState(SwerveModuleState desiredState) {
+  public void setAutoDesiredState(SwerveModuleState desiredState) {
     // Optimize the desired state to avoid spinning modules more than 90 degrees
-    SwerveModuleState state = customOptimize(desiredState, new Rotation2d(Math.toRadians(getSteerMotorEncoderAngle())));
+    SwerveModuleState state = SwerveModuleState.optimize(desiredState, new Rotation2d(Math.toRadians(getSteerMotorDegrees())));
 
     // Calculate percent of max drive velocity
-    double driveOutput = state.speedMetersPerSecond / ModuleConstants.DISTANCE_PER_ENCODER_COUNT / 10;
+    driveVelocity.Velocity = state.speedMetersPerSecond;
 
     // Calculate steer motor output
-    double steerPositionOutput = state.angle.getDegrees() * ModuleConstants.STEER_MOTOR_ENCODER_COUNTS_PER_DEGREE;
+    steerPosition.Position = state.angle.getDegrees() / 360;
 
     // Apply PID outputs
     //driveMotor.set(ControlMode.Velocity, driveOutput, DemandType.ArbitraryFeedForward, feedforward.calculate(state.speedMetersPerSecond));
     //steerMotor.set(ControlMode.Position, steerPositionOutput);
 
-    //TODO: feed forward?
-    driveMotor.setControl(new VelocityDutyCycle(driveOutput));
-    steerMotor.setControl(new PositionDutyCycle(steerPositionOutput));
+    driveMotor.setControl(driveVelocity);
+    steerMotor.setControl(steerPosition);
   }
-
 
   public void resetEncoders() {
-    //driveMotor.setSelectedSensorPosition(0);
-
     //TODO: determine what to do for drive motor reset
-
-    driveMotor.setControl(new PositionVoltage(0));
-    steerEncoder.setPosition(0);
+    driveMotor.setPosition(0, ModuleConstants.TIMEOUT_mS);
+    steerEncoder.setPosition(0, ModuleConstants.TIMEOUT_mS);
   }
 
-  /**
-   * From team 364
-   * 
-   * Minimize the change in heading the desired swerve module state would require
-   * by potentially
-   * reversing the direction the wheel spins. Customized from WPILib's version to
-   * include placing
-   * in appropriate scope for CTRE onboard control.
-   *
-   * @param desiredState The desired state.
-   * @param currentAngle The current module angle.
-   */
-  public static SwerveModuleState customOptimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
-    double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
-    double targetSpeed = desiredState.speedMetersPerSecond;
-    double delta = targetAngle - currentAngle.getDegrees();
-    if(Math.abs(delta) > 90) {
-      targetSpeed = -targetSpeed;
-      targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
-    }
-    return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
-  }
+  public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("SwerveModule");
 
-  /**
-   * From team 364
-   * 
-   * @param initialAngle Current Angle
-   * @param targetAngle  Target Angle
-   * @return Closest angle within scope
-   */
-  private static double placeInAppropriate0To360Scope(double initialAngle, double targetAngle) {
-    double lowerBound;
-    double upperBound;
-    double lowerOffset = initialAngle % 360;
-    if (lowerOffset >= 0) {
-      lowerBound = initialAngle - lowerOffset;
-      upperBound = initialAngle + (360 - lowerOffset);
-    } else {
-      upperBound = initialAngle - lowerOffset;
-      lowerBound = initialAngle - (360 + lowerOffset);
-    }
-    while (targetAngle < lowerBound) {
-      targetAngle += 360;
-    }
-    while (targetAngle > upperBound) {
-      targetAngle -= 360;
-    }
-    if (targetAngle - initialAngle > 180) {
-      targetAngle -= 360;
-    } else if (targetAngle - initialAngle < -180) {
-      targetAngle += 360;
-    }
-    return targetAngle;
+    builder.addDoubleProperty("Drive Motor Velocity", this::getDriveMotorVelocity, null);
+    builder.addDoubleProperty("Steer Motor Angle", this::getSteerMotorDegrees, null);
+    builder.addDoubleProperty("CANCoder Angle Degrees", this::getCANcoderAngle, null);
+    builder.addDoubleProperty("Drive Motor Output", this::getDriveMotorDutyCycle, null);
+    builder.addDoubleProperty("Drive Motor Voltage", this::getDriveMotorVoltage, null);
+    builder.addDoubleProperty("Drive Motor Distance Meters", this::getDriveMotorDistance, null);
   }
 }
