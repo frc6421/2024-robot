@@ -40,7 +40,9 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // unsure how to make this binding (when you press it goes up when you press again it goes down)
-    // driverController.a().toggleOnTrue(getAutonomousCommand())(new InstantCommand(() -> ClimberSubsystem.RaiseClimberArm(.75)));
+  // driverController.a().toggleOnTrue(getAutonomousCommand())(new InstantCommand(() -> ClimberSubsystem.RaiseClimberArm(.75)));
+    driverController.rightBumper().whileTrue(new InstantCommand(() -> ClimberSubsystem.buttonChange()));
+    driverController.rightBumper().whileFalse(new InstantCommand(() -> ClimberSubsystem.buttonChange()));
   }
 
   /**
