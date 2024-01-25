@@ -25,7 +25,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public static final double CLIMBER_KP = 0.0;
     public static final double CLIMBER_KI = 0.0;
     public static final double CLIMBER_KD = 0.0;
-
+    public static final double CLIMBER_SPEED = .75;
   }
   //Create new
   private TalonFX leftClimberMotor;
@@ -52,7 +52,7 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotorConfig.Slot0.kI = ClimberConstants.CLIMBER_KI;
     climberMotorConfig.Slot0.kD = ClimberConstants.CLIMBER_KD;
   }
-  /** Lowers the climber arms to a set position
+  /** Sets the climber arms to a set position
    * 
    * @param value Used to set the position of the motors
    */
@@ -62,10 +62,9 @@ public class ClimberSubsystem extends SubsystemBase {
       rightClimberMotor.set(value);
     }
     else {
-      leftClimberMotor.set(-value);
-      rightClimberMotor.set(-value);
+      leftClimberMotor.set(0);
+      rightClimberMotor.set(0);
     }
-
   }
 
   /** A method to make a special button input by flipping a bool 

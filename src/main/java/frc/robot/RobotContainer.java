@@ -19,12 +19,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-
+  public ClimberSubsystem climberSubsystem;
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    climberSubsystem = new ClimberSubsystem();
     // Configure the trigger bindings
     configureBindings();
   }
@@ -39,10 +40,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // unsure how to make this binding (when you press it goes up when you press again it goes down)
-  // driverController.a().toggleOnTrue(getAutonomousCommand())(new InstantCommand(() -> ClimberSubsystem.RaiseClimberArm(.75)));
-    driverController.rightBumper().whileTrue(new InstantCommand(() -> ClimberSubsystem.buttonChange()));
-    driverController.rightBumper().whileFalse(new InstantCommand(() -> ClimberSubsystem.buttonChange()));
+    driverController.rightBumper().onTrue(new InstantCommand(() -> climberSubsystem.SetClimberArm(.75)));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> ClimberSubsystem.buttonChange()));
   }
 
   /**
