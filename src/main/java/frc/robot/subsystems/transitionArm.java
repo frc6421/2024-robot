@@ -80,7 +80,7 @@ public class TransitionArm extends SubsystemBase {
     // Gear ratio
     armMotorRightConfig.Feedback.SensorToMechanismRatio = transitionArmConstants.ARM_GEAR_RATIO;
 
-    // set the new configutarion to the motor
+    // Set the new configutarion to the motor
     armMotorRight.getConfigurator().apply(armMotorRightConfig);
 
     // Set to factory defults
@@ -104,7 +104,7 @@ public class TransitionArm extends SubsystemBase {
     // Gear ratio
     armMotorRightConfig.Feedback.SensorToMechanismRatio = transitionArmConstants.ARM_GEAR_RATIO;
 
-    // set the new configutarion to the motor
+    // Set the new configutarion to the motor
     armMotorLeft.getConfigurator().apply(armMotorLeftConfig);
 
     // Set the left motor to follow the right motor
