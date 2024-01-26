@@ -25,16 +25,18 @@ public class TransitionArm extends SubsystemBase {
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
-    public static final double ARMMOTORRIGHT_KP = 0.3; // needs to be tuned
+    public static final double ARMMOTORRIGHT_KP = 0.3; // TODO needs to be tuned
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
 
-    public static final double ARMMOTORLEFT_KP = 0.3; // needs to be tuned
+    public static final double ARMMOTORLEFT_KP = 0.3; // TODO needs to be tuned
     public static final double ARMMOTORLEFT_KI = 0.0;
     public static final double ARMMOTORLEFT_KD = 0.0; 
 
-    public static final double ARM_FORAWRD_SOFT_LIMIT = 0; // needs to be determined
-    public static final double ARM_REVERSE_SOFT_LIMIT = 0; // needs to be determined
+    public static final double ARM_FORAWRD_SOFT_LIMIT = 0; // TODO needs to be determined
+    public static final double ARM_REVERSE_SOFT_LIMIT = 0; // TODO needs to be determined
+
+    public static final double ARM_GEAR_RATIO = 1; // TODO needs to be determined
   }
 
   // fields
@@ -75,6 +77,9 @@ public class TransitionArm extends SubsystemBase {
     armMotorRightConfig.Slot0.kI = transitionArmConstants.ARMMOTORRIGHT_KI;
     armMotorRightConfig.Slot0.kD = transitionArmConstants.ARMMOTORRIGHT_KD;
 
+    // Gear ratio
+    armMotorRightConfig.Feedback.SensorToMechanismRatio = transitionArmConstants.ARM_GEAR_RATIO;
+
     // set the new configutarion to the motor
     armMotorRight.getConfigurator().apply(armMotorRightConfig);
 
@@ -96,7 +101,8 @@ public class TransitionArm extends SubsystemBase {
     armMotorLeftConfig.Slot0.kI = transitionArmConstants.ARMMOTORLEFT_KI;
     armMotorLeftConfig.Slot0.kD = transitionArmConstants.ARMMOTORLEFT_KD;
 
-
+    // Gear ratio
+    armMotorRightConfig.Feedback.SensorToMechanismRatio = transitionArmConstants.ARM_GEAR_RATIO;
 
     // set the new configutarion to the motor
     armMotorLeft.getConfigurator().apply(armMotorLeftConfig);

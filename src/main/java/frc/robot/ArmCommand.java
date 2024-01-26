@@ -26,11 +26,11 @@ public class ArmCommand extends Command {
     switch(RobotContainer.currentArmState)
     {
       case INTAKE:
-        arm.setArmMotorPosition(0); // positions needed
+        arm.setArmMotorPosition(0); // TODO positions needed
         break;
 
       case SCOREING:
-        arm.setArmMotorPosition(0); // positions needed
+        arm.setArmMotorPosition(0); // TODO positions needed
         break;
     }
   }
