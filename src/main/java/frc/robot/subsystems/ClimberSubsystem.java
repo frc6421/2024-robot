@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -19,6 +20,8 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final int LEFT_CLIMBER_CAN_ID = 40;
     private static final int RIGHT_CLIMBER_CAN_ID = 41;
 
+    // Value is TBD
+    private static final double CLIMBER_GEAR_RATIO = 22.5;
     // Velocity control
     public static final double CLIMBER_KS = 0.0;
     public static final double CLIMBER_KV = 0.0;
@@ -28,9 +31,12 @@ public class ClimberSubsystem extends SubsystemBase {
     public static final double CLIMBER_SPEED = .75;
   }
   //Create new
+  private PositionVoltage climberPosition;
   private TalonFX leftClimberMotor;
   private TalonFX rightClimberMotor;
   private TalonFXConfiguration climberMotorConfig;
+
+
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     // Make new TalonFX Motors
@@ -56,17 +62,22 @@ public class ClimberSubsystem extends SubsystemBase {
    * 
    * @param value Used to set the position of the motors
    */
-  public void SetClimberArm(double value) {
+  public void SetClimberMotorPosition(double position) {
     if (stateFlipper) {
-      leftClimberMotor.set(value);
-      rightClimberMotor.set(value);
+      climberPosition.Position = position;
+      leftClimberMotor.setControl(climberPosition);
+      rightClimberMotor.setControl(climberPosition);
     }
     else {
-      leftClimberMotor.set(0);
-      rightClimberMotor.set(0);
+      climberPosition.Position = -1.0 * position;
+      leftClimberMotor.setControl(climberPosition);
+      rightClimberMotor.setControl(climberPosition);
     }
   }
-
+  public double getArmMotorPosition() {
+    return leftClimberMotor.getPosition().refresh().getValue();
+  }
+    
   /** A method to make a special button input by flipping a bool 
    * @return stateFlipper
   */
