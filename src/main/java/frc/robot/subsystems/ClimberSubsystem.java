@@ -21,7 +21,7 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final int RIGHT_CLIMBER_CAN_ID = 41;
 
     // Value is TBD
-    private static final double CLIMBER_GEAR_RATIO = 22.5;
+    private static final double CLIMBER_GEAR_RATIO = 1;
     // Velocity control
     public static final double CLIMBER_KS = 0.0;
     public static final double CLIMBER_KV = 0.0;
@@ -58,9 +58,9 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotorConfig.Slot0.kI = ClimberConstants.CLIMBER_KI;
     climberMotorConfig.Slot0.kD = ClimberConstants.CLIMBER_KD;
   }
-  /** Sets the climber arms to a set position
+  /** Sets the climber arms to a set position uses stateFlipper values to determine if going up or down
    * 
-   * @param value Used to set the position of the motors
+   * @param position Used to set the position of the motors
    */
   public void SetClimberMotorPosition(double position) {
     if (stateFlipper) {
@@ -74,6 +74,10 @@ public class ClimberSubsystem extends SubsystemBase {
       rightClimberMotor.setControl(climberPosition);
     }
   }
+  /** Returns a value in rotations of the current motor
+   * 
+   * @return
+   */
   public double getArmMotorPosition() {
     return leftClimberMotor.getPosition().refresh().getValue();
   }
