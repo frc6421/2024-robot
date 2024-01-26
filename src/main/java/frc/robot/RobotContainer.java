@@ -5,7 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.TransitionArm;
+import frc.robot.subsystems.TransitionArm.transitionArmConstants.armState;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -17,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final TransitionArm armSubsystem;
+
+  public static armState currentArmState;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -25,6 +31,10 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    armSubsystem = new TransitionArm();
+
+    currentArmState = armState.INTAKE;
+
     configureBindings();
   }
 
@@ -38,7 +48,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
+      driverController.a().onTrue(new InstantCommand(() -> currentArmState = armState.INTAKE).andThen(new ArmCommand(armSubsystem)));
+      driverController.b().onTrue(new InstantCommand(() -> currentArmState = armState.SCOREING).andThen(new ArmCommand(armSubsystem)));
   }
 
   /**

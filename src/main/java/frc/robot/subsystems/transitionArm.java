@@ -13,7 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class transitionArm extends SubsystemBase {
+public class TransitionArm extends SubsystemBase {
   
   public static class transitionArmConstants {
     
@@ -32,9 +32,12 @@ public class transitionArm extends SubsystemBase {
     public static final double ARMMOTORLEFT_KP = 0.3; // needs to be tuned
     public static final double ARMMOTORLEFT_KI = 0.0;
     public static final double ARMMOTORLEFT_KD = 0.0; 
+
+    public static final double ARM_FORAWRD_SOFT_LIMIT = 0; // needs to be determined
+    public static final double ARM_REVERSE_SOFT_LIMIT = 0; // needs to be determined
   }
 
-  // feilds
+  // fields
   private final TalonFX armMotorRight;
   private final TalonFX armMotorLeft;
 
@@ -44,7 +47,8 @@ public class transitionArm extends SubsystemBase {
   private final PositionVoltage armPosition;
 
   /** Creates a new transitionArm. */
-  public transitionArm() {
+  public TransitionArm() {
+
     // CAN IDs
     armMotorRight = new TalonFX(transitionArmConstants.ARMMOTORRIGHT_CAN_ID);
     armMotorLeft = new TalonFX(transitionArmConstants.ARMMOTORLEFT_CAN_ID);
@@ -59,6 +63,12 @@ public class transitionArm extends SubsystemBase {
     // Neutral mode and Inversions
     armMotorRightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     armMotorRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    // Soft limits
+    armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = transitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
+    armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = transitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
     
     // Sets PID values
     armMotorRightConfig.Slot0.kP = transitionArmConstants.ARMMOTORRIGHT_KP;
@@ -74,11 +84,19 @@ public class transitionArm extends SubsystemBase {
     // Neutral mode and Inversions
     armMotorLeftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     armMotorLeftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    // Soft limits
+    armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = transitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
+    armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = transitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
     
     // Sets PID values
     armMotorLeftConfig.Slot0.kP = transitionArmConstants.ARMMOTORLEFT_KP;
     armMotorLeftConfig.Slot0.kI = transitionArmConstants.ARMMOTORLEFT_KI;
     armMotorLeftConfig.Slot0.kD = transitionArmConstants.ARMMOTORLEFT_KD;
+
+
 
     // set the new configutarion to the motor
     armMotorLeft.getConfigurator().apply(armMotorLeftConfig);
