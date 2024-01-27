@@ -68,7 +68,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Converts the given RPM from RPM to a value between 0 and 1.
-   * @param rpm The set RPM, gotten from the Shuffleboard
+   * @param output The set RPM, gotten from the Shuffleboard
    */
   public double setPercentOutput(double output){
     percentOutput = output;
@@ -77,7 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Gets the current RPM of the motor
-   * @return RPM
+   * @return rpm
    */
   public double getTopMotorRPM(){
     double rpm = topEncoder.getVelocity();
@@ -85,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   /**
    * Gets the current RPM of the motor
-   * @return RPM
+   * @return rpm
    */
   public double getBottomMotorRPM(){
     double rpm = bottomEncoder.getVelocity();
