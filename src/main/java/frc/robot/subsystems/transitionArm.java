@@ -141,12 +141,20 @@ public class TransitionArm extends SubsystemBase {
     return armMotorRight.getPosition().refresh().getValue();
   }
 
+  /**
+   * Returns the position in degrees of the right arm motor. The left motor follows the right motor.
+   * @return position in degrees of the arm motors
+   */
+  public double getArmMotorPositionDeg() {
+    return armMotorRight.getPosition().refresh().getValue() * 360;
+  }
+
  /**
    * Sets the position of the right arm motor. The left motor follows the right motor.
-   * @param position the position in rotations to set the motor to.
+   * @param position the position in degrees to set the motor to.
    */
   public void setArmMotorPosition(double position) {
-    armPosition.Position = position;
+    armPosition.Position = position / 360;
     armMotorRight.setControl(armPosition);
   }
 
