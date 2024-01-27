@@ -82,7 +82,7 @@ public class TransitionSubsystem extends SubsystemBase {
    public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("SwerveModule");
 
-    builder.addBooleanProperty("Transition Motor Output", this::isNoteInTransition, null);
+    builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
     builder.addDoubleProperty("Transition Motor Output", this::getTransitionOutput, null);
   }
 }
