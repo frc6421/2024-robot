@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -20,9 +21,10 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final int LEFT_CLIMBER_CAN_ID = 40;
     private static final int RIGHT_CLIMBER_CAN_ID = 41;
 
-    // Value is TBD
+    // TODO Value is TBD
     private static final double CLIMBER_GEAR_RATIO = 1;
     // Velocity control
+    // TODO Put in PID values
     public static final double CLIMBER_KS = 0.0;
     public static final double CLIMBER_KV = 0.0;
     public static final double CLIMBER_KP = 0.0;
@@ -48,56 +50,37 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberMotor.getConfigurator().apply(climberMotorConfig);
     rightClimberMotor.getConfigurator().apply(climberMotorConfig);
 
-    //Set motors to brake mode
+    //Set motors to brake mode and set direction
+    // TODO Confirm which direction config should be
     climberMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     climberMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
+    // apply PID
     climberMotorConfig.Slot0.kS = ClimberConstants.CLIMBER_KS;
     climberMotorConfig.Slot0.kV = ClimberConstants.CLIMBER_KV;
     climberMotorConfig.Slot0.kP = ClimberConstants.CLIMBER_KP;
     climberMotorConfig.Slot0.kI = ClimberConstants.CLIMBER_KI;
     climberMotorConfig.Slot0.kD = ClimberConstants.CLIMBER_KD;
+
+    // Apply Configurator
+    leftClimberMotor.getConfigurator().apply(climberMotorConfig);
+    rightClimberMotor.getConfigurator().apply(climberMotorConfig);
+
+    // Set Left as master
+    rightClimberMotor.setControl(new Follower(leftClimberMotor.getDeviceID(), false));
   }
   /** Sets the climber arms to a set position uses stateFlipper values to determine if going up or down
    * 
    * @param position Used to set the position of the motors
    */
   public void SetClimberMotorPosition(double position) {
-    if (stateFlipper) {
       climberPosition.Position = position;
-      leftClimberMotor.setControl(climberPosition);
       rightClimberMotor.setControl(climberPosition);
-    }
-    else {
-      climberPosition.Position = -1.0 * position;
-      leftClimberMotor.setControl(climberPosition);
-      rightClimberMotor.setControl(climberPosition);
-    }
   }
   /** Returns a value in rotations of the current motor
-   * 
    * @return
    */
   public double getArmMotorPosition() {
-    return leftClimberMotor.getPosition().refresh().getValue();
-  }
-    
-  /** A method to make a special button input by flipping a bool 
-   * @return stateFlipper
-  */
-  public static void buttonChange()
-  {
-    if(stateFlipper)
-    {
-      stateFlipper = false;
-    }
-    else
-    {
-      stateFlipper = true;
-    }
-  }
-  @Override
-  public void periodic() {
-
+    return rightClimberMotor.getPosition().refresh().getValue();
   }
 }
