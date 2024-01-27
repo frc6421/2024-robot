@@ -8,27 +8,33 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkFlex;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
-
-/*
- * NOTE: The Angle Neo is unused!!!!! Please veryify you have stuff set up for it!
- */
 public class ShooterSubsystem extends SubsystemBase {
     public static class ShooterConstants{
       public static final int TOP_SHOOTER_CAN_ID = 30;
       public static final int BOTTOM_SHOOTER_CAN_ID = 31;
       public static final int CURRENT_LIMIT = 60;
+
+      public static final double SHOOTER_P = 0;
+      public static final double SHOOTER_I = 0;
+      public static final double SHOOTER_D = 0;
     }
     //Creating the objects for the motors and their encoders, respectivly
     private CANSparkFlex topShooterMotor;
     private CANSparkFlex bottomShooterMotor;
 
+    private SparkPIDController topShooterPID;
+    private SparkPIDController bottomShooterPID;
 
     private static RelativeEncoder topEncoder;
     private static RelativeEncoder bottomEncoder;
+
+    private double positionMinOutput;
+    private double positionMaxOutput;
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -41,44 +47,53 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterMotor.restoreFactoryDefaults();
     bottomShooterMotor.restoreFactoryDefaults();
 
+    topShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
+    bottomShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
+
+    topShooterMotor.setInverted(false);
+    topShooterMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
+
+    //Setting the bottom motor to follow
+    bottomShooterMotor.follow(topShooterMotor, true);
+
     //Setting the encoders
     topEncoder = topShooterMotor.getEncoder();
     bottomEncoder = bottomShooterMotor.getEncoder();
 
-    //TODO: Add PID controller
+    // PID Stuff... fun... \\
+    positionMinOutput = -1;
+    positionMaxOutput =  1;
 
-    //Setting the motors idel mode. Coast means they will be free to rotate
-    topShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
-    bottomShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
+    topShooterPID = topShooterMotor.getPIDController();
+    bottomShooterPID = bottomShooterMotor.getPIDController();
+    
+    topShooterPID.setFeedbackDevice(topEncoder);
+    bottomShooterPID.setFeedbackDevice(bottomEncoder);
 
-    //TODO: MAKE IT A FOLLOWER!!!!!!!!!!!!!!!!!!
-    topShooterMotor.setInverted(false);
-    topShooterMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
-    bottomShooterMotor.follow(topShooterMotor, true);
+    topShooterPID.setP(ShooterConstants.SHOOTER_P, 0);
+    topShooterPID.setI(ShooterConstants.SHOOTER_I, 0);
+    topShooterPID.setD(ShooterConstants.SHOOTER_D, 0);
+    bottomShooterPID.setP(ShooterConstants.SHOOTER_P, 0);
+    bottomShooterPID.setI(ShooterConstants.SHOOTER_I, 0);
+    bottomShooterPID.setD(ShooterConstants.SHOOTER_D, 0);
+        
+    topShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
+    bottomShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
 
     //Creating the Shuffleboard tab for testing
     Shuffleboard.getTab("Shooter Subsystem").add(this);
   }
 
-  // Used for setting the percent output of other functions
-  double percentOutput;
-
-  /**
-   * Takes the percent output of the motors and to allow for other 
-   * functions to use it.
-   * @param output The set percent, gotten from Shuffleboard
-   */
-  //TODO: Change from Percent output to Velocity
-  public double setPercentOutput(double output){
-    percentOutput = output;
-    return output;
+  public void setVelocity(double velocity){
+    topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
+    bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
   }
 
   /**
    * Gets the current RPM of the motor
    * @return rpm
    */
-  public double getTopMotorRPM(){
+  public double getTopMotorVelocity(){
     double rpm = topEncoder.getVelocity();
     return rpm;
   }
@@ -87,26 +102,24 @@ public class ShooterSubsystem extends SubsystemBase {
    * Gets the current RPM of the motor
    * @return rpm
    */
-  public double getBottomMotorRPM(){
+  public double getBottomMotorVelocity(){
     double rpm = bottomEncoder.getVelocity();
     return rpm;
   }
 
-  /**
-   * Runs the motor forward with the desired output 
-   * percent
-   */
-  //TODO: Change to Velocity stuff and combine Methods 
-  public void runMotorForward(){
-    topShooterMotor.set(percentOutput);
+  public void setP(double value){
+    topShooterPID.setP(value,0);
+    bottomShooterPID.setP(value,0);
   }
+
 
   public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("ShooterSubsystem");
 
-    builder.addDoubleProperty("Set Motor Percent", null, this::setPercentOutput);
-    builder.addDoubleProperty("Top Motor RPM", this::getTopMotorRPM, null);
-    builder.addDoubleProperty("Bottom Motor RPM", this::getBottomMotorRPM, null);
+    builder.addDoubleProperty("Set P", null, this::setP);
+    builder.addDoubleProperty("Set Motor Velocity", null, this::setVelocity);
+    builder.addDoubleProperty("Top Motor Velocity", this::getTopMotorVelocity, null);
+    builder.addDoubleProperty("Bottom Motor Velocity", this::getBottomMotorVelocity, null);
   }
 
   @Override

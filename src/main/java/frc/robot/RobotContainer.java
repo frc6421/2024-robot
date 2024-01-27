@@ -41,9 +41,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //Thank you Mr. Miron for the command to get it to work!
-    driverController.a().toggleOnTrue(new InstantCommand(() -> shooterSubsystem.runMotorForward()));
-    driverController.b().whileTrue(new InstantCommand(() -> shooterSubsystem.runMotorBackward()));
+    
 
   }
 
