@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionSubsystem extends SubsystemBase {
   
-  private final CANSparkMax transitionMotor;
+  private final CANSparkFlex transitionMotor;
   public static class TransitionConstants {
     
     private static final int TRANSITION_MOTOR_CAN_ID = 21;
@@ -26,7 +26,7 @@ public class TransitionSubsystem extends SubsystemBase {
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
     // Make new instance of motor
-    transitionMotor = new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CAN_ID, MotorType.kBrushless);
+    transitionMotor = new CANSparkFlex(TransitionConstants.TRANSITION_MOTOR_CAN_ID, MotorType.kBrushless);
   
     topProximitySensor = new DigitalInput(TransitionConstants.TOP_PROXIMITY_SENSOR_DIO);
     bottomProximitySensor = new DigitalInput(TransitionConstants.BOTTOM_PROXIMITY_SENSOR_DIO);
@@ -36,7 +36,7 @@ public class TransitionSubsystem extends SubsystemBase {
     //TODO Verify Inversion
     transitionMotor.setInverted(false);
     // Set to idle to coast
-    transitionMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    transitionMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
 
   }
   /** Sets the belts to the Intake mode
