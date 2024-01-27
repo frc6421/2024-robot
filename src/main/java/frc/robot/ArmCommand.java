@@ -29,7 +29,7 @@ public class ArmCommand extends Command {
         arm.setArmMotorPosition(0); // TODO positions needed
         break;
 
-      case SCOREING:
+      case SCORING:
         arm.setArmMotorPosition(0); // TODO positions needed
         break;
     }

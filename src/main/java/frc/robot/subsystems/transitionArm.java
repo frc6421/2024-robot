@@ -17,9 +17,10 @@ public class TransitionArm extends SubsystemBase {
   
   public static class TransitionArmConstants {
     
+    // used for testing
     public static enum armState {
       INTAKE,
-      SCOREING
+      SCORING
     }
 
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
@@ -28,10 +29,14 @@ public class TransitionArm extends SubsystemBase {
     public static final double ARMMOTORRIGHT_KP = 0.3; // TODO needs to be tuned
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
+    public static final double ARMMOTORRIGHT_KG = 0.0;
 
     public static final double ARMMOTORLEFT_KP = 0.3; // TODO needs to be tuned
     public static final double ARMMOTORLEFT_KI = 0.0;
     public static final double ARMMOTORLEFT_KD = 0.0; 
+    public static final double ARMMOTORLEFT_KG = 0.0;
+
+    public static final int ARM_STATOR_CURRENT_LIMIT = 50;
 
     public static final double ARM_FORAWRD_SOFT_LIMIT = 0; // TODO needs to be determined
     public static final double ARM_REVERSE_SOFT_LIMIT = 0; // TODO needs to be determined
@@ -76,6 +81,11 @@ public class TransitionArm extends SubsystemBase {
     armMotorRightConfig.Slot0.kP = TransitionArmConstants.ARMMOTORRIGHT_KP;
     armMotorRightConfig.Slot0.kI = TransitionArmConstants.ARMMOTORRIGHT_KI;
     armMotorRightConfig.Slot0.kD = TransitionArmConstants.ARMMOTORRIGHT_KD;
+    armMotorRightConfig.Slot0.kG = TransitionArmConstants.ARMMOTORRIGHT_KG;
+
+    // Current limit
+    armMotorRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    armMotorRightConfig.CurrentLimits.StatorCurrentLimit = TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT;
 
     // Gear ratio
     armMotorRightConfig.Feedback.SensorToMechanismRatio = TransitionArmConstants.ARM_GEAR_RATIO;
@@ -100,6 +110,11 @@ public class TransitionArm extends SubsystemBase {
     armMotorLeftConfig.Slot0.kP = TransitionArmConstants.ARMMOTORLEFT_KP;
     armMotorLeftConfig.Slot0.kI = TransitionArmConstants.ARMMOTORLEFT_KI;
     armMotorLeftConfig.Slot0.kD = TransitionArmConstants.ARMMOTORLEFT_KD;
+    armMotorLeftConfig.Slot0.kG = TransitionArmConstants.ARMMOTORLEFT_KG;
+
+    // Current limit
+    armMotorLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    armMotorLeftConfig.CurrentLimits.StatorCurrentLimit = TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT;
 
     // Gear ratio
     armMotorRightConfig.Feedback.SensorToMechanismRatio = TransitionArmConstants.ARM_GEAR_RATIO;
@@ -110,7 +125,7 @@ public class TransitionArm extends SubsystemBase {
     // Set the left motor to follow the right motor
     armMotorLeft.setControl(new Follower(armMotorRight.getDeviceID(), false));
 
-    armPosition = new PositionVoltage(0);
+    armPosition = new PositionVoltage(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
   }
 
   @Override
@@ -134,4 +149,7 @@ public class TransitionArm extends SubsystemBase {
     armPosition.Position = position;
     armMotorRight.setControl(armPosition);
   }
+
+  // TODO Sendable
+  // Send: position, P value (set)
 }

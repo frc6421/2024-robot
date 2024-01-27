@@ -49,7 +49,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
       driverController.a().onTrue(new InstantCommand(() -> currentArmState = armState.INTAKE).andThen(new ArmCommand(armSubsystem)));
-      driverController.b().onTrue(new InstantCommand(() -> currentArmState = armState.SCOREING).andThen(new ArmCommand(armSubsystem)));
+      driverController.b().onTrue(new InstantCommand(() -> currentArmState = armState.SCORING).andThen(new ArmCommand(armSubsystem)));
   }
 
   /**
