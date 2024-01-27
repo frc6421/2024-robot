@@ -40,6 +40,11 @@ public class ClimberSubsystem extends SubsystemBase {
     //TODO Confirm Limits
     public static final double CLIMBER_STATOR_CURRENT_LIMIT = 50;
 
+    // Command States
+    public static enum climberState {
+      EXTENDED,
+      LOW
+    }
   }
 
   // TODO Trapezoid Profile (Maybe in command)
@@ -114,7 +119,7 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Returns a value in rotations of the current motor
    * @return
    */
-  public double getArmMotorPosition() {
+  public double getClimberMotorPosition() {
     return rightClimberMotor.getPosition().refresh().getValue();
   }
 }
