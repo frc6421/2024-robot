@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionArm extends SubsystemBase {
   
-  public static class transitionArmConstants {
+  public static class TransitionArmConstants {
     
     public static enum armState {
       INTAKE,
@@ -52,8 +52,8 @@ public class TransitionArm extends SubsystemBase {
   public TransitionArm() {
 
     // CAN IDs
-    armMotorRight = new TalonFX(transitionArmConstants.ARMMOTORRIGHT_CAN_ID);
-    armMotorLeft = new TalonFX(transitionArmConstants.ARMMOTORLEFT_CAN_ID);
+    armMotorRight = new TalonFX(TransitionArmConstants.ARMMOTORRIGHT_CAN_ID);
+    armMotorLeft = new TalonFX(TransitionArmConstants.ARMMOTORLEFT_CAN_ID);
 
     // Creates new configurations for the motors
     armMotorRightConfig = new TalonFXConfiguration();
@@ -69,16 +69,16 @@ public class TransitionArm extends SubsystemBase {
     // Soft limits
     armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = transitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
-    armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = transitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
+    armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
+    armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
     
     // Sets PID values
-    armMotorRightConfig.Slot0.kP = transitionArmConstants.ARMMOTORRIGHT_KP;
-    armMotorRightConfig.Slot0.kI = transitionArmConstants.ARMMOTORRIGHT_KI;
-    armMotorRightConfig.Slot0.kD = transitionArmConstants.ARMMOTORRIGHT_KD;
+    armMotorRightConfig.Slot0.kP = TransitionArmConstants.ARMMOTORRIGHT_KP;
+    armMotorRightConfig.Slot0.kI = TransitionArmConstants.ARMMOTORRIGHT_KI;
+    armMotorRightConfig.Slot0.kD = TransitionArmConstants.ARMMOTORRIGHT_KD;
 
     // Gear ratio
-    armMotorRightConfig.Feedback.SensorToMechanismRatio = transitionArmConstants.ARM_GEAR_RATIO;
+    armMotorRightConfig.Feedback.SensorToMechanismRatio = TransitionArmConstants.ARM_GEAR_RATIO;
 
     // Set the new configutarion to the motor
     armMotorRight.getConfigurator().apply(armMotorRightConfig);
@@ -93,16 +93,16 @@ public class TransitionArm extends SubsystemBase {
     // Soft limits
     armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = transitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
-    armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = transitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
+    armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
+    armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
     
     // Sets PID values
-    armMotorLeftConfig.Slot0.kP = transitionArmConstants.ARMMOTORLEFT_KP;
-    armMotorLeftConfig.Slot0.kI = transitionArmConstants.ARMMOTORLEFT_KI;
-    armMotorLeftConfig.Slot0.kD = transitionArmConstants.ARMMOTORLEFT_KD;
+    armMotorLeftConfig.Slot0.kP = TransitionArmConstants.ARMMOTORLEFT_KP;
+    armMotorLeftConfig.Slot0.kI = TransitionArmConstants.ARMMOTORLEFT_KI;
+    armMotorLeftConfig.Slot0.kD = TransitionArmConstants.ARMMOTORLEFT_KD;
 
     // Gear ratio
-    armMotorRightConfig.Feedback.SensorToMechanismRatio = transitionArmConstants.ARM_GEAR_RATIO;
+    armMotorRightConfig.Feedback.SensorToMechanismRatio = TransitionArmConstants.ARM_GEAR_RATIO;
 
     // Set the new configutarion to the motor
     armMotorLeft.getConfigurator().apply(armMotorLeftConfig);
@@ -127,7 +127,7 @@ public class TransitionArm extends SubsystemBase {
   }
 
  /**
-   * sets the position of the right arm motor. The left motor follows the right motor.
+   * Sets the position of the right arm motor. The left motor follows the right motor.
    * @param position the position in rotations to set the motor to.
    */
   public void setArmMotorPosition(double position) {
