@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.SparkPIDController;
 
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -50,21 +51,20 @@ public class ClimberSubsystem extends SubsystemBase {
   // TODO Trapezoid Profile (Maybe in command)
   //Create new
   private PositionVoltage climberPosition;
-  private TalonFX leftClimberMotor;
-  private TalonFX rightClimberMotor;
+  private CANSparkFlex leftClimberMotor;
+  private CANSparkFlex rightClimberMotor;
   private TalonFXConfiguration climberMotorConfig;
-
+  private final SparkPIDController armRightPIDController;
+  private final SparkPIDController armLeftPIDController;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     // Make new TalonFX Motors
-    leftClimberMotor = new TalonFX(ClimberConstants.LEFT_CLIMBER_CAN_ID);
-    rightClimberMotor = new TalonFX(ClimberConstants.RIGHT_CLIMBER_CAN_ID);
-    climberMotorConfig = new TalonFXConfiguration();
+    leftClimberMotor = new CANSparkFlex(ClimberConstants.LEFT_CLIMBER_CAN_ID, null);
+    rightClimberMotor = new CANSparkFlex(ClimberConstants.RIGHT_CLIMBER_CAN_ID, null);
 
     //Restore Factory defaults
-    leftClimberMotor.getConfigurator().apply(climberMotorConfig);
-    rightClimberMotor.getConfigurator().apply(climberMotorConfig);
+    
 
     //Set motors to brake mode and set direction
     // TODO Confirm which direction config should be
