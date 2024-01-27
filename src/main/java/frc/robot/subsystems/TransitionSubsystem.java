@@ -16,10 +16,10 @@ public class TransitionSubsystem extends SubsystemBase {
   private final CANSparkMax transitionMotor;
   public static class TransitionConstants {
     
-    private static final int TRANSITION_MOTOR_CAN_ID = 21;  
+    private static final int TRANSITION_MOTOR_CAN_ID = 21;
+    //TODO Find the Channels
     private static final int TOP_PROXIMITY_SENSOR_DIO = 0;  
     private static final int BOTTOM_PROXIMITY_SENSOR_DIO = 0; 
-    private static final int PROXIMITY_THRESHOLD = 150;
   }
   private final DigitalInput topProximitySensor;
   private final DigitalInput bottomProximitySensor;
@@ -31,9 +31,10 @@ public class TransitionSubsystem extends SubsystemBase {
     topProximitySensor = new DigitalInput(TransitionConstants.TOP_PROXIMITY_SENSOR_DIO);
     bottomProximitySensor = new DigitalInput(TransitionConstants.BOTTOM_PROXIMITY_SENSOR_DIO);
     
-    // Factory default
+    // Factory default and inversion
     transitionMotor.restoreFactoryDefaults();
-
+    //TODO Verify Inversion
+    transitionMotor.setInverted(false);
     // Set to idle to coast
     transitionMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
@@ -42,7 +43,7 @@ public class TransitionSubsystem extends SubsystemBase {
    * 
    * @param value Used to set the speed of the belt
   */
-  public void SetIntakeState(double value) {
+  public void SetTransitionIntakeState(double value) {
     transitionMotor.set(value);
   }
 

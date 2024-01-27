@@ -26,6 +26,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     transitionSubsystem = new TransitionSubsystem();
+
+    transitionSubsystem.SetTransitionIntakeState(1);
+
     // Configure the trigger bindings
     configureBindings();
   }
