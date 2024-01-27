@@ -10,7 +10,15 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionArm extends SubsystemBase {
@@ -38,94 +46,72 @@ public class TransitionArm extends SubsystemBase {
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 50;
 
-    public static final double ARM_FORAWRD_SOFT_LIMIT = 0; // TODO needs to be determined
-    public static final double ARM_REVERSE_SOFT_LIMIT = 0; // TODO needs to be determined
+    public static final float ARM_FORAWRD_SOFT_LIMIT = 0; // TODO needs to be determined
+    public static final float ARM_REVERSE_SOFT_LIMIT = 0; // TODO needs to be determined
 
     public static final double ARM_GEAR_RATIO = 1; // TODO needs to be determined
   }
 
   // fields
-  private final TalonFX armMotorRight;
-  private final TalonFX armMotorLeft;
+  private final CANSparkFlex armMotorRight;
+  private final CANSparkFlex armMotorLeft;
 
-  private final TalonFXConfiguration armMotorRightConfig;
-  private final TalonFXConfiguration armMotorLeftConfig;
+  private final SparkPIDController armRightPIDController;
+  private final SparkPIDController armLeftPIDController;
 
-  private final PositionVoltage armPosition;
+  private final RelativeEncoder armRightEncoder;
+  private final RelativeEncoder armLeftEncoder;
 
   /** Creates a new transitionArm. */
   public TransitionArm() {
 
-    // CAN IDs
-    armMotorRight = new TalonFX(TransitionArmConstants.ARMMOTORRIGHT_CAN_ID);
-    armMotorLeft = new TalonFX(TransitionArmConstants.ARMMOTORLEFT_CAN_ID);
+      // CAN IDs
+      armMotorRight = new CANSparkFlex(TransitionArmConstants.ARMMOTORRIGHT_CAN_ID, MotorType.kBrushless);
+      armMotorLeft = new CANSparkFlex(TransitionArmConstants.ARMMOTORLEFT_CAN_ID, MotorType.kBrushless);
 
-    // Creates new configurations for the motors
-    armMotorRightConfig = new TalonFXConfiguration();
-    armMotorLeftConfig = new TalonFXConfiguration();
+      // Encoders
+      armRightEncoder = armMotorRight.getEncoder();
+      armLeftEncoder = armMotorLeft.getEncoder();
 
-    // Set to factory defults
-    armMotorRight.getConfigurator().apply(new TalonFXConfiguration());
-    
-    // Neutral mode and Inversions
-    armMotorRightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    armMotorRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      // PID controller
+      armRightPIDController = armMotorRight.getPIDController();
+      armLeftPIDController = armMotorLeft.getPIDController();
 
-    // Soft limits
-    armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    armMotorRightConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
-    armMotorRightConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
-    
-    // Sets PID values
-    armMotorRightConfig.Slot0.kP = TransitionArmConstants.ARMMOTORRIGHT_KP;
-    armMotorRightConfig.Slot0.kI = TransitionArmConstants.ARMMOTORRIGHT_KI;
-    armMotorRightConfig.Slot0.kD = TransitionArmConstants.ARMMOTORRIGHT_KD;
-    armMotorRightConfig.Slot0.kG = TransitionArmConstants.ARMMOTORRIGHT_KG;
+      // Set right PID values
+      armRightPIDController.setP(TransitionArmConstants.ARMMOTORRIGHT_KP);
+      armRightPIDController.setI(TransitionArmConstants.ARMMOTORRIGHT_KI);
+      armRightPIDController.setD(TransitionArmConstants.ARMMOTORRIGHT_KD);
 
-    // Current limit
-    armMotorRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    armMotorRightConfig.CurrentLimits.StatorCurrentLimit = TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT;
+      // Set left PID values
+      armLeftPIDController.setP(TransitionArmConstants.ARMMOTORLEFT_KP);
+      armLeftPIDController.setI(TransitionArmConstants.ARMMOTORLEFT_KP);
+      armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP);
 
-    // Gear ratio
-    armMotorRightConfig.Feedback.SensorToMechanismRatio = TransitionArmConstants.ARM_GEAR_RATIO;
+      // Factory defaults
+      armMotorRight.restoreFactoryDefaults();
+      armMotorLeft.restoreFactoryDefaults();
 
-    // Set the new configutarion to the motor
-    armMotorRight.getConfigurator().apply(armMotorRightConfig);
+      // Inversions
+      armMotorRight.setInverted(false);
+      armMotorLeft.setInverted(false);
 
-    // Set to factory defults
-    armMotorLeft.getConfigurator().apply(new TalonFXConfiguration());
+      // Idle Modes
+      armMotorRight.setIdleMode(IdleMode.kCoast);
+      armMotorLeft.setIdleMode(IdleMode.kCoast);
 
-    // Neutral mode and Inversions
-    armMotorLeftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    armMotorLeftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      // Current Limits
+      armMotorRight.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
+      armMotorLeft.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
 
-    // Soft limits
-    armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    armMotorLeftConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT;
-    armMotorLeftConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
-    
-    // Sets PID values
-    armMotorLeftConfig.Slot0.kP = TransitionArmConstants.ARMMOTORLEFT_KP;
-    armMotorLeftConfig.Slot0.kI = TransitionArmConstants.ARMMOTORLEFT_KI;
-    armMotorLeftConfig.Slot0.kD = TransitionArmConstants.ARMMOTORLEFT_KD;
-    armMotorLeftConfig.Slot0.kG = TransitionArmConstants.ARMMOTORLEFT_KG;
+      // Soft Limits
+      armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      armMotorRight.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-    // Current limit
-    armMotorLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    armMotorLeftConfig.CurrentLimits.StatorCurrentLimit = TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT;
+      armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-    // Gear ratio
-    armMotorRightConfig.Feedback.SensorToMechanismRatio = TransitionArmConstants.ARM_GEAR_RATIO;
-
-    // Set the new configutarion to the motor
-    armMotorLeft.getConfigurator().apply(armMotorLeftConfig);
-
-    // Set the left motor to follow the right motor
-    armMotorLeft.setControl(new Follower(armMotorRight.getDeviceID(), false));
-
-    armPosition = new PositionVoltage(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      // Follower
+      armMotorLeft.follow(armMotorRight);
   }
 
   @Override
@@ -134,28 +120,33 @@ public class TransitionArm extends SubsystemBase {
   }
 
   /**
-   * Returns the position of the right arm motor. The left motor follows the right motor.
-   * @return position of the arm motors
+   * Sets the arm motors to the position inputed
+   * @param position the position to set the motors to
    */
-  public double getArmMotorPosition() {
-    return armMotorRight.getPosition().refresh().getValue();
+  public void setArmMotorPosition(double position)
+  {
+    armRightPIDController.setReference(position, ControlType.kPosition);
+    armLeftPIDController.setReference(position, ControlType.kPosition);
+  }
+
+  //TODO determine if an error is needed in case of motor failure 
+
+  /**
+   * Returns the average position of the arm in rotations
+   * @return the average position in rotations
+   */
+  public double getArmMotorPosition()
+  {
+    return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
   }
 
   /**
-   * Returns the position in degrees of the right arm motor. The left motor follows the right motor.
-   * @return position in degrees of the arm motors
+   * Returns the averageposition of the arm in degrees
+   * @return the average position in degrees
    */
-  public double getArmMotorPositionDeg() {
-    return armMotorRight.getPosition().refresh().getValue() * 360;
-  }
-
- /**
-   * Sets the position of the right arm motor. The left motor follows the right motor.
-   * @param position the position in degrees to set the motor to.
-   */
-  public void setArmMotorPosition(double position) {
-    armPosition.Position = position / 360;
-    armMotorRight.setControl(armPosition);
+  public double getArmMotorPositionDeg()
+  {
+    return ((armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2) * 360;
   }
 
   // TODO Sendable

@@ -19,6 +19,7 @@ public class ArmCommand extends Command {
     new TrapezoidProfile.Constraints(600, 250);
 
   private TrapezoidProfile.State armGoal = new TrapezoidProfile.State();
+  
   private TrapezoidProfile.State armSetpoint = new TrapezoidProfile.State();
 
   TrapezoidProfile armProfile;
