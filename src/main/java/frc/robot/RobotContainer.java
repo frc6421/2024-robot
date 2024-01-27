@@ -27,7 +27,7 @@ public class RobotContainer {
   public RobotContainer() {
     transitionSubsystem = new TransitionSubsystem();
 
-    transitionSubsystem.SetTransitionIntakeState(1);
+    transitionSubsystem.setTransitionIntakeState(1);
 
     // Configure the trigger bindings
     configureBindings();

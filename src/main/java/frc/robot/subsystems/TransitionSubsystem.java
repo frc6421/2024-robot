@@ -5,29 +5,36 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionSubsystem extends SubsystemBase {
-  
-  private final CANSparkFlex transitionMotor;
+
   public static class TransitionConstants {
-    
+
     private static final int TRANSITION_MOTOR_CAN_ID = 21;
     //TODO Find the Channels
     private static final int TOP_PROXIMITY_SENSOR_DIO = 0;  
-    private static final int BOTTOM_PROXIMITY_SENSOR_DIO = 0; 
+    private static final int BOTTOM_PROXIMITY_SENSOR_DIO = 0;
+
+    private static final double TRANSITION_GEAR_RATIO = 1.6;
+    
+    //TODO Velocity???
   }
+
+  private final CANSparkFlex transitionMotor;
+
   private final DigitalInput topProximitySensor;
   private final DigitalInput bottomProximitySensor;
+
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
     // Make new instance of motor
     transitionMotor = new CANSparkFlex(TransitionConstants.TRANSITION_MOTOR_CAN_ID, MotorType.kBrushless);
   
+    // Make 2 new instances of DigitalInput
     topProximitySensor = new DigitalInput(TransitionConstants.TOP_PROXIMITY_SENSOR_DIO);
     bottomProximitySensor = new DigitalInput(TransitionConstants.BOTTOM_PROXIMITY_SENSOR_DIO);
     
@@ -41,29 +48,27 @@ public class TransitionSubsystem extends SubsystemBase {
   }
   /** Sets the belts to the Intake mode
    * 
-   * @param value Used to set the speed of the belt
+   * @param value Used to set the output of the belts
   */
-  public void SetTransitionIntakeState(double value) {
+  public void setTransitionIntakeState(double value) {
     transitionMotor.set(value);
   }
 
   /**
-   * Comparing topProximitySenson and bottomProximitySensor boolean values
-   * @return true/false
+   * Comparing topProximitySensor and bottomProximitySensor boolean values
+   * @return true when both sensors are detecting a note, else false
   */
   public boolean isNoteInTransition() {
-    if(topProximitySensor.get() == true && bottomProximitySensor.get() == true) {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    // Compares values in a boolean statement
+    return (topProximitySensor.get() && bottomProximitySensor.get());
   }
-  
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  //TODO add sendable for output and proximity sensors
+  //Shuffleboard (Seperate tab)
 }
 
