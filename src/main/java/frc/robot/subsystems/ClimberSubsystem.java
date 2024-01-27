@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -13,14 +14,14 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ClimberSubsystem extends SubsystemBase {
-  private static boolean stateFlipper = false;
+
   public static class ClimberConstants {
-    public static final String RIO_NAME = "rio";
 
     // Can ID
     private static final int LEFT_CLIMBER_CAN_ID = 40;
     private static final int RIGHT_CLIMBER_CAN_ID = 41;
 
+    // TODO Limit switch sensors??? (boolean)
     // TODO Value is TBD
     private static final double CLIMBER_GEAR_RATIO = 1;
     // Velocity control
@@ -30,8 +31,20 @@ public class ClimberSubsystem extends SubsystemBase {
     public static final double CLIMBER_KP = 0.0;
     public static final double CLIMBER_KI = 0.0;
     public static final double CLIMBER_KD = 0.0;
-    public static final double CLIMBER_SPEED = .75;
+    public static final double CLIMBER_KG = 0.0;
+
+
+    //TODO Confirm values
+    public static final double CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0;
+    public static final double CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 100;
+
+    // Current Limits
+    //TODO Confirm Limits
+    public static final double CLIMBER_STATOR_CURRENT_LIMIT = 50;
+
   }
+
+  // TODO Trapezoid Profile (Maybe in command)
   //Create new
   private PositionVoltage climberPosition;
   private TalonFX leftClimberMotor;
@@ -61,22 +74,45 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotorConfig.Slot0.kP = ClimberConstants.CLIMBER_KP;
     climberMotorConfig.Slot0.kI = ClimberConstants.CLIMBER_KI;
     climberMotorConfig.Slot0.kD = ClimberConstants.CLIMBER_KD;
+    climberMotorConfig.Slot0.kG = ClimberConstants.CLIMBER_KG;
+
+    // Apply soft limits
+    climberMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    climberMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS;
+
+    climberMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    climberMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS;
+
+    // Gear Ratio 
+    climberMotorConfig.Feedback.SensorToMechanismRatio = ClimberConstants.CLIMBER_GEAR_RATIO;
+
+    //Current limits
+    climberMotorConfig.CurrentLimits.StatorCurrentLimit = ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT;
 
     // Apply Configurator
     leftClimberMotor.getConfigurator().apply(climberMotorConfig);
+    
+    // Change invert for follow motor
+    climberMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     rightClimberMotor.getConfigurator().apply(climberMotorConfig);
 
     // Set Left as master
     rightClimberMotor.setControl(new Follower(leftClimberMotor.getDeviceID(), false));
+
+    // Set position voltage
+    climberPosition = new PositionVoltage(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
   }
-  /** Sets the climber arms to a set position uses stateFlipper values to determine if going up or down
+
+  /** Sets the climber arms to a set position
    * 
    * @param position Used to set the position of the motors
    */
-  public void SetClimberMotorPosition(double position) {
+  public void setClimberMotorPosition(double position) {
       climberPosition.Position = position;
       rightClimberMotor.setControl(climberPosition);
   }
+
   /** Returns a value in rotations of the current motor
    * @return
    */

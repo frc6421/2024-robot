@@ -40,8 +40,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverController.rightBumper().whileTrue(new InstantCommand(() -> climberSubsystem.SetClimberMotorPosition(2)));
-    driverController.rightBumper().whileFalse(new InstantCommand(() -> climberSubsystem.SetClimberMotorPosition(-2)));
+    driverController.rightBumper().whileTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(2)));
+    driverController.rightBumper().whileFalse(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(-2)));
   }
 
   /**
