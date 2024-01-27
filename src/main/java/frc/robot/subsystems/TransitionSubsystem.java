@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionSubsystem extends SubsystemBase {
@@ -45,6 +47,8 @@ public class TransitionSubsystem extends SubsystemBase {
     // Set to idle to coast
     transitionMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
 
+    //Shuffleboard
+    Shuffleboard.getTab("Trasition").add(this);
   }
   /** Sets the belts to the Intake mode
    * 
@@ -52,6 +56,13 @@ public class TransitionSubsystem extends SubsystemBase {
   */
   public void setTransitionIntakeState(double value) {
     transitionMotor.set(value);
+  }
+  /** get the output of the transition motor, -1.0 to 1.0
+   * @return output
+   */
+  public double getTransitionOutput() {
+    double output = transitionMotor.get();
+    return output;
   }
 
   /**
@@ -68,7 +79,11 @@ public class TransitionSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  //TODO add sendable for output and proximity sensors
-  //Shuffleboard (Seperate tab)
+   public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("SwerveModule");
+
+    builder.addBooleanProperty("Transition Motor Output", this::isNoteInTransition, null);
+    builder.addDoubleProperty("Transition Motor Output", this::getTransitionOutput, null);
+  }
 }
 
