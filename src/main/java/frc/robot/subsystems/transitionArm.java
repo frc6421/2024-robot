@@ -66,6 +66,9 @@ public class TransitionArm extends SubsystemBase {
       armRightEncoder = armMotorRight.getEncoder();
       armLeftEncoder = armMotorLeft.getEncoder();
 
+      armRightEncoder.setPositionConversionFactor(360 / TransitionArmConstants.ARM_GEAR_RATIO);
+      armLeftEncoder.setPositionConversionFactor(360 / TransitionArmConstants.ARM_GEAR_RATIO);
+
       // PID controller
       armRightPIDController = armMotorRight.getPIDController();
       armLeftPIDController = armMotorLeft.getPIDController();
@@ -125,21 +128,12 @@ public class TransitionArm extends SubsystemBase {
   //TODO determine if an error is needed in case of motor failure 
 
   /**
-   * Returns the average position of the arm in rotations
-   * @return the average position in rotations
-   */
-  public double getArmMotorPosition()
-  {
-    return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
-  }
-
-  /**
    * Returns the averageposition of the arm in degrees
    * @return the average position in degrees
    */
   public double getArmMotorPositionDeg()
   {
-    return ((armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2) * 360;
+    return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
   }
 
   // TODO Sendable
