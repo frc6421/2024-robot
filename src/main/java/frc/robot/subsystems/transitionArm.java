@@ -12,9 +12,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TransitionArm extends SubsystemBase {
+public class TransitionArm extends SubsystemBase implements Sendable {
   
   public static class TransitionArmConstants {
     
@@ -108,6 +111,8 @@ public class TransitionArm extends SubsystemBase {
 
       // Follower
       armMotorLeft.follow(armMotorRight);
+
+      Shuffleboard.getTab("Arm Tuning").add(this);
   }
 
   @Override
@@ -121,6 +126,7 @@ public class TransitionArm extends SubsystemBase {
    */
   public void setArmMotorPosition(double position)
   {
+    System.out.println("running");
     armRightPIDController.setReference(position, ControlType.kPosition);
     armLeftPIDController.setReference(position, ControlType.kPosition);
   }
@@ -138,4 +144,12 @@ public class TransitionArm extends SubsystemBase {
 
   // TODO Sendable
   // Send: position, P value (set)
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+      builder.addDoubleProperty("Arm P Value:", () -> armRightPIDController.getP(), null);
+      builder.addDoubleProperty("Arm Position:", () -> getArmMotorPositionDeg(), null);
+      //builder.addDoubleProperty("Testing", null, null);
+  }
 }
