@@ -3,8 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.ctre.phoenix6.controls.Follower;
@@ -117,7 +119,8 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param position Used to set the position of the motors
    */
   public void setClimberMotorPosition(double position) {
-      
+    leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
   }
 
   /** Returns a value in rotations of the current motor
@@ -125,5 +128,14 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public double getClimberMotorPosition() {
     return (leftClimberEncoder.getPosition() + rightClimberEncoder.getPosition()) / 2;
+  }
+
+  public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("SwerveModule");
+
+    builder.addDoubleProperty("Climber P Value", () -> leftClimberPIDController.getP(), null);
+    builder.addDoubleProperty("Climber I Value", () -> leftClimberPIDController.getI(), null);
+    builder.addDoubleProperty("Climber D Value", () -> leftClimberPIDController.getD(), null);
+    builder.addDoubleProperty("Motor Output", () -> leftClimberMotor.get(), null);
   }
 }
