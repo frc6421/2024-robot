@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private IntakeSubsystem intakeSubsystem;
+  private IntakeTuningCommand intakeTuningCommand;
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -28,8 +30,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     intakeSubsystem = new IntakeSubsystem();
+    intakeTuningCommand = new IntakeTuningCommand(intakeSubsystem);
     // Configure the trigger bindings
     configureBindings();
+    Shuffleboard.getTab("Intake Testing").add(intakeTuningCommand);
+    
   }
 
   /**
@@ -42,7 +47,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverController.rightBumper().onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(.4)));
   }
 
   /**
