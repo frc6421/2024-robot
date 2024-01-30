@@ -41,8 +41,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
-
+    driverController.a().toggleOnTrue(new InstantCommand(() -> shooterSubsystem.runMotors(shooterSubsystem.getVelocity())));
+    driverController.b().onTrue(new InstantCommand(() -> shooterSubsystem.runMotors(-shooterSubsystem.getVelocity() / 2)));
   }
 
   /**

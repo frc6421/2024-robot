@@ -36,6 +36,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private double positionMinOutput;
     private double positionMaxOutput;
 
+    private double setVelocity;
+
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
 
@@ -79,12 +81,21 @@ public class ShooterSubsystem extends SubsystemBase {
         
     topShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
     bottomShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
+    // And the end of the PID Stuff. yay. \\
 
     //Creating the Shuffleboard tab for testing
     Shuffleboard.getTab("Shooter Subsystem").add(this);
   }
 
   public void setVelocity(double velocity){
+    setVelocity = velocity;
+  }
+
+  public double getVelocity(){
+    return setVelocity;
+  }
+
+  public void runMotors(double velocity){
     topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
     bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
   }
@@ -112,11 +123,10 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomShooterPID.setP(value,0);
   }
 
-
   public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("ShooterSubsystem");
 
-    builder.addDoubleProperty("Set P", null, this::setP);
+    builder.addDoubleProperty("Set Motor P", null, this::setP);
     builder.addDoubleProperty("Set Motor Velocity", null, this::setVelocity);
     builder.addDoubleProperty("Top Motor Velocity", this::getTopMotorVelocity, null);
     builder.addDoubleProperty("Bottom Motor Velocity", this::getBottomMotorVelocity, null);
