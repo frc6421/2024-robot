@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -121,5 +122,11 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public double getClimberMotorPosition() {
     return rightClimberMotor.getPosition().refresh().getValue();
+  }
+
+  public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("SwerveModule");
+
+    builder.addDoubleProperty("Climber Motor Position", () -> getClimberMotorPosition(), null);
   }
 }
