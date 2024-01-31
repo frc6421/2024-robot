@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -17,6 +18,8 @@ public class TransitionSubsystem extends SubsystemBase {
   public static class TransitionConstants {
 
     private static final int TRANSITION_MOTOR_CAN_ID = 21;
+    private static final int TIME_OF_FLIGHT_SENSOR_1_CAN_ID = 22;
+    private static final int TIME_OF_FLIGHT_SENSOR_2_CAN_ID = 23;
     //TODO Find the Channels
     private static final int TOP_PROXIMITY_SENSOR_DIO = 0;  
     private static final int BOTTOM_PROXIMITY_SENSOR_DIO = 0;
@@ -31,6 +34,7 @@ public class TransitionSubsystem extends SubsystemBase {
   private final DigitalInput topProximitySensor;
   private final DigitalInput bottomProximitySensor;
 
+  private final RelativeEncoder transitionEncoder;
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
     // Make new instance of motor
@@ -39,14 +43,15 @@ public class TransitionSubsystem extends SubsystemBase {
     // Make 2 new instances of DigitalInput
     topProximitySensor = new DigitalInput(TransitionConstants.TOP_PROXIMITY_SENSOR_DIO);
     bottomProximitySensor = new DigitalInput(TransitionConstants.BOTTOM_PROXIMITY_SENSOR_DIO);
-    
+    transitionEncoder = transitionMotor.getEncoder(); 
     // Factory default and inversion
     transitionMotor.restoreFactoryDefaults();
     //TODO Verify Inversion
     transitionMotor.setInverted(false);
     // Set to idle to coast
     transitionMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
-
+    // Gear Ratio
+    transitionEncoder.setPositionConversionFactor(TransitionConstants.TRANSITION_GEAR_RATIO);
     //Shuffleboard
     Shuffleboard.getTab("Trasition").add(this);
   }
