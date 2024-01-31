@@ -111,8 +111,6 @@ public class TransitionArm extends SubsystemBase implements Sendable {
 
       // Follower
       armMotorLeft.follow(armMotorRight);
-
-      Shuffleboard.getTab("Arm Tuning").add(this);
   }
 
   @Override
@@ -126,7 +124,6 @@ public class TransitionArm extends SubsystemBase implements Sendable {
    */
   public void setArmMotorPosition(double position)
   {
-    System.out.println("running");
     armRightPIDController.setReference(position, ControlType.kPosition);
     armLeftPIDController.setReference(position, ControlType.kPosition);
   }
@@ -142,14 +139,22 @@ public class TransitionArm extends SubsystemBase implements Sendable {
     return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
   }
 
+  public double getArmP()
+  {
+    return armRightPIDController.getP();
+  }
+
+  public void setArmP(double value)
+  {
+    armRightPIDController.setP(value);
+    armLeftPIDController.setP(value);
+  }
+
   // TODO Sendable
   // Send: position, P value (set)
 
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      super.initSendable(builder);
-      builder.addDoubleProperty("Arm P Value:", () -> armRightPIDController.getP(), null);
-      builder.addDoubleProperty("Arm Position:", () -> getArmMotorPositionDeg(), null);
-      //builder.addDoubleProperty("Testing", null, null);
-  }
+  // @Override
+  // public void initSendable(SendableBuilder builder) {
+  //     super.initSendable(builder);
+  // }
 }

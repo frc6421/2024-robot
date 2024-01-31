@@ -5,11 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TransitionArm;
 
-public class ArmCommand extends Command {
+public class ArmCommand extends Command implements Sendable {
 
   TransitionArm arm;
 
@@ -24,6 +27,8 @@ public class ArmCommand extends Command {
 
   TrapezoidProfile armProfile;
 
+  private double setPosition;
+
   /** Creates a new armCommand. */
   public ArmCommand(TransitionArm armSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,19 +41,9 @@ public class ArmCommand extends Command {
   @Override
   public void initialize() 
   {
-
     timer.reset();
 
-    switch(RobotContainer.currentArmState)
-    {
-      case INTAKE:
-        armGoal = new TrapezoidProfile.State(0, 0); // TODO positions needed
-        break;
-
-      case SCORING:
-        armGoal = new TrapezoidProfile.State(0, 0); // TODO positions needed
-        break;
-    }
+    armGoal = new TrapezoidProfile.State(setPosition, 0);
 
     armProfile = new TrapezoidProfile(armConstraints);
 
@@ -72,5 +67,24 @@ public class ArmCommand extends Command {
   @Override
   public boolean isFinished() {
     return (timer.get() > armProfile.totalTime());
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+      builder.addDoubleProperty("Arm P Value:", () -> arm.getArmP(), null);
+      builder.addDoubleProperty("Arm Position:", () -> arm.getArmMotorPositionDeg(), null);
+      builder.addDoubleProperty("Arm P Setting", () -> arm.getArmP(), this::setArmP);
+      builder.addDoubleProperty("Arm Position Setting", () -> arm.getArmMotorPositionDeg(), this::setArmPosition);
+  }
+
+  public void setArmPosition(double position)
+  {
+    position = setPosition;
+  }
+
+  public void setArmP(double value)
+  {
+    arm.setArmP(value);
   }
 }
