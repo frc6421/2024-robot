@@ -21,7 +21,7 @@ public class ClimberCommand extends Command {
     new TrapezoidProfile.Constraints(600, 250);
 
   private TrapezoidProfile.State climberGoal = new TrapezoidProfile.State();
-  private TrapezoidProfile.State climberSetpoint = new TrapezoidProfile.State();
+  private TrapezoidProfile.State climberSetPoint = new TrapezoidProfile.State();
 
   TrapezoidProfile climberProfile;
 
@@ -38,7 +38,7 @@ public class ClimberCommand extends Command {
   public void initialize() {
     timer.reset();
     //TODO Robot States
-  switch(RobotContainer.currentClimberState)
+    switch(RobotContainer.currentClimberState)
     {
       case EXTENDED:
         climberGoal = new TrapezoidProfile.State(0, 0); // TODO positions needed
@@ -57,16 +57,18 @@ public class ClimberCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberSetpoint = climberProfile.calculate(timer.get(), new TrapezoidProfile.State(climber.getClimberMotorPosition(), 0), climberGoal);
+    climberSetPoint = climberProfile.calculate(timer.get(), new TrapezoidProfile.State(climber.getClimberMotorPosition(), 0), climberGoal);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    climber.setClimberMotorPosition(climberSetPoint.position);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return timer.get() > climberProfile.totalTime();
   }
 }
