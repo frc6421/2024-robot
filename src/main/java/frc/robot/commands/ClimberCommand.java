@@ -38,7 +38,7 @@ public class ClimberCommand extends Command {
   public void initialize() {
     timer.reset();
     //TODO Robot States
-  switch(RobotContainer.currentClimberState)
+    switch(RobotContainer.currentClimberState)
     {
       case EXTENDED:
         climberGoal = new TrapezoidProfile.State(0, 0); // TODO positions needed
@@ -62,11 +62,13 @@ public class ClimberCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    climber.setClimberMotorPosition(climberSetpoint.position);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return timer.get() > climberProfile.totalTime();
   }
 }
