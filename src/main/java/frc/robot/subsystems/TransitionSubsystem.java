@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -25,8 +26,11 @@ public class TransitionSubsystem extends SubsystemBase {
     private static final int BOTTOM_PROXIMITY_SENSOR_DIO = 0;
 
     private static final double TRANSITION_GEAR_RATIO = 1.6;
+
+    // TOF Sensors
+    // TODO confirm this value
+    private static final double DETECTION_DISTANCE_MM = 100;
     
-    //TODO Velocity???
   }
 
   private final CANSparkFlex transitionMotor;
@@ -35,6 +39,8 @@ public class TransitionSubsystem extends SubsystemBase {
   private final DigitalInput bottomProximitySensor;
 
   private final RelativeEncoder transitionEncoder;
+  private final TimeOfFlight timeOfFlight1;
+  private final TimeOfFlight timeOfFlight2;
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
     // Make new instance of motor
@@ -43,18 +49,28 @@ public class TransitionSubsystem extends SubsystemBase {
     // Make 2 new instances of DigitalInput
     topProximitySensor = new DigitalInput(TransitionConstants.TOP_PROXIMITY_SENSOR_DIO);
     bottomProximitySensor = new DigitalInput(TransitionConstants.BOTTOM_PROXIMITY_SENSOR_DIO);
+
     transitionEncoder = transitionMotor.getEncoder(); 
+
+    timeOfFlight1 = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
+    timeOfFlight2 = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
+
     // Factory default and inversion
     transitionMotor.restoreFactoryDefaults();
+
     //TODO Verify Inversion
     transitionMotor.setInverted(false);
+
     // Set to idle to coast
     transitionMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
+
     // Gear Ratio
     transitionEncoder.setPositionConversionFactor(TransitionConstants.TRANSITION_GEAR_RATIO);
+
     //Shuffleboard
     Shuffleboard.getTab("Trasition").add(this);
   }
+
   /** Sets the belts to the Intake mode
    * 
    * @param value Used to set the output of the belts
@@ -62,6 +78,7 @@ public class TransitionSubsystem extends SubsystemBase {
   public void setTransitionIntakeState(double value) {
     transitionMotor.set(value);
   }
+
   /** get the output of the transition motor, -1.0 to 1.0
    * @return output
    */
@@ -70,13 +87,34 @@ public class TransitionSubsystem extends SubsystemBase {
     return output;
   }
 
-  /**
-   * Comparing topProximitySensor and bottomProximitySensor boolean values
+  /** Comparing topProximitySensor and bottomProximitySensor boolean values
    * @return true when both sensors are detecting a note, else false
   */
   public boolean isNoteInTransition() {
     // Compares values in a boolean statement
     return (topProximitySensor.get() && bottomProximitySensor.get());
+  }
+
+  /** Takes in the values of timeOfFlight1 and timeOfFlight2 and compares them
+   *  @return true/false (true = close to centered, false = not close to center)
+   */
+  // TODO make a command to move the belts when it is not centered
+  // TODO test if position in transition matters when shooting
+
+  public boolean isCentered() {
+    if (timeOfFlight1.getRange() < TransitionConstants.DETECTION_DISTANCE_MM) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  public double getFOT1Range() {
+    return timeOfFlight1.getRange();
+  }
+
+  public double getFOT2Range() {
+    return timeOfFlight2.getRange();
   }
 
   @Override
@@ -89,6 +127,9 @@ public class TransitionSubsystem extends SubsystemBase {
 
     builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
     builder.addDoubleProperty("Transition Motor Output", this::getTransitionOutput, null);
+    builder.addBooleanProperty("Time Of Flight Boolean Output", this::isCentered, null);
+    builder.addDoubleProperty("Time Of Flight 1 Output", this::getFOT1Range, null);
+    builder.addDoubleProperty("Time Of Flight 2 Output", this::getFOT2Range, null);
   }
 }
 
