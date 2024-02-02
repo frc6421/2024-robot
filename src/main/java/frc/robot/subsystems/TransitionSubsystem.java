@@ -39,8 +39,8 @@ public class TransitionSubsystem extends SubsystemBase {
   private final DigitalInput bottomProximitySensor;
 
   private final RelativeEncoder transitionEncoder;
-  private final TimeOfFlight timeOfFlight1;
-  private final TimeOfFlight timeOfFlight2;
+  public final TimeOfFlight timeOfFlightTop;
+  public final TimeOfFlight timeOfFlightBottom;
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
     // Make new instance of motor
@@ -52,8 +52,8 @@ public class TransitionSubsystem extends SubsystemBase {
 
     transitionEncoder = transitionMotor.getEncoder(); 
 
-    timeOfFlight1 = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
-    timeOfFlight2 = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
+    timeOfFlightTop = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
+    timeOfFlightBottom = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
 
     // Factory default and inversion
     transitionMotor.restoreFactoryDefaults();
@@ -75,7 +75,7 @@ public class TransitionSubsystem extends SubsystemBase {
    * 
    * @param value Used to set the output of the belts
   */
-  public void setTransitionIntakeState(double value) {
+  public void setTransitionSpeed(double value) {
     transitionMotor.set(value);
   }
 
@@ -102,19 +102,19 @@ public class TransitionSubsystem extends SubsystemBase {
   // TODO test if position in transition matters when shooting
 
   public boolean isCentered() {
-    if (timeOfFlight1.getRange() < TransitionConstants.DETECTION_DISTANCE_MM) {
+    if (timeOfFlightTop.getRange() < TransitionConstants.DETECTION_DISTANCE_MM) {
       return true;
     }
     else {
       return false;
     }
   }
-  public double getFOT1Range() {
-    return timeOfFlight1.getRange();
+  public double getFOTTopRange() {
+    return timeOfFlightTop.getRange();
   }
 
-  public double getFOT2Range() {
-    return timeOfFlight2.getRange();
+  public double getFOTBottomRange() {
+    return timeOfFlightBottom.getRange();
   }
 
   @Override
@@ -128,8 +128,8 @@ public class TransitionSubsystem extends SubsystemBase {
     builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
     builder.addDoubleProperty("Transition Motor Output", this::getTransitionOutput, null);
     builder.addBooleanProperty("Time Of Flight Boolean Output", this::isCentered, null);
-    builder.addDoubleProperty("Time Of Flight 1 Output", this::getFOT1Range, null);
-    builder.addDoubleProperty("Time Of Flight 2 Output", this::getFOT2Range, null);
+    builder.addDoubleProperty("Time Of Flight 1 Output", this::getFOTTopRange, null);
+    builder.addDoubleProperty("Time Of Flight 2 Output", this::getFOTBottomRange, null);
   }
 }
 
