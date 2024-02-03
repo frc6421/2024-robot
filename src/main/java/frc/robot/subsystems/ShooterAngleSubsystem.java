@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import com.revrobotics.RelativeEncoder;
@@ -14,7 +15,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
-public class AngledShooterSubsystem extends SubsystemBase {
+public class ShooterAngleSubsystem extends SubsystemBase {
   public static class AngleConstants{
     public static final int ANGLE_CAN_ID = 32;
     public static final int CURRENT_LIMIT = 60;
@@ -42,9 +43,11 @@ public class AngledShooterSubsystem extends SubsystemBase {
   private double positionMaxOutput;
 
   private double angleDynamicFF;
+  private double tempGravityFF;
+  private double gravityOffset;
 
   /** Creates a new AngledShooterSubsystem. */
-  public AngledShooterSubsystem() {
+  public ShooterAngleSubsystem() {
     //Setting CAN ID and the type
     angleMotor = new CANSparkMax(AngleConstants.ANGLE_CAN_ID, MotorType.kBrushless);
 
@@ -88,13 +91,17 @@ public class AngledShooterSubsystem extends SubsystemBase {
     angleMotorPID.setReference(position, CANSparkMax.ControlType.kPosition, 0, position, SparkPIDController.ArbFFUnits.kPercentOut);
   }
 
-  public void setArmAngle(double angle){
+  public void setAngle(double angle){
     setGravityOffset();
     angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, angleDynamicFF, SparkPIDController.ArbFFUnits.kPercentOut);
   }
 
   public void setGravityOffset(){
-    angleDynamicFF = (AngleConstants.MAX_ANGLE_GRAVITY_FF * Math.cos(Math.toRadians(angleEncoder.getPosition())));
+    angleDynamicFF = (tempGravityFF * Math.cos(Math.toRadians(angleEncoder.getPosition())));
+  }
+
+  public void changeGravityOffset(){
+    tempGravityFF = gravityOffset;
   }
 
   private void setP(double P){
@@ -104,13 +111,30 @@ public class AngledShooterSubsystem extends SubsystemBase {
   private void setFF(double FF){
     angleMotorPID.setFF(FF);
   }
+  
+  private void setTempGravityOffset(double tempGravityOffset){
+    gravityOffset = tempGravityOffset;
+  }
 
+  private double getEncoderPostition(){
+    return angleEncoder.getPosition();
+  }
+
+  private double getEncoderVelocity(){
+    return angleEncoder.getVelocity();
+  }
 
   public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("AngleSubsystem");
 
+
     builder.addDoubleProperty("Set P", null, this::setP);
-    builder.addDoubleProperty("Set FF",null, this::setFF);
+    builder.addDoubleProperty("Set FF", null, this::setFF);
+    builder.addDoubleProperty("Set Gravity Offset", null, this::setTempGravityOffset);
+    builder.addDoubleProperty("Set Angle", null, this::setAngle);
+
+    builder.addDoubleProperty("Encoder Value", this::getEncoderPostition, null);
+    builder.addDoubleProperty("Encoder Velocity", this::getEncoderVelocity, null);
   }
 
   @Override

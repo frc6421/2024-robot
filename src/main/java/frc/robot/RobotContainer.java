@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -22,6 +23,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
 
   private final ShooterSubsystem shooterSubsystem;
+  private final ShooterAngleSubsystem shooterAngleSubsystem;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -29,6 +31,7 @@ public class RobotContainer {
     configureBindings();
 
     shooterSubsystem = new ShooterSubsystem();
+    shooterAngleSubsystem = new ShooterAngleSubsystem();
   }
 
   /**
@@ -41,7 +44,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
+    driverController.a().onTrue(new InstantCommand(() -> shooterAngleSubsystem.changeGravityOffset()));
 
   }
 
