@@ -31,6 +31,13 @@ public class TransitionSubsystem extends SubsystemBase {
     // TODO confirm this value
     private static final double DETECTION_DISTANCE_MM = 100;
     
+    public static enum transitionState {
+      INTAKE,
+      SHOOTING,
+      AMP,
+      // TODO Do we need amp and trap to be seperate states?
+      TRAP
+    }
   }
 
   private final CANSparkFlex transitionMotor;

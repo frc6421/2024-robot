@@ -5,6 +5,7 @@
 package commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.TransitionSubsystem;
 
 public class CenterNote extends Command {
@@ -33,18 +34,20 @@ public class CenterNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (transition.timeOfFlightTop.getRange() > transition.timeOfFlightBottom.getRange()) {
-      transition.setTransitionSpeed(-1.0 * CenterNoteConstants.DEFAULT_BELT_SPEED);
-      centered = false;
+    if (RobotContainer.currentTransitionState == TransitionSubsystem.TransitionConstants.transitionState.INTAKE) { 
+      if (transition.timeOfFlightTop.getRange() > transition.timeOfFlightBottom.getRange() + 5) {
+        transition.setTransitionSpeed(-1.0 * CenterNoteConstants.DEFAULT_BELT_SPEED);
+        centered = false;
     }
-    else if (transition.timeOfFlightTop.getRange() < transition.timeOfFlightBottom.getRange()) {
-      transition.setTransitionSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
-      centered = false;
+      else if (transition.timeOfFlightTop.getRange() + 5 < transition.timeOfFlightBottom.getRange()) {
+        transition.setTransitionSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
+        centered = false;
     }
-    else {
-      transition.setTransitionSpeed(0);
-      centered = true;
+      else {
+        transition.setTransitionSpeed(0);
+        centered = true;
     }
+  }
   }
 
   // Called once the command ends or is interrupted.
