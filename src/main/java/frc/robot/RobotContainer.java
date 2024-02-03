@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -12,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,16 +22,29 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private IntakeSubsystem intakeSubsystem;
-  private IntakeTuningCommand intakeTuningCommand;
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+
+  // Controllers \\
+  private final CommandXboxController driverController; 
+
+  private static final int driverControllerPort = 0;
+
+  // Subsystems \\
+  private final DriveSubsystem driveSubsystem;
+
+  // Command \\
+  private final DriveCommand driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    intakeSubsystem = new IntakeSubsystem();
-    intakeTuningCommand = new IntakeTuningCommand(intakeSubsystem);
+
+    driverController = new CommandXboxController(driverControllerPort);
+
+    driveSubsystem = new DriveSubsystem();
+
+    driveCommand = new DriveCommand(driveSubsystem, driverController);
+
+    driveSubsystem.setDefaultCommand(driveCommand);
+    
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Intake Testing").add(intakeTuningCommand);
