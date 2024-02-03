@@ -4,12 +4,18 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants.transitionState;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,18 +25,34 @@ import frc.robot.subsystems.TransitionSubsystem.TransitionConstants.transitionSt
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  TransitionSubsystem transitionSubsystem;
-  public static transitionState currentTransitionState;
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+
+  // Controllers \\
+  private final CommandXboxController driverController; 
+
+  private static final int driverControllerPort = 0;
+
+  // Subsystems \\
+  private final DriveSubsystem driveSubsystem;
+  private final IntakeSubsystem intakeSubsystem;
+
+  // Command \\
+  private final DriveCommand driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    transitionSubsystem = new TransitionSubsystem();
 
+    driverController = new CommandXboxController(driverControllerPort);
+
+    driveSubsystem = new DriveSubsystem();
+    intakeSubsystem = new IntakeSubsystem();
+
+    driveCommand = new DriveCommand(driveSubsystem, driverController);
+
+    driveSubsystem.setDefaultCommand(driveCommand);
+    
     // Configure the trigger bindings
     configureBindings();
+    
   }
 
   /**
@@ -43,7 +65,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
+    driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
+    driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
   }
 
   /**
@@ -54,5 +77,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return null;
+  }
+
+  public void initSendable(SendableBuilder builder) {
+    
   }
 }
