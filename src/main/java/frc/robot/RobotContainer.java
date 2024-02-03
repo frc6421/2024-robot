@@ -5,10 +5,11 @@
 package frc.robot;
 
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
@@ -30,6 +31,7 @@ public class RobotContainer {
 
   // Subsystems \\
   private final DriveSubsystem driveSubsystem;
+  private final IntakeSubsystem intakeSubsystem;
 
   // Command \\
   private final DriveCommand driveCommand;
@@ -40,6 +42,7 @@ public class RobotContainer {
     driverController = new CommandXboxController(driverControllerPort);
 
     driveSubsystem = new DriveSubsystem();
+    intakeSubsystem = new IntakeSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
 
@@ -47,7 +50,6 @@ public class RobotContainer {
     
     // Configure the trigger bindings
     configureBindings();
-    Shuffleboard.getTab("Intake Testing").add(intakeTuningCommand);
     
   }
 
@@ -61,6 +63,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
+    driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
   }
 
   /**

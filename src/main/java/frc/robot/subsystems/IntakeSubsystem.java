@@ -13,11 +13,15 @@ public class IntakeSubsystem extends SubsystemBase {
   public static class IntakeConstants {
     public static final int INTAKE_MOTOR_CAN_ID = 20;
 
-    //TODO Do we need gear ratio?
     public static final int INTAKE_MOTOR_GEAR_RATIO = 1;
 
     //Current Limit
-    public static final int INTAKE_STATOR_CURRENT_LIMIT = 50;
+    public static final int INTAKE_STATOR_CURRENT_LIMIT = 80;
+
+    public static final double INTAKE_IN_SPEED = 0.85;
+
+    //TODO verify on actual robot
+    public static final double INTAKE_OUT_SPEED = -0.85;
   }
 
   private CANSparkMax intakeMotor;
@@ -32,15 +36,23 @@ public class IntakeSubsystem extends SubsystemBase {
     // Set Current Limits
     intakeMotor.setSmartCurrentLimit(IntakeConstants.INTAKE_STATOR_CURRENT_LIMIT);
     
-    //TODO confirm inversions
-    intakeMotor.setInverted(false);
+    intakeMotor.setInverted(true);
   }
+
   /** Sets the intakeMotor output
    * @param value output to apply
    */
   public void setIntakeSpeed(double value) {
     intakeMotor.set(value);
   }
+
+  /**
+   * Stops the intakeMotor
+   */
+  public void stopIntake() {
+    intakeMotor.stopMotor();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
