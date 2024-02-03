@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -24,8 +23,13 @@ public class AngledShooterSubsystem extends SubsystemBase {
     public static final double ANGLE_I = 0;
     public static final double ANGLE_D = 0;
 
-    public static final float MAXIMIMUM_SOFT_LIMIT = 0;
-    public static final float MINNIMUM_SOFT_LIMIT = 0;
+    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 55;
+    public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
+
+    public static final int GEAR_RATIO = 180;
+    public static final double DEGREES_PER_MOTOR_ROTATION = (360.0 / AngleConstants.GEAR_RATIO);
+
+    public static final double MAX_ANGLE_GRAVITY_FF = 0;
   }
   //Creating the object for the motor and encoder
   private CANSparkMax angleMotor;
@@ -37,12 +41,14 @@ public class AngledShooterSubsystem extends SubsystemBase {
   private double positionMinOutput;
   private double positionMaxOutput;
 
+  private double angleDynamicFF;
+
   /** Creates a new AngledShooterSubsystem. */
   public AngledShooterSubsystem() {
-    //Setting their CAN ID and the type
+    //Setting CAN ID and the type
     angleMotor = new CANSparkMax(AngleConstants.ANGLE_CAN_ID, MotorType.kBrushless);
 
-    //Reseting them to defaults
+    //Reseting to defaults
     angleMotor.restoreFactoryDefaults();
 
     angleMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -50,8 +56,9 @@ public class AngledShooterSubsystem extends SubsystemBase {
     angleMotor.setInverted(false);
     angleMotor.setSmartCurrentLimit(AngleConstants.CURRENT_LIMIT);
 
-    //Setting the encoders
+    //Setting encoder with the conversion factor of the gearbox
     angleEncoder = angleMotor.getEncoder();
+    angleEncoder.setPositionConversionFactor(AngleConstants.DEGREES_PER_MOTOR_ROTATION);
 
     // PID Stuff... fun... \\
     positionMinOutput = -1;
@@ -65,8 +72,8 @@ public class AngledShooterSubsystem extends SubsystemBase {
     angleMotorPID.setI(AngleConstants.ANGLE_I, 0);
     angleMotorPID.setD(AngleConstants.ANGLE_D, 0);
 
-    angleMotor.setSoftLimit(SoftLimitDirection.kForward, AngleConstants.MAXIMIMUM_SOFT_LIMIT);
-    angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINNIMUM_SOFT_LIMIT);
+    angleMotor.setSoftLimit(SoftLimitDirection.kForward, AngleConstants.MAXIMIMUM_SOFT_LIMIT_DEGREES);
+    angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
     
     angleMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -77,7 +84,34 @@ public class AngledShooterSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Angle Motor Subsystem").add(this);
   }
 
+  public void setPosition(double position){
+    angleMotorPID.setReference(position, CANSparkMax.ControlType.kPosition, 0, position, SparkPIDController.ArbFFUnits.kPercentOut);
+  }
 
+  public void setArmAngle(double angle){
+    setGravityOffset();
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, angleDynamicFF, SparkPIDController.ArbFFUnits.kPercentOut);
+  }
+
+  public void setGravityOffset(){
+    angleDynamicFF = (AngleConstants.MAX_ANGLE_GRAVITY_FF * Math.cos(Math.toRadians(angleEncoder.getPosition())));
+  }
+
+  private void setP(double P){
+    angleMotorPID.setP(P);
+  }
+
+  private void setFF(double FF){
+    angleMotorPID.setFF(FF);
+  }
+
+
+  public void initSendable(SendableBuilder builder){
+    builder.setSmartDashboardType("AngleSubsystem");
+
+    builder.addDoubleProperty("Set P", null, this::setP);
+    builder.addDoubleProperty("Set FF",null, this::setFF);
+  }
 
   @Override
   public void periodic() {
