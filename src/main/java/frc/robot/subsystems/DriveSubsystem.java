@@ -12,6 +12,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -66,6 +67,8 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final double STEER_GEAR_RATIO = 21.428571428571427;
     //TODO update after initial measurements and before each competition/everytime treads are changed
     private static final double WHEEL_RADIUS_INCHES = 1.91;
+
+    public static final double DRIVE_ROTATIONS_PER_METER = DRIVE_GEAR_RATIO / (2 * Math.PI * Units.inchesToMeters(WHEEL_RADIUS_INCHES));
 
     private static final boolean STEER_MOTOR_REVERSED = true;
     private static final boolean INVERT_LEFT_SIDE = false;
@@ -165,6 +168,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
     return run(() -> this.setControl(requestSupplier.get()));
+  }
+
+  public SwerveDriveKinematics getSwerveDriveKinematics() {
+    return m_kinematics;
   }
 
   private void startSimThread() {
