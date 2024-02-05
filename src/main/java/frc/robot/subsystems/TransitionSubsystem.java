@@ -19,54 +19,40 @@ public class TransitionSubsystem extends SubsystemBase {
   public static class TransitionConstants {
 
     private static final int TRANSITION_MOTOR_CAN_ID = 21;
-    private static final int TIME_OF_FLIGHT_SENSOR_1_CAN_ID = 22;
-    private static final int TIME_OF_FLIGHT_SENSOR_2_CAN_ID = 23;
-    //TODO Find the Channels
-    private static final int TOP_PROXIMITY_SENSOR_DIO = 0;  
-    private static final int BOTTOM_PROXIMITY_SENSOR_DIO = 0;
+    private static final int TIME_OF_FLIGHT_SENSOR_IN_CAN_ID = 22;
+    private static final int TIME_OF_FLIGHT_SENSOR_OUT_CAN_ID = 23;
 
     private static final double TRANSITION_GEAR_RATIO = 1.6;
 
     // TOF Sensors
     // TODO confirm this value
     private static final double DETECTION_DISTANCE_MM = 100;
+
+    public static final double TRANSITION_FORWARD_SPEED = 0.85;
+    public static final double TRANSITION_REVERSE_SPEED = -0.85;
     
-    public static enum transitionState {
-      INTAKE,
-      SHOOTING,
-      AMP,
-      // TODO Do we need amp and trap to be seperate states?
-      TRAP
-    }
   }
 
   private final CANSparkFlex transitionMotor;
 
-  private final DigitalInput topProximitySensor;
-  private final DigitalInput bottomProximitySensor;
-
   private final RelativeEncoder transitionEncoder;
-  public final TimeOfFlight timeOfFlightTop;
-  public final TimeOfFlight timeOfFlightBottom;
+  public final TimeOfFlight timeOfFlightIn;
+  public final TimeOfFlight timeOfFlightOut;
+
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
     // Make new instance of motor
     transitionMotor = new CANSparkFlex(TransitionConstants.TRANSITION_MOTOR_CAN_ID, MotorType.kBrushless);
-  
-    // Make 2 new instances of DigitalInput
-    topProximitySensor = new DigitalInput(TransitionConstants.TOP_PROXIMITY_SENSOR_DIO);
-    bottomProximitySensor = new DigitalInput(TransitionConstants.BOTTOM_PROXIMITY_SENSOR_DIO);
 
     transitionEncoder = transitionMotor.getEncoder(); 
 
-    timeOfFlightTop = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
-    timeOfFlightBottom = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_1_CAN_ID);
+    timeOfFlightIn = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_IN_CAN_ID);
+    timeOfFlightOut = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_OUT_CAN_ID);
 
     // Factory default and inversion
     transitionMotor.restoreFactoryDefaults();
 
-    //TODO Verify Inversion
-    transitionMotor.setInverted(false);
+    transitionMotor.setInverted(true);
 
     // Set to idle to coast
     transitionMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
@@ -82,14 +68,22 @@ public class TransitionSubsystem extends SubsystemBase {
    * 
    * @param value Used to set the output of the belts
   */
-  public void setTransitionSpeed(double value) {
+  public void setTransitionMotorSpeed(double value) {
     transitionMotor.set(value);
+  }
+
+  /**
+   * Stops the transition motor
+   * 
+   */
+  public void stopTransitionMotor() {
+    transitionMotor.stopMotor();
   }
 
   /** get the output of the transition motor, -1.0 to 1.0
    * @return output
    */
-  public double getTransitionOutput() {
+  public double getTransitionMotorOutput() {
     double output = transitionMotor.get();
     return output;
   }
@@ -97,10 +91,10 @@ public class TransitionSubsystem extends SubsystemBase {
   /** Comparing topProximitySensor and bottomProximitySensor boolean values
    * @return true when both sensors are detecting a note, else false
   */
-  public boolean isNoteInTransition() {
-    // Compares values in a boolean statement
-    return (topProximitySensor.get() && bottomProximitySensor.get());
-  }
+  // public boolean isNoteInTransition() {
+  //   // Compares values in a boolean statement
+  //   return (topProximitySensor.get() && bottomProximitySensor.get());
+  // }
 
   /** Takes in the values of timeOfFlight1 and timeOfFlight2 and compares them
    *  @return true/false (true = close to centered, false = not close to center)
@@ -109,19 +103,20 @@ public class TransitionSubsystem extends SubsystemBase {
   // TODO test if position in transition matters when shooting
 
   public boolean isCentered() {
-    if (timeOfFlightTop.getRange() < TransitionConstants.DETECTION_DISTANCE_MM) {
+    if (timeOfFlightOut.getRange() < TransitionConstants.DETECTION_DISTANCE_MM) {
       return true;
     }
     else {
       return false;
     }
   }
-  public double getFOTTopRange() {
-    return timeOfFlightTop.getRange();
+
+  public double getTOFInRange() {
+    return timeOfFlightIn.getRange();
   }
 
-  public double getFOTBottomRange() {
-    return timeOfFlightBottom.getRange();
+  public double getTOFOutRange() {
+    return timeOfFlightOut.getRange();
   }
 
   @Override
@@ -132,11 +127,11 @@ public class TransitionSubsystem extends SubsystemBase {
    public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("SwerveModule");
 
-    builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
-    builder.addDoubleProperty("Transition Motor Output", this::getTransitionOutput, null);
+    //builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
+    builder.addDoubleProperty("Transition Motor Output", this::getTransitionMotorOutput, null);
     builder.addBooleanProperty("Time Of Flight Boolean Output", this::isCentered, null);
-    builder.addDoubleProperty("Time Of Flight 1 Output", this::getFOTTopRange, null);
-    builder.addDoubleProperty("Time Of Flight 2 Output", this::getFOTBottomRange, null);
+    builder.addDoubleProperty("Time Of Flight 1 Output", this::getTOFInRange, null);
+    builder.addDoubleProperty("Time Of Flight 2 Output", this::getTOFOutRange, null);
   }
 }
 

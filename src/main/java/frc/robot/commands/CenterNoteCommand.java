@@ -2,13 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package commands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.TransitionSubsystem;
 
-public class CenterNote extends Command {
+public class CenterNoteCommand extends Command {
   TransitionSubsystem transition;
   boolean centered;
   public static class CenterNoteConstants {
@@ -18,7 +17,7 @@ public class CenterNote extends Command {
 
   }
   /** Creates a new CenterNoteInTransition. */
-  public CenterNote(TransitionSubsystem transitionSubsystem) {
+  public CenterNoteCommand(TransitionSubsystem transitionSubsystem) {
     addRequirements(transitionSubsystem);
 
     transition = transitionSubsystem;
@@ -28,26 +27,24 @@ public class CenterNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    transition.setTransitionSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
+    transition.setTransitionMotorSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (RobotContainer.currentTransitionState == TransitionSubsystem.TransitionConstants.transitionState.INTAKE) { 
-      if (transition.timeOfFlightTop.getRange() > transition.timeOfFlightBottom.getRange() + 5) {
-        transition.setTransitionSpeed(-1.0 * CenterNoteConstants.DEFAULT_BELT_SPEED);
+  public void execute() { 
+      if (transition.timeOfFlightOut.getRange() > transition.timeOfFlightIn.getRange() + 5) {
+        transition.setTransitionMotorSpeed(-1.0 * CenterNoteConstants.DEFAULT_BELT_SPEED);
         centered = false;
     }
-      else if (transition.timeOfFlightTop.getRange() + 5 < transition.timeOfFlightBottom.getRange()) {
-        transition.setTransitionSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
+      else if (transition.timeOfFlightOut.getRange() + 5 < transition.timeOfFlightIn.getRange()) {
+        transition.setTransitionMotorSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
         centered = false;
     }
       else {
-        transition.setTransitionSpeed(0);
+        transition.setTransitionMotorSpeed(0);
         centered = true;
     }
-  }
   }
 
   // Called once the command ends or is interrupted.

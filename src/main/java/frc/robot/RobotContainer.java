@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
-import frc.robot.subsystems.TransitionSubsystem.TransitionConstants.transitionState;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -34,6 +34,7 @@ public class RobotContainer {
   // Subsystems \\
   private final DriveSubsystem driveSubsystem;
   private final IntakeSubsystem intakeSubsystem;
+  private final TransitionSubsystem transitionSubsystem;
 
   // Command \\
   private final DriveCommand driveCommand;
@@ -45,6 +46,7 @@ public class RobotContainer {
 
     driveSubsystem = new DriveSubsystem();
     intakeSubsystem = new IntakeSubsystem();
+    transitionSubsystem = new TransitionSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
 
@@ -65,8 +67,15 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
-    driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem)
+      .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorSpeed(TransitionConstants.TRANSITION_FORWARD_SPEED), transitionSubsystem)));
+    driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake())
+      .alongWith(new InstantCommand(() -> transitionSubsystem.stopTransitionMotor())));
+
+    driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem)
+      .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorSpeed(TransitionConstants.TRANSITION_REVERSE_SPEED), transitionSubsystem)));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake())
+      .alongWith(new InstantCommand(() -> transitionSubsystem.stopTransitionMotor())));
   }
 
   /**
