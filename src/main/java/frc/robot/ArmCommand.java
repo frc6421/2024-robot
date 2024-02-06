@@ -76,6 +76,8 @@ public class ArmCommand extends Command implements Sendable {
       builder.addDoubleProperty("Arm Position:", () -> arm.getArmMotorPositionDeg(), null);
       builder.addDoubleProperty("Arm P Setting", () -> arm.getArmP(), this::setArmP);
       builder.addDoubleProperty("Arm Position Setting", () -> arm.getArmMotorPositionDeg(), this::setArmPosition);
+      builder.addDoubleProperty("Encoder Right Position:", () -> arm.getEncoderRightPosition(), null);
+      builder.addDoubleProperty("Encoder Left Position:", () -> arm.getEncoderLeftPosition(), null);
   }
 
   public void setArmPosition(double position)

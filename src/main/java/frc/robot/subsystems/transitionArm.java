@@ -13,8 +13,6 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionArm extends SubsystemBase implements Sendable {
@@ -45,7 +43,7 @@ public class TransitionArm extends SubsystemBase implements Sendable {
     public static final float ARM_FORAWRD_SOFT_LIMIT = 0; // TODO needs to be determined
     public static final float ARM_REVERSE_SOFT_LIMIT = 0; // TODO needs to be determined
 
-    public static final double ARM_GEAR_RATIO = 1; // TODO needs to be determined
+    public static final double ARM_GEAR_RATIO = 15.94; // TODO needs to be determined
   }
 
   // fields
@@ -102,12 +100,12 @@ public class TransitionArm extends SubsystemBase implements Sendable {
       armMotorRight.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
       armMotorLeft.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
 
-      // Soft Limits
-      armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
-      armMotorRight.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      // // Soft Limits
+      // armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      // armMotorRight.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-      armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
-      armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      // armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      // armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
       // Follower
       armMotorLeft.follow(armMotorRight);
@@ -137,6 +135,16 @@ public class TransitionArm extends SubsystemBase implements Sendable {
   public double getArmMotorPositionDeg()
   {
     return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
+  }
+
+  public double getEncoderLeftPosition()
+  {
+    return armLeftEncoder.getPosition();
+  }
+
+  public double getEncoderRightPosition()
+  {
+    return armRightEncoder.getPosition();
   }
 
   public double getArmP()
