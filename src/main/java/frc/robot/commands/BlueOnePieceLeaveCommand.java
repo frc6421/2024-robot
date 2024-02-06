@@ -26,11 +26,11 @@ import frc.robot.subsystems.DriveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class onePieceLeave extends SequentialCommandGroup {
+public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
   private DriveSubsystem driveSubsystem;
 
   /** Creates a new onePieceLeave. */
-  public onePieceLeave(DriveSubsystem drive) {
+  public BlueOnePieceLeaveCommand(DriveSubsystem drive) {
 
     driveSubsystem = drive;
     addRequirements(driveSubsystem);
