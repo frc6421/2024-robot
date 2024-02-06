@@ -29,6 +29,8 @@ public class ArmCommand extends Command implements Sendable {
 
   private double setPosition;
 
+  private double setVoltage;
+
   /** Creates a new armCommand. */
   public ArmCommand(TransitionArmSubsystem armSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -41,32 +43,35 @@ public class ArmCommand extends Command implements Sendable {
   @Override
   public void initialize() 
   {
-    timer.reset();
+    //timer.reset();
 
-    armGoal = new TrapezoidProfile.State(setPosition, 0);
+    //armGoal = new TrapezoidProfile.State(setPosition, 0);
 
-    armProfile = new TrapezoidProfile(armConstraints);
+    //armProfile = new TrapezoidProfile(armConstraints);
 
-    timer.start();
+    //timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
+    arm.setVoltage(setVoltage);
+    //armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    arm.setArmMotorPosition(armSetpoint.position);
+    arm.setVoltage(0);
+    //arm.setArmMotorPosition(armSetpoint.position);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get() > armProfile.totalTime());
+    //return (timer.get() > armProfile.totalTime());
+    return false;
   }
 
   @Override
@@ -78,11 +83,17 @@ public class ArmCommand extends Command implements Sendable {
       builder.addDoubleProperty("Arm Position Setting", () -> arm.getArmMotorPositionDeg(), this::setArmPosition);
       builder.addDoubleProperty("Encoder Right Position:", () -> arm.getEncoderRightPosition(), null);
       builder.addDoubleProperty("Encoder Left Position:", () -> arm.getEncoderLeftPosition(), null);
+      builder.addDoubleProperty("Set Voltage:", () -> setVoltage, this::setArmVoltage);
   }
 
   public void setArmPosition(double position)
   {
     position = setPosition;
+  }
+
+  public void setArmVoltage(double voltage)
+  {
+    setVoltage = voltage;
   }
 
   public void setArmP(double value)

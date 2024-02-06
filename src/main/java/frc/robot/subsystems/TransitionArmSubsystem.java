@@ -31,12 +31,16 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
     public static final double ARMMOTORRIGHT_KP = 0.3; // TODO needs to be tuned
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
-    public static final double ARMMOTORRIGHT_KG = 0.0;
+    public static final double ARMMOTORRIGHT_KG = 0.3453;
 
     public static final double ARMMOTORLEFT_KP = 0.3; // TODO needs to be tuned
     public static final double ARMMOTORLEFT_KI = 0.0;
     public static final double ARMMOTORLEFT_KD = 0.0; 
-    public static final double ARMMOTORLEFT_KG = 0.0;
+    public static final double ARMMOTORLEFT_KG = 0.3453; // voltage
+
+    // public static final double ARMMOTORLEFT_FF = 0; // TODO needs to be determined 
+    // public static final double ARMMOTORRIGHT_FF = 0; // TODO needs to be determined 
+
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 50;
 
@@ -93,8 +97,8 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
       armMotorLeft.setInverted(true);
 
       // Idle Modes
-      armMotorRight.setIdleMode(IdleMode.kCoast);
-      armMotorLeft.setIdleMode(IdleMode.kCoast);
+      armMotorRight.setIdleMode(IdleMode.kBrake);
+      armMotorLeft.setIdleMode(IdleMode.kBrake);
 
       // Current Limits
       armMotorRight.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
@@ -106,6 +110,12 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
 
       armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
       armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+
+      armMotorLeft.enableSoftLimit(SoftLimitDirection.kForward, true);
+      armMotorLeft.enableSoftLimit(SoftLimitDirection.kReverse, true);
+
+      armMotorRight.enableSoftLimit(SoftLimitDirection.kForward, true);
+      armMotorRight.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
       // Follower
       armMotorLeft.follow(armMotorRight, true);
@@ -161,6 +171,11 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
     armLeftPIDController.setP(value);
   }
 
+  public void setVoltage(double voltage)
+  {
+    armMotorLeft.setVoltage(voltage);
+    armMotorRight.setVoltage(voltage);
+  }
   // TODO Sendable
   // Send: position, P value (set)
 
