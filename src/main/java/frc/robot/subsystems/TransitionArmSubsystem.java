@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TransitionArm extends SubsystemBase implements Sendable {
+public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
   
   public static class TransitionArmConstants {
     
@@ -40,10 +40,10 @@ public class TransitionArm extends SubsystemBase implements Sendable {
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 50;
 
-    public static final float ARM_FORAWRD_SOFT_LIMIT = 0; // TODO needs to be determined
-    public static final float ARM_REVERSE_SOFT_LIMIT = 0; // TODO needs to be determined
+    public static final float ARM_FORAWRD_SOFT_LIMIT = 100; // TODO needs to be determined
+    public static final float ARM_REVERSE_SOFT_LIMIT = -7; // TODO needs to be determined
 
-    public static final double ARM_GEAR_RATIO = 15.94; // TODO needs to be determined
+    public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0); // TODO needs to be determined
   }
 
   // fields
@@ -57,18 +57,22 @@ public class TransitionArm extends SubsystemBase implements Sendable {
   private final RelativeEncoder armLeftEncoder;
 
   /** Creates a new transitionArm. */
-  public TransitionArm() {
+  public TransitionArmSubsystem() {
 
       // CAN IDs
       armMotorRight = new CANSparkFlex(TransitionArmConstants.ARMMOTORRIGHT_CAN_ID, MotorType.kBrushless);
       armMotorLeft = new CANSparkFlex(TransitionArmConstants.ARMMOTORLEFT_CAN_ID, MotorType.kBrushless);
+      
+      // Factory defaults
+      armMotorRight.restoreFactoryDefaults();
+      armMotorLeft.restoreFactoryDefaults();
 
       // Encoders
       armRightEncoder = armMotorRight.getEncoder();
       armLeftEncoder = armMotorLeft.getEncoder();
 
-      armRightEncoder.setPositionConversionFactor(360 / TransitionArmConstants.ARM_GEAR_RATIO);
-      armLeftEncoder.setPositionConversionFactor(360 / TransitionArmConstants.ARM_GEAR_RATIO);
+      armRightEncoder.setPositionConversionFactor(360.0 / TransitionArmConstants.ARM_GEAR_RATIO);
+      armLeftEncoder.setPositionConversionFactor(360.0 / TransitionArmConstants.ARM_GEAR_RATIO);
 
       // PID controller
       armRightPIDController = armMotorRight.getPIDController();
@@ -84,13 +88,9 @@ public class TransitionArm extends SubsystemBase implements Sendable {
       armLeftPIDController.setI(TransitionArmConstants.ARMMOTORLEFT_KP);
       armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP);
 
-      // Factory defaults
-      armMotorRight.restoreFactoryDefaults();
-      armMotorLeft.restoreFactoryDefaults();
-
       // Inversions
       armMotorRight.setInverted(false);
-      armMotorLeft.setInverted(false);
+      armMotorLeft.setInverted(true);
 
       // Idle Modes
       armMotorRight.setIdleMode(IdleMode.kCoast);
@@ -100,15 +100,18 @@ public class TransitionArm extends SubsystemBase implements Sendable {
       armMotorRight.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
       armMotorLeft.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
 
-      // // Soft Limits
-      // armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
-      // armMotorRight.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      // Soft Limits
+      armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      armMotorRight.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-      // armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
-      // armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
       // Follower
-      armMotorLeft.follow(armMotorRight);
+      armMotorLeft.follow(armMotorRight, true);
+
+      armRightEncoder.setPosition(-7);
+      armLeftEncoder.setPosition(-7);
   }
 
   @Override

@@ -5,8 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.TransitionArm;
-import frc.robot.subsystems.TransitionArm.TransitionArmConstants.armState;
+import frc.robot.subsystems.TransitionArmSubsystem;
+import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants.armState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final TransitionArm armSubsystem;
+  private final TransitionArmSubsystem armSubsystem;
 
   private ArmCommand armCommand;
 
@@ -34,7 +34,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    armSubsystem = new TransitionArm();
+    armSubsystem = new TransitionArmSubsystem();
     armCommand = new ArmCommand(armSubsystem);
 
     currentArmState = armState.INTAKE;

@@ -10,11 +10,11 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.TransitionArm;
+import frc.robot.subsystems.TransitionArmSubsystem;
 
 public class ArmCommand extends Command implements Sendable {
 
-  TransitionArm arm;
+  TransitionArmSubsystem arm;
 
   Timer timer = new Timer();
 
@@ -30,7 +30,7 @@ public class ArmCommand extends Command implements Sendable {
   private double setPosition;
 
   /** Creates a new armCommand. */
-  public ArmCommand(TransitionArm armSubsystem) {
+  public ArmCommand(TransitionArmSubsystem armSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(armSubsystem);
 
