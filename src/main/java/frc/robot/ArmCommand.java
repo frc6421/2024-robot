@@ -19,13 +19,15 @@ public class ArmCommand extends Command implements Sendable {
   Timer timer = new Timer();
 
   private final TrapezoidProfile.Constraints armConstraints = 
-    new TrapezoidProfile.Constraints(600, 250);
+    new TrapezoidProfile.Constraints(3000, 2500);
 
   private TrapezoidProfile.State armGoal = new TrapezoidProfile.State();
   
   private TrapezoidProfile.State armSetpoint = new TrapezoidProfile.State();
 
   TrapezoidProfile armProfile;
+
+  private double P;
 
   private double setPosition;
 
@@ -43,6 +45,8 @@ public class ArmCommand extends Command implements Sendable {
   @Override
   public void initialize() 
   {
+
+    arm.setArmP(P);
     timer.reset();
 
     armGoal = new TrapezoidProfile.State(setPosition, 0);
@@ -57,20 +61,21 @@ public class ArmCommand extends Command implements Sendable {
   public void execute() {
     //arm.setVoltage(setVoltage);
     armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
+    arm.setArmMotorPosition(armSetpoint.position);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    //arm.setVoltage(0);
-    arm.setArmMotorPosition(armSetpoint.position);
+    arm.setVoltage(0);
+    //arm.setArmMotorPosition(armSetpoint.position);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get() > armProfile.totalTime());
+    return (timer.get() > armProfile.totalTime()*3);
   }
 
   @Override
@@ -78,8 +83,8 @@ public class ArmCommand extends Command implements Sendable {
       super.initSendable(builder);
       builder.addDoubleProperty("Arm P Value:", () -> arm.getArmP(), null);
       builder.addDoubleProperty("Arm Position:", () -> arm.getArmMotorPositionDeg(), null);
-      builder.addDoubleProperty("Arm P Setting", null, this::setArmP);
-      builder.addDoubleProperty("Arm Position Setting", null, this::setArmPosition);
+      builder.addDoubleProperty("Arm P Setting", ()-> P, this::setArmP);
+      builder.addDoubleProperty("Arm Position Setting", ()-> setPosition, this::setArmPosition);
       builder.addDoubleProperty("Encoder Right Position:", () -> arm.getEncoderRightPosition(), null);
       builder.addDoubleProperty("Encoder Left Position:", () -> arm.getEncoderLeftPosition(), null);
       builder.addDoubleProperty("Set Voltage:", () -> setVoltage, this::setArmVoltage);
@@ -87,7 +92,7 @@ public class ArmCommand extends Command implements Sendable {
 
   public void setArmPosition(double position)
   {
-    position = setPosition;
+    setPosition = position;
   }
 
   public void setArmVoltage(double voltage)
@@ -97,6 +102,6 @@ public class ArmCommand extends Command implements Sendable {
 
   public void setArmP(double value)
   {
-    arm.setArmP(value);
+    P = value;
   }
 }

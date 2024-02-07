@@ -29,12 +29,12 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
-    public static final double ARMMOTORRIGHT_KP = 0.3; // TODO needs to be tuned
+    public static final double ARMMOTORRIGHT_KP = 0.0003; // TODO needs to be tuned
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
     public static final double ARMMOTORRIGHT_KG = 0.3453;
 
-    public static final double ARMMOTORLEFT_KP = 0.3; // TODO needs to be tuned
+    public static final double ARMMOTORLEFT_KP = 0.0003; // TODO needs to be tuned
     public static final double ARMMOTORLEFT_KI = 0.0;
     public static final double ARMMOTORLEFT_KD = 0.0; 
     public static final double ARMMOTORLEFT_KG = 0.3453; // voltage
