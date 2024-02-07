@@ -43,35 +43,34 @@ public class ArmCommand extends Command implements Sendable {
   @Override
   public void initialize() 
   {
-    //timer.reset();
+    timer.reset();
 
-    //armGoal = new TrapezoidProfile.State(setPosition, 0);
+    armGoal = new TrapezoidProfile.State(setPosition, 0);
 
-    //armProfile = new TrapezoidProfile(armConstraints);
+    armProfile = new TrapezoidProfile(armConstraints);
 
-    //timer.start();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setVoltage(setVoltage);
-    //armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
+    //arm.setVoltage(setVoltage);
+    armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    arm.setVoltage(0);
-    //arm.setArmMotorPosition(armSetpoint.position);
+    //arm.setVoltage(0);
+    arm.setArmMotorPosition(armSetpoint.position);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return (timer.get() > armProfile.totalTime());
-    return false;
+    return (timer.get() > armProfile.totalTime());
   }
 
   @Override
@@ -79,8 +78,8 @@ public class ArmCommand extends Command implements Sendable {
       super.initSendable(builder);
       builder.addDoubleProperty("Arm P Value:", () -> arm.getArmP(), null);
       builder.addDoubleProperty("Arm Position:", () -> arm.getArmMotorPositionDeg(), null);
-      builder.addDoubleProperty("Arm P Setting", () -> arm.getArmP(), this::setArmP);
-      builder.addDoubleProperty("Arm Position Setting", () -> arm.getArmMotorPositionDeg(), this::setArmPosition);
+      builder.addDoubleProperty("Arm P Setting", null, this::setArmP);
+      builder.addDoubleProperty("Arm Position Setting", null, this::setArmPosition);
       builder.addDoubleProperty("Encoder Right Position:", () -> arm.getEncoderRightPosition(), null);
       builder.addDoubleProperty("Encoder Left Position:", () -> arm.getEncoderLeftPosition(), null);
       builder.addDoubleProperty("Set Voltage:", () -> setVoltage, this::setArmVoltage);

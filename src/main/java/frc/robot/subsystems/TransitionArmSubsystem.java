@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -135,8 +136,8 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
    */
   public void setArmMotorPosition(double position)
   {
-    armRightPIDController.setReference(position, ControlType.kPosition);
-    armLeftPIDController.setReference(position, ControlType.kPosition);
+    armRightPIDController.setReference(position, ControlType.kPosition, 0, TransitionArmConstants.ARMMOTORRIGHT_KG * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    armLeftPIDController.setReference(position, ControlType.kPosition, 0, TransitionArmConstants.ARMMOTORLEFT_KG * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
   }
 
   //TODO determine if an error is needed in case of motor failure 
