@@ -2,17 +2,21 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -29,6 +33,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
   public SwerveDriveKinematics kinematics;
+  public ApplyModuleStates autoDriveRequest;
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -158,7 +163,11 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       DriveConstants.frontRight,
       DriveConstants.backLeft,
       DriveConstants.backRight);
+
       kinematics = m_kinematics;
+
+      autoDriveRequest = new ApplyModuleStates();
+
     if (Utils.isSimulation()) {
       startSimThread();
     }
@@ -181,5 +190,48 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       updateSimState(deltaTime, RobotController.getBatteryVoltage());
     });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  public class ApplyModuleStates implements SwerveRequest {
+    public SwerveModuleState[] States = new SwerveModuleState[] {};
+
+    public SwerveModule.DriveRequestType DriveRequestType = SwerveModule.DriveRequestType.Velocity;
+
+    public SwerveModule.SteerRequestType SteerRequestType = SwerveModule.SteerRequestType.MotionMagic;
+
+    public StatusCode apply(SwerveControlRequestParameters parameters, SwerveModule... modulesToApply) {
+      var states = States;
+      for (int i = 0; i < modulesToApply.length; ++i) {
+        modulesToApply[i].apply(states[i], DriveRequestType, SteerRequestType);
+      }
+
+      return StatusCode.OK;
+    }
+    
+    public ApplyModuleStates withModuleStates(SwerveModuleState[] state) {
+      this.States = state;
+      return this;
+    }
+
+    public ApplyModuleStates withDriveRequestType(SwerveModule.DriveRequestType driveRequestType) {
+      this.DriveRequestType = driveRequestType;
+      return this;
+    }
+
+    public ApplyModuleStates withSteerRequestType(SwerveModule.SteerRequestType steerRequestType) {
+      this.SteerRequestType = steerRequestType;
+      return this;
+    }
+  }
+
+  public void autoSetModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
+
+    autoDriveRequest.withModuleStates(desiredStates);
+    autoDriveRequest.apply(m_requestParameters, Modules);
+  }
+
+  public Pose2d getPose2d() {
+    return getState().Pose;
   }
 }
