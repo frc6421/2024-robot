@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.commands.CenterNoteCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -47,7 +48,6 @@ public class RobotContainer {
     driveSubsystem = new DriveSubsystem();
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
-
     driveCommand = new DriveCommand(driveSubsystem, driverController);
 
     driveSubsystem.setDefaultCommand(driveCommand);

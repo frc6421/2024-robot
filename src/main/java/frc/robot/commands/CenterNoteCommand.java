@@ -13,7 +13,7 @@ public class CenterNoteCommand extends Command {
   public static class CenterNoteConstants {
     // TODO Tune values
     private static final double DEFAULT_BELT_SPEED = 0.3;
-    private static final double CENTERING_POS = 100;
+    private static final double OFFSET_MM = 5;
 
   }
   /** Creates a new CenterNoteInTransition. */
@@ -33,11 +33,11 @@ public class CenterNoteCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() { 
-      if (transition.timeOfFlightOut.getRange() > transition.timeOfFlightIn.getRange() + 5) {
+      if (transition.timeOfFlightOut.getRange() > transition.timeOfFlightIn.getRange() + CenterNoteConstants.OFFSET_MM) {
         transition.setTransitionMotorSpeed(-1.0 * CenterNoteConstants.DEFAULT_BELT_SPEED);
         centered = false;
     }
-      else if (transition.timeOfFlightOut.getRange() + 5 < transition.timeOfFlightIn.getRange()) {
+      else if (transition.timeOfFlightOut.getRange() + CenterNoteConstants.OFFSET_MM < transition.timeOfFlightIn.getRange()) {
         transition.setTransitionMotorSpeed(CenterNoteConstants.DEFAULT_BELT_SPEED);
         centered = false;
     }
