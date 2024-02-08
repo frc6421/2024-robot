@@ -5,14 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TransitionArmSubsystem;
 
-public class ArmCommand extends Command implements Sendable {
+public class ArmCommand extends Command{
 
   TransitionArmSubsystem arm;
 
@@ -33,6 +31,8 @@ public class ArmCommand extends Command implements Sendable {
 
   private double setVoltage;
 
+  private double finalAngle;
+
   /** Creates a new armCommand. */
   public ArmCommand(TransitionArmSubsystem armSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -47,27 +47,29 @@ public class ArmCommand extends Command implements Sendable {
   {
 
     arm.setArmP(P);
-    timer.reset();
+    // timer.reset();
 
-    armGoal = new TrapezoidProfile.State(setPosition, 0);
+    // armGoal = new TrapezoidProfile.State(setPosition, 0);
 
-    armProfile = new TrapezoidProfile(armConstraints);
+    // armProfile = new TrapezoidProfile(armConstraints);
 
-    timer.start();
+    // timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     //arm.setVoltage(setVoltage);
-    armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
-    arm.setArmMotorPosition(armSetpoint.position);
+    //armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
+    //arm.setArmMotorPosition(armSetpoint.position);
+    arm.setArmMotorPosition(setPosition);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
+    finalAngle = arm.getArmMotorPositionDeg();
     arm.setVoltage(0);
     //arm.setArmMotorPosition(armSetpoint.position);
   }
@@ -75,7 +77,8 @@ public class ArmCommand extends Command implements Sendable {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get() > armProfile.totalTime()*3);
+    //return (timer.get() > armProfile.totalTime()*3);
+    return (finalAngle >= setPosition - 1 && finalAngle <= setPosition + 1);
   }
 
   @Override
@@ -88,6 +91,7 @@ public class ArmCommand extends Command implements Sendable {
       builder.addDoubleProperty("Encoder Right Position:", () -> arm.getEncoderRightPosition(), null);
       builder.addDoubleProperty("Encoder Left Position:", () -> arm.getEncoderLeftPosition(), null);
       builder.addDoubleProperty("Set Voltage:", () -> setVoltage, this::setArmVoltage);
+      builder.addDoubleProperty("Arm Final Angle:", () -> finalAngle, null);
   }
 
   public void setArmPosition(double position)

@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.TransitionArmSubsystem;
-import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants.armState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,8 +24,6 @@ public class RobotContainer {
 
   private ArmCommand armCommand;
 
-  public static armState currentArmState;
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -36,8 +33,6 @@ public class RobotContainer {
     // Configure the trigger bindings
     armSubsystem = new TransitionArmSubsystem();
     armCommand = new ArmCommand(armSubsystem);
-
-    currentArmState = armState.INTAKE;
 
     configureBindings();
     Shuffleboard.getTab("Arm Tuning").add(armCommand);

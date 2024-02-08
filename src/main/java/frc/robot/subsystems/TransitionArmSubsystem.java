@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkFlex;
+//import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -13,42 +14,31 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
+public class TransitionArmSubsystem extends SubsystemBase{
   
   public static class TransitionArmConstants {
-    
-    // used for testing
-    public static enum armState {
-      INTAKE,
-      SCORING
-    }
-
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
     public static final double ARMMOTORRIGHT_KP = 0.0003; // TODO needs to be tuned
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
-    public static final double ARMMOTORRIGHT_KG = 0.3453;
+    public static final double ARMMOTORRIGHT_KG = 0.3453; // voltage
 
-    public static final double ARMMOTORLEFT_KP = 0.0003; // TODO needs to be tuned
-    public static final double ARMMOTORLEFT_KI = 0.0;
-    public static final double ARMMOTORLEFT_KD = 0.0; 
-    public static final double ARMMOTORLEFT_KG = 0.3453; // voltage
-
-    // public static final double ARMMOTORLEFT_FF = 0; // TODO needs to be determined 
-    // public static final double ARMMOTORRIGHT_FF = 0; // TODO needs to be determined 
-
+    public static final double ARMMOTORLEFT_KP = ARMMOTORRIGHT_KP;
+    public static final double ARMMOTORLEFT_KI = ARMMOTORRIGHT_KI;
+    public static final double ARMMOTORLEFT_KD = ARMMOTORRIGHT_KD; 
+    public static final double ARMMOTORLEFT_KG = ARMMOTORRIGHT_KG;
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 50;
 
-    public static final float ARM_FORAWRD_SOFT_LIMIT = 100; // TODO needs to be determined
-    public static final float ARM_REVERSE_SOFT_LIMIT = -7; // TODO needs to be determined
+    public static final float ARM_FORAWRD_SOFT_LIMIT = 100;
+    public static final float ARM_REVERSE_SOFT_LIMIT = -7;
+    public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0);
 
-    public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0); // TODO needs to be determined
+    public static final double ARM_GEAR_RATIO_CONVERSION = 360.0 / TransitionArmConstants.ARM_GEAR_RATIO; // degrees
   }
 
   // fields
@@ -61,6 +51,10 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
   private final RelativeEncoder armRightEncoder;
   private final RelativeEncoder armLeftEncoder;
 
+  // private REVLibError rightMotorPrevError;
+  // private REVLibError leftMotorPrevError;
+
+  // TODO add try catch?
   /** Creates a new transitionArm. */
   public TransitionArmSubsystem() {
 
@@ -76,8 +70,8 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
       armRightEncoder = armMotorRight.getEncoder();
       armLeftEncoder = armMotorLeft.getEncoder();
 
-      armRightEncoder.setPositionConversionFactor(360.0 / TransitionArmConstants.ARM_GEAR_RATIO);
-      armLeftEncoder.setPositionConversionFactor(360.0 / TransitionArmConstants.ARM_GEAR_RATIO);
+      armRightEncoder.setPositionConversionFactor(TransitionArmConstants.ARM_GEAR_RATIO_CONVERSION);
+      armLeftEncoder.setPositionConversionFactor(TransitionArmConstants.ARM_GEAR_RATIO_CONVERSION);
 
       // PID controller
       armRightPIDController = armMotorRight.getPIDController();
@@ -121,8 +115,8 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
       // Follower
       armMotorLeft.follow(armMotorRight, true);
 
-      armRightEncoder.setPosition(-7);
-      armLeftEncoder.setPosition(-7);
+      armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
   }
 
   @Override
@@ -140,15 +134,31 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
     armLeftPIDController.setReference(position, ControlType.kPosition, 0, TransitionArmConstants.ARMMOTORLEFT_KG * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
   }
 
-  //TODO determine if an error is needed in case of motor failure 
-
   /**
-   * Returns the averageposition of the arm in degrees
-   * @return the average position in degrees
+   * Returns position based on error codes of PID controller(s)
+   * </p>
+   * Checks if motors are returning valid error codes 
+   * @return the position in degrees
    */
   public double getArmMotorPositionDeg()
   {
-    return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
+    // TODO how to handle errors
+    // if(rightMotorPrevError == REVLibError.kOk && leftMotorPrevError == REVLibError.kOk)
+    // {
+      return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
+    // }
+    // else if(rightMotorPrevError != REVLibError.kOk)
+    // {
+    //   return armLeftEncoder.getPosition();
+    // }
+    // else if(leftMotorPrevError != REVLibError.kOk)
+    // {
+    //   return armRightEncoder.getPosition();
+    // }
+    // else
+    // {
+    //   return TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
+    // }
   }
 
   public double getEncoderLeftPosition()
@@ -161,6 +171,7 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
     return armRightEncoder.getPosition();
   }
 
+  // TODO for testing
   public double getArmP()
   {
     return armRightPIDController.getP();
@@ -177,11 +188,4 @@ public class TransitionArmSubsystem extends SubsystemBase implements Sendable {
     armMotorLeft.setVoltage(voltage);
     armMotorRight.setVoltage(voltage);
   }
-  // TODO Sendable
-  // Send: position, P value (set)
-
-  // @Override
-  // public void initSendable(SendableBuilder builder) {
-  //     super.initSendable(builder);
-  // }
 }
