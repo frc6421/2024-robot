@@ -31,6 +31,12 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final double DEGREES_PER_MOTOR_ROTATION = (360.0 / AngleConstants.GEAR_RATIO);
 
     public static final double MAX_ANGLE_GRAVITY_FF = 0;
+
+    public static enum angleState {
+      MAX,  
+      MID,
+      MIN
+    }
   }
   //Creating the object for the motor and encoder
   private CANSparkMax angleMotor;
