@@ -43,8 +43,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   private double positionMaxOutput;
 
   private double angleDynamicFF;
-  private double tempGravityFF;
-  private double gravityOffset;
+  private double testingGravityFF;
 
   /** Creates a new AngledShooterSubsystem. */
   public ShooterAngleSubsystem() {
@@ -58,6 +57,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
     angleMotor.setInverted(false);
     angleMotor.setSmartCurrentLimit(AngleConstants.CURRENT_LIMIT);
+
+    angleMotor.clearFaults();
 
     //Setting encoder with the conversion factor of the gearbox
     angleEncoder = angleMotor.getEncoder();
@@ -86,44 +87,62 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     //Creating the Shuffleboard tab for testing
     Shuffleboard.getTab("Angle Motor Subsystem").add(this);
   }
-
-  public void setPosition(double position){
-    angleMotorPID.setReference(position, CANSparkMax.ControlType.kPosition, 0, position, SparkPIDController.ArbFFUnits.kPercentOut);
-  }
-
+  /**
+   * Sets the output of the angle motor to go to a certain angle
+   * @param angle The angle of which to set the motor to
+   */
   public void setAngle(double angle){
     setGravityOffset();
     angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, angleDynamicFF, SparkPIDController.ArbFFUnits.kPercentOut);
   }
-
+  /**
+   * Calculates the force due to gravity acting upon the shooter
+   */
   public void setGravityOffset(){
-    angleDynamicFF = (tempGravityFF * Math.cos(Math.toRadians(angleEncoder.getPosition())));
+    angleDynamicFF = (testingGravityFF * Math.cos(Math.toRadians(angleEncoder.getPosition())));
   }
 
-  public void changeGravityOffset(){
-    tempGravityFF = gravityOffset;
-  }
+  //TODO: Remove the following functions after testing!
 
+  /**
+   * Sets the new P value of the motor retrived from ShuffleBoard
+   * @param P the new P value to set to
+   */
   private void setP(double P){
     angleMotorPID.setP(P);
   }
 
+  /**
+   * Sets the new FF value of the motor retrived from ShuffleBoard
+   * @param FF the new FF value to set to
+   */
   private void setFF(double FF){
     angleMotorPID.setFF(FF);
   }
   
+  /**
+   * Changes the Gravity FF of the PID Control Loop for testing
+   * @param tempGravityOffset the new Gravity Offset
+   */
   private void setTempGravityOffset(double tempGravityOffset){
-    gravityOffset = tempGravityOffset;
+    testingGravityFF = tempGravityOffset;
   }
-
-  private double getEncoderPostition(){
+  /**
+   * Gets the position of the encoder to compare to the actual value
+   * @return Arm position, in degrees
+   */
+  public double getAngleEncoderPostition(){
     return angleEncoder.getPosition();
   }
-
-  private double getEncoderVelocity(){
+  /**
+   * Gets the velocity of the encoder to see if the motor is "jittering"
+   * @return The Motor velocity, in RPM
+   */
+  private double getAngleEncoderVelocity(){
     return angleEncoder.getVelocity();
   }
 
+  //Shuffleboard stuff. Don't ask.
   public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("AngleSubsystem");
 
@@ -133,8 +152,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Set Gravity Offset", null, this::setTempGravityOffset);
     builder.addDoubleProperty("Set Angle", null, this::setAngle);
 
-    builder.addDoubleProperty("Encoder Value", this::getEncoderPostition, null);
-    builder.addDoubleProperty("Encoder Velocity", this::getEncoderVelocity, null);
+    builder.addDoubleProperty("Encoder Value", this::getAngleEncoderPostition, null);
+    builder.addDoubleProperty("Encoder Velocity", this::getAngleEncoderVelocity, null);
   }
 
   @Override

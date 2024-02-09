@@ -44,7 +44,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverController.a().onTrue(new InstantCommand(() -> shooterAngleSubsystem.changeGravityOffset()));
 
   }
 
