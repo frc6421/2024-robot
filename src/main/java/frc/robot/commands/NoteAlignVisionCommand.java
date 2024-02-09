@@ -12,12 +12,14 @@ import frc.robot.subsystems.DriveSubsystem;
 public class NoteAlignVisionCommand extends Command {
   DriveSubsystem driveSubsystem;
 
-  PhotonCamera camera5;
+  //TODO update camera name
+  PhotonCamera Camera7;
+
   /** Creates a new NoteAlignVisionCommand. */
   public NoteAlignVisionCommand(DriveSubsystem drive) {
     driveSubsystem = drive;
 
-    camera5 = new PhotonCamera("camera5");
+    Camera7 = new PhotonCamera("Camera7");
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);

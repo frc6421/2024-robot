@@ -1,9 +1,19 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonUtils;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.proto.Photon;
+import org.photonvision.targeting.MultiTargetPNPResult;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
@@ -12,6 +22,15 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -27,6 +46,17 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
+
+  // PhotonVision Cameras
+  private PhotonCamera Camera1;
+  private PhotonCamera Camera2;
+  private PhotonCamera Camera3;
+  private PhotonCamera Camera4;
+
+  private PhotonPoseEstimator camera1PoseEstimator;
+  private PhotonPoseEstimator camera2PoseEstimator;
+  private PhotonPoseEstimator camera3PoseEstimator;
+  private PhotonPoseEstimator camera4PoseEstimator;
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -161,6 +191,26 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
+
+    camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera1,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+
+    camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera2,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+
+    camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera3,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+
+    camera4PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera4,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -180,5 +230,40 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       updateSimState(deltaTime, RobotController.getBatteryVoltage());
     });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  @Override
+  public void periodic() {
+
+    var result1 = Camera1.getLatestResult();
+    var result2 = Camera2.getLatestResult();
+    var result3 = Camera3.getLatestResult();
+    var result4 = Camera4.getLatestResult();
+
+
+    if(result1.hasTargets()) {
+      
+    }
+
+    if(result2.hasTargets()) {
+      
+    }
+
+    if(result3.hasTargets()) {
+      
+    }
+
+    if(result4.hasTargets()) {
+      
+    }
+
+    m_odometry.update(
+      m_pigeon2.getRotation2d(),
+      m_modulePositions);
+
+  }
+
+  public Optional<EstimatedRobotPose> getEstimatedRobotPose(PhotonPoseEstimator poseEstimator) {
+    return poseEstimator.update();
   }
 }
