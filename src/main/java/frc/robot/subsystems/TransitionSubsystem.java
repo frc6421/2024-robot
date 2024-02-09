@@ -24,14 +24,18 @@ public class TransitionSubsystem extends SubsystemBase {
 
     private static final double TRANSITION_GEAR_RATIO = 1.6;
 
+    // Velocity
+    private static final double TRANSITION_MOTOR_KV = 0.0;
     // TOF Sensors
     // TODO confirm this value
     private static final double DETECTION_DISTANCE_MM = 100;
 
-    public static final double TRANSITION_FORWARD_SPEED = 0.85;
-    public static final double TRANSITION_REVERSE_SPEED = -0.85;
-    
+    // TODO do we need forward and backward
+    // moved below for testing sake
   }
+
+  public double TRANSITION_FORWARD_SPEED = 0.85;
+  public double TRANSITION_REVERSE_SPEED =  -0.85;
 
   private final CANSparkFlex transitionMotor;
 
@@ -119,6 +123,10 @@ public class TransitionSubsystem extends SubsystemBase {
     return timeOfFlightOut.getRange();
   }
 
+  public void setVoltage(double velocity) {
+    
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -130,8 +138,8 @@ public class TransitionSubsystem extends SubsystemBase {
     //builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
     builder.addDoubleProperty("Transition Motor Output", this::getTransitionMotorOutput, null);
     builder.addBooleanProperty("Time Of Flight Boolean Output", this::isCentered, null);
-    builder.addDoubleProperty("Time Of Flight 1 Output", this::getTOFInRange, null);
-    builder.addDoubleProperty("Time Of Flight 2 Output", this::getTOFOutRange, null);
+    builder.addDoubleProperty("Time Of Flight In Output", this::getTOFInRange, null);
+    builder.addDoubleProperty("Time Of Flight Out Output", this::getTOFOutRange, null);
   }
 }
 

@@ -68,12 +68,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem)
-      .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorSpeed(TransitionConstants.TRANSITION_FORWARD_SPEED), transitionSubsystem)));
+      .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorSpeed(transitionSubsystem.TRANSITION_FORWARD_SPEED), transitionSubsystem)));
     driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake())
       .alongWith(new InstantCommand(() -> transitionSubsystem.stopTransitionMotor())));
 
     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem)
-      .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorSpeed(TransitionConstants.TRANSITION_REVERSE_SPEED), transitionSubsystem)));
+      .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorSpeed(transitionSubsystem.TRANSITION_REVERSE_SPEED), transitionSubsystem)));
     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake())
       .alongWith(new InstantCommand(() -> transitionSubsystem.stopTransitionMotor())));
   }
