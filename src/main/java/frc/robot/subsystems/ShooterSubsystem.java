@@ -91,17 +91,22 @@ public class ShooterSubsystem extends SubsystemBase {
     setVelocity = velocity;
   }
 
+
   public double getVelocity(){
     return setVelocity;
   }
 
+  /**
+   * Runs the motors at a desired velocity
+   * @param velocity the speed of which to run the motors
+   */
   public void runMotors(double velocity){
     topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
     bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
   }
 
   /**
-   * Gets the current RPM of the motor
+   * Gets the current RPM of the top motor
    * @return rpm
    */
   public double getTopMotorVelocity(){
@@ -110,7 +115,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Gets the current RPM of the motor
+   * Gets the current RPM of the bottom motor
    * @return rpm
    */
   public double getBottomMotorVelocity(){
@@ -118,15 +123,28 @@ public class ShooterSubsystem extends SubsystemBase {
     return rpm;
   }
 
-  public void setP(double value){
-    topShooterPID.setP(value,0);
-    bottomShooterPID.setP(value,0);
+  /**
+   * Changes the P value of the PID control loop of top motor
+   * @param P the new P 
+   */
+  public void setTopP(double P){
+    bottomShooterPID.setP(P,0);
   }
 
+  /**
+   * Changes the P value of the PID control loop of the Bottom Motor
+   * @param P the new P
+   */
+  public void setBottomP(double P){
+    bottomShooterPID.setP(P,0);
+  }
+
+  //ShuffleBoard Stuff.
   public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("ShooterSubsystem");
 
-    builder.addDoubleProperty("Set Motor P", null, this::setP);
+    builder.addDoubleProperty("Set Top Motor P", null, this::setTopP);
+    builder.addDoubleProperty("Set Bottom Motor P", null, this::setBottomP);
     builder.addDoubleProperty("Set Motor Velocity", null, this::setVelocity);
     builder.addDoubleProperty("Top Motor Velocity", this::getTopMotorVelocity, null);
     builder.addDoubleProperty("Bottom Motor Velocity", this::getBottomMotorVelocity, null);
