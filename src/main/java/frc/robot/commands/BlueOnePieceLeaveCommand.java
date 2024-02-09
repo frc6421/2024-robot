@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import java.util.List;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -17,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.AutoConstants;
@@ -48,8 +51,12 @@ public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
 
     Trajectory leaveStartZoneTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.ONE_PIECE_START, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.ONE_PIECE_SHOOT.plus(new Translation2d(0, Units.feetToMeters(0))), new Rotation2d(0))), forwardConfig);
+        new Pose2d(TrajectoryConstants.ONE_PIECE_SHOOT, new Rotation2d(0))), forwardConfig);
     
+    Trajectory testTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.TEST_START, new Rotation2d(0)),
+        new Pose2d(TrajectoryConstants.TEST_END, new Rotation2d(0))), forwardConfig);
+
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
         new TrapezoidProfile.Constraints(AutoConstants.AUTO_MAX_ANGULAR_VELOCITY_RAD_PER_SEC,
@@ -63,7 +70,7 @@ public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
         thetaController);
 
     SwerveControllerCommand leaveStartZoneCommand = new SwerveControllerCommand(
-        leaveStartZoneTrajectory,
+        testTrajectory,
         driveSubsystem::getPose2d,
         driveSubsystem.kinematics,
         holonomicDriveController,
@@ -72,6 +79,10 @@ public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
 
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands();
+    addCommands(
+        new InstantCommand(() -> driveSubsystem.tareEverything()), 
+        leaveStartZoneCommand, 
+        new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds()))
+    );
   }
 }
