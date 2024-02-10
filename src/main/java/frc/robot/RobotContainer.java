@@ -4,13 +4,18 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.commands.CenterNoteCommand;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,20 +27,40 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final TransitionArmSubsystem armSubsystem;
 
-  private ArmCommand armCommand;
+  // Controllers \\
+  private final CommandXboxController driverController; 
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private static final int driverControllerPort = 0;
+
+  // Subsystems \\
+  private final DriveSubsystem driveSubsystem;
+  private final IntakeSubsystem intakeSubsystem;
+  private final TransitionSubsystem transitionSubsystem;
+
+  // Commands \\
+  private final DriveCommand driveCommand;
+  private ArmCommand armCommand;
+  private final CenterNoteCommand centerNoteCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
+
+    driverController = new CommandXboxController(driverControllerPort);
+
+    driveSubsystem = new DriveSubsystem();
+    intakeSubsystem = new IntakeSubsystem();
+    transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
+
+    driveCommand = new DriveCommand(driveSubsystem, driverController);
+    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
     armCommand = new ArmCommand(armSubsystem);
 
+    driveSubsystem.setDefaultCommand(driveCommand);
+    
+    // Configure the trigger bindings
     configureBindings();
-    Shuffleboard.getTab("Arm Tuning").add(armCommand);
+    
   }
 
   /**
@@ -48,8 +73,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-      //driverController.a().onTrue(new InstantCommand(() -> currentArmState = armState.INTAKE).andThen(new ArmCommand(armSubsystem)));
-      //driverController.b().onTrue(new InstantCommand(() -> currentArmState = armState.SCORING).andThen(new ArmCommand(armSubsystem)));
+     driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
+     driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+
+     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
   }
 
   /**
