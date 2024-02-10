@@ -24,6 +24,8 @@ public class ArmCommand extends Command{
 
   TrapezoidProfile armProfile;
 
+  private double finalPosition;
+
   /** Creates a new armCommand. */
   public ArmCommand(TransitionArmSubsystem armSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,35 +38,37 @@ public class ArmCommand extends Command{
   @Override
   public void initialize() 
   {
-    timer.reset();
+    // timer.reset();
 
-    armGoal = new TrapezoidProfile.State(0, 0); // TODO position needed
+    // armGoal = new TrapezoidProfile.State(0, 0); // TODO position needed
 
-    armProfile = new TrapezoidProfile(armConstraints);
+    // armProfile = new TrapezoidProfile(armConstraints);
 
-    timer.start();
+    // timer.start();
+
+    arm.setArmMotorPosition(90);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
+    //armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
     //arm.setArmMotorPosition(armSetpoint.position);
-    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    arm.setArmMotorPosition(armSetpoint.position);
+    //arm.setArmMotorPosition(armSetpoint.position);
+    finalPosition = arm.getArmMotorPositionDeg();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get() > armProfile.totalTime());
-    //return (finalAngle >= setPosition - 1 && finalAngle <= setPosition + 1);
+    //return (timer.get() > armProfile.totalTime());
+    return (finalPosition >= 90 - 5 && finalPosition <= 90 + 5);
     //return false;
   }
 }

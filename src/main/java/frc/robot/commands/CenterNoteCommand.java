@@ -11,7 +11,7 @@ public class CenterNoteCommand extends Command {
   private final TransitionSubsystem transition;
   boolean centered;
   public static class CenterNoteConstants {
-    public static final double DEFAULT_BELT_SPEED = 0.65;
+    public static final double DEFAULT_BELT_SPEED = 0.6;
   }
 
   /** Creates a new CenterNoteInTransition. */
@@ -28,7 +28,14 @@ public class CenterNoteCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (transition.timeOfFlightIn.getRange() < 350 && transition.timeOfFlightOut.getRange() > 370) {
+      transition.setTransitionMotorOutput(CenterNoteConstants.DEFAULT_BELT_SPEED / 4.0);
+    }
+    else if (transition.timeOfFlightIn.getRange() > 370 && transition.timeOfFlightOut.getRange() < 350) {
+      transition.setTransitionMotorOutput(-1.0 * CenterNoteConstants.DEFAULT_BELT_SPEED / 4.0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -39,6 +46,6 @@ public class CenterNoteCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return transition.timeOfFlightIn.getRange() <= 300;
+    return (transition.timeOfFlightIn.getRange() < 350 && transition.timeOfFlightOut.getRange() < 350);
   }
 }
