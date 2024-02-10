@@ -21,10 +21,15 @@ public class CANdleSubsystem {
             LIGHT_BLUE,             CYAN,                   BLUE,   //Blues 
             VIOLET,                 MAGENTA,                PINK,   //Purples
             WHITE,
-            RAINBOW_4_COLOR,        RAINBOW_8_COLOR,        RAINBOW_16_COLOR,       RAINBOW_32_COLOR,   //Rainbow of which varies in the amount of colors they display
-            FADE_4_COLOR,           FADE_8_COLOR,           FADE_16_COLOR,          FADE_32_COLOR,      //Fade of which varies in the amount of colors they display
-            SPARKLE_RED_ON_WHITE,   SPARKLE_BLUE_ON_WHITE,  SPARKLE_BLACK_ON_WHITE,     //Sparkle of color on primarily white
-            SPARKLE_WHITE_ON_RED,   SPARKLE_WHITE_ON_BLUE,  SPARKLE_WHITE_ON_BLACK,     //Sparkle of white on primarily color
+        }
+        //All the different animations that the CANdle can support
+        public static enum animations{
+            RAINBOW,            // Goes through all colors
+            SPARKLE,            // Has a background color and a color that can flicker
+            FADE,               // Fades the selected color
+            FADE_TO_PERCENT,    // Puts the color to a level of opacity      
+            FADE_RAINBOW,       // Rainbow patter that fades
+            SOLID,              // Sets a color to display
         }
     }
 
