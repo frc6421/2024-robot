@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import com.revrobotics.RelativeEncoder;
@@ -20,17 +19,17 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final int ANGLE_CAN_ID = 32;
     public static final int CURRENT_LIMIT = 60;
 
+    //TODO: Calibration for P value
     public static final double ANGLE_P = 0;
     public static final double ANGLE_I = 0;
     public static final double ANGLE_D = 0;
 
+    //TODO: Verify that the minimum is the extrusion bellow the shooter
     public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 55;
     public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
 
     public static final int GEAR_RATIO = 180;
     public static final double DEGREES_PER_MOTOR_ROTATION = (360.0 / AngleConstants.GEAR_RATIO);
-
-    public static final double MAX_ANGLE_GRAVITY_FF = 0;
 
     public static enum angleState {
       MAX,  
@@ -47,9 +46,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
   private double positionMinOutput;
   private double positionMaxOutput;
-
-  private double angleDynamicFF;
-  private double testingGravityFF;
 
   /** Creates a new AngledShooterSubsystem. */
   public ShooterAngleSubsystem() {
@@ -98,14 +94,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    * @param angle The angle of which to set the motor to
    */
   public void setAngle(double angle){
-    setGravityOffset();
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, angleDynamicFF, SparkPIDController.ArbFFUnits.kPercentOut);
-  }
-  /**
-   * Calculates the force due to gravity acting upon the shooter
-   */
-  public void setGravityOffset(){
-    angleDynamicFF = (testingGravityFF * Math.cos(Math.toRadians(angleEncoder.getPosition())));
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kPercentOut);
   }
 
   //TODO: Remove the following functions after testing!
@@ -126,13 +115,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     angleMotorPID.setFF(FF);
   }
   
-  /**
-   * Changes the Gravity FF of the PID Control Loop for testing
-   * @param tempGravityOffset the new Gravity Offset
-   */
-  private void setTempGravityOffset(double tempGravityOffset){
-    testingGravityFF = tempGravityOffset;
-  }
   /**
    * Gets the position of the encoder to compare to the actual value
    * @return Arm position, in degrees
@@ -155,7 +137,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
     builder.addDoubleProperty("Set P", null, this::setP);
     builder.addDoubleProperty("Set FF", null, this::setFF);
-    builder.addDoubleProperty("Set Gravity Offset", null, this::setTempGravityOffset);
     builder.addDoubleProperty("Set Angle", null, this::setAngle);
 
     builder.addDoubleProperty("Encoder Value", this::getAngleEncoderPostition, null);
