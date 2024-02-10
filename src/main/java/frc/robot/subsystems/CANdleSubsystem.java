@@ -62,29 +62,15 @@ public class CANdleSubsystem extends SubsystemBase {
      * Sets the color of the LED strips connected to the CANdle
      * @param primaryColor The color to be used as the base color. The color and
      * the number they corospond to is listed:
-     * --0: Red
-     * --1: Orange
-     * --2: Yellow
-     * --3: Lime
-     * --4: Light Green
-     * --5: Green
-     * --6: Cyan
-     * --7: Light Blue
-     * --8: Blue
-     * --9: Violet
-     * --10: Magenta
-     * --11: Pink
-     * --12: White
-     * --13: Black
+     *    -0: Red   -1: Orange   -2: Yellow   -3: Lime   -4: Light Green   -5: Green
+     *    -6: Cyan   -7: Light Blue   -8: Blue   -9: Violet   -10: Magenta   -11: Pink
+     *    -12: White   -13: Black
      * @param secondaryColor The color to be used in the Twinkle pattern as the pattern
      * These colors also come from the list for primaryColor
      * @param animation The animation wanted. The pattern and the number they corespond
      * to is listed:
-     * --0: Rainbow
-     * --1: Rainbow Fade
-     * --2: Twinkle; Requires a primary and secondary color
-     * --3: Fade; Requires primary only
-     * --4: Solid; Requires primary only
+     *   -0: Rainbow   -1: Rainbow Fade   -2: Twinkle; Requires a primary and secondary color
+     *   -3: Fade; Requires primary only   -4: Solid; Requires primary only
      */
     public void setPattern(int primaryColor, int secondaryColor, int animation){
         switch(animation){
