@@ -35,11 +35,11 @@ public class CANdleSubsystem extends SubsystemBase {
         };
     }
 
-    public CANdle candle = new CANdle(CANdleConstants.CANDLE_CAN_ID);
+    public static CANdle candle = new CANdle(CANdleConstants.CANDLE_CAN_ID);
 
-    public int mainPrimaryColor;
-    public int mainSecondaryColor;
-    public int mainPattern;
+    public static int mainPrimaryColor;
+    public static int mainSecondaryColor;
+    public static int mainPattern;
 
     public CANdleSubsystem() {
         //Set the CANdle to configure settings
@@ -61,18 +61,18 @@ public class CANdleSubsystem extends SubsystemBase {
     /**
      * Sets the color of the LED strips connected to the CANdle
      * @param primaryColor The color to be used as the base color. The color and
-     * the number they corospond to is listed:
+     * the number they correspond to is listed:
      *    -0: Red   -1: Orange   -2: Yellow   -3: Lime   -4: Light Green   -5: Green
      *    -6: Cyan   -7: Light Blue   -8: Blue   -9: Violet   -10: Magenta   -11: Pink
      *    -12: White   -13: Black
      * @param secondaryColor The color to be used in the Twinkle pattern as the pattern
      * These colors also come from the list for primaryColor
-     * @param animation The animation wanted. The pattern and the number they corespond
+     * @param animation The animation wanted. The pattern and the number they correspond
      * to is listed:
      *   -0: Rainbow   -1: Rainbow Fade   -2: Twinkle; Requires a primary and secondary color
      *   -3: Fade; Requires primary only   -4: Solid; Requires primary only
      */
-    public void setPattern(int primaryColor, int secondaryColor, int animation){
+    public static void setPattern(int primaryColor, int secondaryColor, int animation){
         switch(animation){
 
             case 0: // Rainbow
@@ -111,31 +111,31 @@ public class CANdleSubsystem extends SubsystemBase {
         }
     }
 
-    public void setPrimaryColor(long color){
+    public static void setPrimaryColor(long color){
         mainPrimaryColor = (int)color;
     }
-    public void setSecondaryColor(long color){
+    public static void setSecondaryColor(long color){
         mainSecondaryColor = (int)color;
     }
-    public void setPattern(long pattern){
+    public static void setPattern(long pattern){
         mainPattern = (int)pattern;
     }
 
     public void initSendable(SendableBuilder builder){
         builder.setSmartDashboardType("CANdleSubsystem");
 
-        builder.addIntegerProperty("Set Primary Color", null, this::setPrimaryColor);
-        builder.addIntegerProperty("Set Secondary Color", null, this::setSecondaryColor);
-        builder.addIntegerProperty("Pattern", null, this::setPattern);
+        // builder.addIntegerProperty("Set Primary Color", null, this::setPrimaryColor);
+        // builder.addIntegerProperty("Set Secondary Color", null, this::setSecondaryColor);
+        // builder.addIntegerProperty("Pattern", null, this::setPattern);
     }
 
-    private int getColorR(int color){
+    private static int getColorR(int color){
         return CANdleConstants.COLORS[color][0]; 
     }
-    private int getColorG(int color){
+    private static int getColorG(int color){
         return CANdleConstants.COLORS[color][1]; 
     }
-    private int getColorB(int color){
+    private static int getColorB(int color){
         return CANdleConstants.COLORS[color][2]; 
     }
     
