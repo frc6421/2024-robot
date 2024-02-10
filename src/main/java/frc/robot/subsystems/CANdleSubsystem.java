@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.RgbFadeAnimation;
@@ -21,17 +22,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class CANdleSubsystem extends SubsystemBase {
     public static class CANdleConstants{
         public static int CANDLE_CAN_ID = 50;
-        public static int NUMBER_OF_LED = 20;
+        public static int NUMBER_OF_LED = 300;
         public static double ANIMATION_SPEED = 0.50; // Percent
         public static double LED_BRIGHTNESS = 1.00;  // Percent
         
-        //Color combinations. In RGB.
+        //Color combinations. In GRB.
         public static int COLORS[][] = {
-            {255,   0,   0},/* Red */     {255, 165,   0},/* Orange */      {255, 255,   0},/* Yellow */
-            { 50, 205,  50},/* Lime */    {144, 238, 144},/* Light Green */ {  0, 255,   0},/* Green */
-            {  0, 255, 255},/* Cyan */    {173, 216, 230},/* Light Blue */  {  0,   0, 255},/* Blue */
-            {127,   0, 255},/* Violet */  {255,   0, 255},/* Magenta */     {255, 193, 203},/* Pink */
-            {255, 255, 255},/* White */   {  0,   0,   0},/* Black */
+            {0, 255, 0},/* Red */     {95, 255, 31},/* Orange */      {255, 255, 0},/* Yellow */
+            {205, 50, 50},/* Lime */    {238, 144, 144},/* Light Green */ {255, 0, 0},/* Green */
+            {255, 0, 255},/* Cyan */    {216, 173, 230},/* Light Blue */  {0, 0, 255},/* Blue */
+            {0, 128, 128},/* Violet */  {43, 159, 104},/* Magenta */     {49, 222, 99},/* Pink */
+            {255, 255, 255},/* White */   {0, 0, 0},/* Black */
         };
     }
 
@@ -45,10 +46,10 @@ public class CANdleSubsystem extends SubsystemBase {
         //Set the CANdle to configure settings
         CANdleConfiguration config = new CANdleConfiguration();
         //Setting the strip connected to RGB
-        config.stripType = LEDStripType.RGB;
+        config.stripType = LEDStripType.GRB;
         //Setting the brighness of the LED's for solid colors
         config.brightnessScalar = CANdleConstants.LED_BRIGHTNESS;
-        //"Burn"(it doesn't) the settings to the CANdle
+        //Apply the settings to the CANdle
         candle.configAllSettings(config);
 
         candle.clearStickyFaults();
@@ -84,12 +85,13 @@ public class CANdleSubsystem extends SubsystemBase {
             case 1: // Rainbow Fade
                 RgbFadeAnimation rainbowFadeAnim = new RgbFadeAnimation(CANdleConstants.LED_BRIGHTNESS, 
                     CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED);
+                rainbowFadeAnim.setSpeed(animation);
                 candle.animate(rainbowFadeAnim);
                 break;
 
             case 2: // Sparkle with Background
                 TwinkleAnimation twinkleAnim = new TwinkleAnimation(getColorR(secondaryColor), getColorG(secondaryColor),
-                    getColorB(secondaryColor), 0, CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED, null);
+                    getColorB(secondaryColor), 0, CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED, TwinklePercent.Percent100);
                 // Setting the background color before the pattern
                 candle.setLEDs(getColorR(primaryColor), getColorG(primaryColor), getColorB(primaryColor));
                 candle.animate(twinkleAnim);

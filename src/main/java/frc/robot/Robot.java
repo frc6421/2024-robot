@@ -50,12 +50,14 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    // Set LEDs to red with white twinkle on disable
-    CANdleSubsystem.setPattern(1, 12, 2);
+    
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() { 
+    // Set LEDs to red with white twinkle on disable
+    CANdleSubsystem.setPattern(1, 0, 4);
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -81,11 +83,14 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   @Override
   public void testInit() {
