@@ -22,14 +22,16 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
-    public static final double ARMMOTORRIGHT_KP = 0.0003; // TODO needs to be tuned
+    public static final double ARMMOTORRIGHT_KP = 0.016; // TODO needs to be tuned
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
-    public static final double ARMMOTORRIGHT_KG = 0.3453; // voltage
+    public static final double ARMMOTORRIGHT_KS = 0.342;
+    public static final double ARMMOTORRIGHT_KG = (0.3759 - ARMMOTORRIGHT_KS); // voltage
 
     public static final double ARMMOTORLEFT_KP = ARMMOTORRIGHT_KP;
     public static final double ARMMOTORLEFT_KI = ARMMOTORRIGHT_KI;
     public static final double ARMMOTORLEFT_KD = ARMMOTORRIGHT_KD; 
+    public static final double ARMMOTORLEFT_KS = ARMMOTORRIGHT_KS;
     public static final double ARMMOTORLEFT_KG = ARMMOTORRIGHT_KG;
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 50;
@@ -130,8 +132,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
    */
   public void setArmMotorPosition(double position)
   {
-    armRightPIDController.setReference(position, ControlType.kPosition, 0, TransitionArmConstants.ARMMOTORRIGHT_KG * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
-    armLeftPIDController.setReference(position, ControlType.kPosition, 0, TransitionArmConstants.ARMMOTORLEFT_KG * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    armRightPIDController.setReference(position, ControlType.kPosition, 0, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    armLeftPIDController.setReference(position, ControlType.kPosition, 0, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
   }
 
   /**

@@ -46,9 +46,9 @@ public class ArmCommand extends Command{
   public void initialize() 
   {
 
-    //arm.setArmP(P);
+    arm.setArmP(P);
 
-    //arm.setArmMotorPosition(setPosition);
+    arm.setArmMotorPosition(setPosition);
     // timer.reset();
 
     // armGoal = new TrapezoidProfile.State(setPosition, 0);
@@ -61,7 +61,7 @@ public class ArmCommand extends Command{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setVoltage(setVoltage);
+    //arm.setVoltage(setVoltage);
     //armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
     //arm.setArmMotorPosition(armSetpoint.position);
     
@@ -72,7 +72,7 @@ public class ArmCommand extends Command{
   public void end(boolean interrupted) 
   {
     //finalAngle = arm.getArmMotorPositionDeg();
-    arm.setVoltage(0);
+    //arm.setVoltage(0);
     //arm.setArmMotorPosition(armSetpoint.position);
   }
 
@@ -80,8 +80,8 @@ public class ArmCommand extends Command{
   @Override
   public boolean isFinished() {
     //return (timer.get() > armProfile.totalTime()*3);
-    //return (finalAngle >= setPosition - 1 && finalAngle <= setPosition + 1);
-    return false;
+    return (finalAngle >= setPosition - 1 && finalAngle <= setPosition + 1);
+    //return false;
   }
 
   @Override
