@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkFlex;
-//import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -52,9 +51,6 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
   private final RelativeEncoder armRightEncoder;
   private final RelativeEncoder armLeftEncoder;
-
-  // private REVLibError rightMotorPrevError;
-  // private REVLibError leftMotorPrevError;
 
   // TODO add try catch?
   /** Creates a new transitionArm. */
@@ -137,30 +133,12 @@ public class TransitionArmSubsystem extends SubsystemBase{
   }
 
   /**
-   * Returns position based on error codes of PID controller(s)
-   * </p>
-   * Checks if motors are returning valid error codes 
+   * Takes the average position of the arm encoders 
    * @return the position in degrees
    */
   public double getArmMotorPositionDeg()
   {
-    // TODO how to handle errors
-    // if(rightMotorPrevError == REVLibError.kOk && leftMotorPrevError == REVLibError.kOk)
-    // {
-      return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
-    // }
-    // else if(rightMotorPrevError != REVLibError.kOk)
-    // {
-    //   return armLeftEncoder.getPosition();
-    // }
-    // else if(leftMotorPrevError != REVLibError.kOk)
-    // {
-    //   return armRightEncoder.getPosition();
-    // }
-    // else
-    // {
-    //   return TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
-    // }
+    return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
   }
 
   public double getEncoderLeftPosition()
@@ -171,23 +149,5 @@ public class TransitionArmSubsystem extends SubsystemBase{
   public double getEncoderRightPosition()
   {
     return armRightEncoder.getPosition();
-  }
-
-  // TODO for testing
-  public double getArmP()
-  {
-    return armRightPIDController.getP();
-  }
-
-  public void setArmP(double value)
-  {
-    armRightPIDController.setP(value);
-    armLeftPIDController.setP(value);
-  }
-
-  public void setVoltage(double voltage)
-  {
-    armMotorLeft.setVoltage(voltage);
-    armMotorRight.setVoltage(voltage);
   }
 }
