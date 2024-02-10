@@ -6,14 +6,10 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.proto.Photon;
-import org.photonvision.targeting.MultiTargetPNPResult;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
@@ -23,11 +19,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -235,25 +227,37 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   @Override
   public void periodic() {
 
-    var result1 = Camera1.getLatestResult();
-    var result2 = Camera2.getLatestResult();
-    var result3 = Camera3.getLatestResult();
-    var result4 = Camera4.getLatestResult();
+    Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
+    Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
+    Optional<EstimatedRobotPose> pose3 = updatePhotonPoseEstimator(camera3PoseEstimator);
+    Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
 
+    //TODO determine if we need to reject bad vision pose estimates
+    if(pose1.isPresent()) {
 
-    if(result1.hasTargets()) {
+      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+          pose1.get().timestampSeconds);
       
     }
 
-    if(result2.hasTargets()) {
+    if(pose2.isPresent()) {
+
+      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+          pose2.get().timestampSeconds);
       
     }
 
-    if(result3.hasTargets()) {
+    if(pose3.isPresent()) {
+
+      addVisionMeasurement(pose3.get().estimatedPose.toPose2d(),
+          pose3.get().timestampSeconds);
       
     }
 
-    if(result4.hasTargets()) {
+    if(pose4.isPresent()) {
+
+      addVisionMeasurement(pose4.get().estimatedPose.toPose2d(),
+          pose4.get().timestampSeconds);
       
     }
 
@@ -263,7 +267,15 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedRobotPose(PhotonPoseEstimator poseEstimator) {
+  private Optional<EstimatedRobotPose> updatePhotonPoseEstimator(PhotonPoseEstimator poseEstimator) {
     return poseEstimator.update();
+  }
+
+  /**
+   * Gets the estimated pose 
+   * @return estimated pose from pose estimator (Pose2d)
+   */
+  public Pose2d getCurrentPose2d() {
+    return m_odometry.getEstimatedPosition();
   }
 }
