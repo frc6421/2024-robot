@@ -12,11 +12,10 @@ import frc.robot.subsystems.TransitionSubsystem;
 
 public class TransitionTuningCommand extends Command {
 
-      private static enum Tune {
+    private static enum Tune {
       KV,
       KS,
-      FORWARDSPEED,
-      REVERSESPEED,
+      KP,
       ERROR,
       DEFAULTSPEED
     }
@@ -27,8 +26,7 @@ public class TransitionTuningCommand extends Command {
 
     private double voltage;
     private double setKS;
-    private double setForwardSpeed;
-    private double setBackwardSpeed;
+    private double setKP;
     private double setError;
     private double setDefaultSpeed;
     private String errorString;
@@ -39,9 +37,7 @@ public class TransitionTuningCommand extends Command {
 
     tuneChooser = new SendableChooser<>();
     tuneChooser.setDefaultOption("KV", Tune.KV);
-    tuneChooser.setDefaultOption("KS", Tune.KS);
-    tuneChooser.addOption("Forward Speed", Tune.FORWARDSPEED);
-    tuneChooser.addOption("Backward Speed", Tune.REVERSESPEED);
+    tuneChooser.addOption("KS", Tune.KS);
     tuneChooser.addOption("Offset", Tune.ERROR);
     tuneChooser.addOption("Default Speed", Tune.DEFAULTSPEED);
 
@@ -59,19 +55,16 @@ public class TransitionTuningCommand extends Command {
   public void initialize() {
     switch (tuneChooser.getSelected()) {
       case KV:
-        transitionSubsystem.setVoltage(setKS + voltage);
+        transitionSubsystem.setTransitionVoltage(voltage);
         break;
       
       case KS:
-        transitionSubsystem.setVoltage(setKS);
+        transitionSubsystem.setTransitionVoltage(setKS);
         break;
 
-      case FORWARDSPEED:
-        transitionSubsystem.TRANSITION_FORWARD_SPEED = setForwardSpeed;
-        break;
-
-      case REVERSESPEED:
-        transitionSubsystem.TRANSITION_REVERSE_SPEED = setBackwardSpeed;
+      case KP:
+        transitionSubsystem.setTransitionMotorP(setKP);
+        transitionSubsystem.setTransitionPosition(100);
         break;
 
       case ERROR:
@@ -86,7 +79,8 @@ public class TransitionTuningCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -101,35 +95,31 @@ public class TransitionTuningCommand extends Command {
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("Set KV", () -> voltage, this::setVoltage);
-    builder.addDoubleProperty("Set Backward Speed", () -> setBackwardSpeed, this::setBackwardSpeed);
-    builder.addDoubleProperty("Set Forward Speed", () -> setForwardSpeed, this::setForwardSpeed);
+    builder.addDoubleProperty("Set KS", () -> setKS, this::setVoltage);
     builder.addDoubleProperty("Set Error", () -> setError, this::setError);
     builder.addDoubleProperty("Set Default Speed", () -> setDefaultSpeed, this::setDefaultSpeed);
+    builder.addDoubleProperty("Set P", () -> setKP, this::setP);
     builder.addStringProperty("Motor Error", () -> errorString, null);
+    builder.addDoubleProperty("Current Position", () -> transitionSubsystem.getPosition(), null);
   }
 
   private void setFeedForward() {
     
   }
 
-  private void setVoltage(double KV) { 
-    voltage = KV;
+  private void setVoltage(double voltage) { 
+    setKS = voltage;
   }
 
-  private void setForwardSpeed(double forwardSpeed){ 
-    setForwardSpeed = forwardSpeed;
-  }
-
-  private void setBackwardSpeed(double backwardSpeed){ 
-    setBackwardSpeed = backwardSpeed;
-  }
-
-  private void setError(double error){ 
+  private void setError(double error) { 
     setError = error;
   }
 
-  private void setDefaultSpeed(double defaultSpeed){ 
+  private void setDefaultSpeed(double defaultSpeed) { 
     setDefaultSpeed = defaultSpeed;
+  }
+
+  private void setP(double P) { 
+    setKP = P;
   }
 }

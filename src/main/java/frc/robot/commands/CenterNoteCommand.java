@@ -4,11 +4,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
 public class CenterNoteCommand extends Command {
-  TransitionSubsystem transition;
+  private final TransitionSubsystem transition;
   boolean centered;
   public static class CenterNoteConstants {
     // TODO Tune values
@@ -17,46 +19,43 @@ public class CenterNoteCommand extends Command {
   }
 
   public static double ERROR_MM = 5;
-  public static double DEFAULT_BELT_SPEED = 0.3;
+  public static double DEFAULT_BELT_SPEED = 0.85;
   /** Creates a new CenterNoteInTransition. */
   public CenterNoteCommand(TransitionSubsystem transitionSubsystem) {
     addRequirements(transitionSubsystem);
 
     transition = transitionSubsystem;
     
+    Shuffleboard.getTab("Center Note Tuning").add(this);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    transition.setTransitionMotorSpeed(DEFAULT_BELT_SPEED);
+    transition.setTransitionMotorOutput(DEFAULT_BELT_SPEED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() { 
-      if (transition.timeOfFlightOut.getRange() > transition.timeOfFlightIn.getRange() + ERROR_MM) {
-        transition.setTransitionMotorSpeed(-1.0 * DEFAULT_BELT_SPEED);
-        centered = false;
-    }
-      else if (transition.timeOfFlightOut.getRange() + ERROR_MM < transition.timeOfFlightIn.getRange()) {
-        transition.setTransitionMotorSpeed(DEFAULT_BELT_SPEED);
-        centered = false;
-    }
-      else {
-        transition.setTransitionMotorSpeed(0);
-        centered = true;
-    }
+  public void execute() {
+
+    // if (transition.isNoteDetected()) {
+    //   transition.setTransitionMotorOutput(DEFAULT_BELT_SPEED / 2);
+    //   if (transition.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM) {
+
+    //   }
+    // }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    transition.setTransitionMotorOutput(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return centered;
+    return transition.timeOfFlightOut.getRange() >= 100 - ERROR_MM && transition.timeOfFlightOut.getRange() <= 100 - ERROR_MM;
   }
 }
