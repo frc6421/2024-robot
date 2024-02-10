@@ -8,8 +8,6 @@ import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionSubsystem extends SubsystemBase {
@@ -58,11 +56,6 @@ public class TransitionSubsystem extends SubsystemBase {
 
     // Gear Ratio
     transitionEncoder.setPositionConversionFactor(TransitionConstants.TRANSITION_GEAR_RATIO);
-
-    //Shuffleboard
-    Shuffleboard.getTab("Transition").add(this);
-    Shuffleboard.getTab("Transition").add("In", timeOfFlightIn);
-    Shuffleboard.getTab("Transition").add("Out", timeOfFlightOut);
   }
 
   /** Sets the belts to a given output
