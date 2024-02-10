@@ -7,10 +7,7 @@ package frc.robot.subsystems;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,20 +25,13 @@ public class TransitionSubsystem extends SubsystemBase {
     public static final double TRANSITION_FORWARD_SPEED = 0.85;
     public static final double TRANSITION_REVERSE_SPEED =  -0.85;
 
-    // TODO confirm this value
-    public static final double DETECTION_DISTANCE_MM = 100;
-
-    //PID
-    private static final double TRANSITION_KP = 0;
-    private static final double TRANSITION_KS = 0;
+    // Its about 400-380 when nothing is detected
+    public static final double DETECTION_DISTANCE_MM = 300;
   }
-
-
 
   private final CANSparkFlex transitionMotor;
 
   private final RelativeEncoder transitionEncoder;
-  private final SparkPIDController transitionPIDController;
   public final TimeOfFlight timeOfFlightIn;
   public final TimeOfFlight timeOfFlightOut;
 
@@ -57,17 +47,11 @@ public class TransitionSubsystem extends SubsystemBase {
     timeOfFlightIn = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_IN_CAN_ID);
     timeOfFlightOut = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_OUT_CAN_ID);
 
-    // Set PID Controller
-    transitionPIDController = transitionMotor.getPIDController();
-
     // Set Encoder
     transitionEncoder = transitionMotor.getEncoder(); 
 
     // Inversion
     transitionMotor.setInverted(true);
-
-    // Set P
-    transitionPIDController.setP(TransitionConstants.TRANSITION_KP);
 
     // Set to idle to coast
     transitionMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
@@ -77,8 +61,8 @@ public class TransitionSubsystem extends SubsystemBase {
 
     //Shuffleboard
     Shuffleboard.getTab("Transition").add(this);
-    Shuffleboard.getTab("Transition").add(timeOfFlightIn);
-    Shuffleboard.getTab("Transition").add(timeOfFlightOut);
+    Shuffleboard.getTab("Transition").add("In", timeOfFlightIn);
+    Shuffleboard.getTab("Transition").add("Out", timeOfFlightOut);
   }
 
   /** Sets the belts to a given output
@@ -137,20 +121,6 @@ public class TransitionSubsystem extends SubsystemBase {
     transitionMotor.setVoltage(velocity);
   }
 
-  /** Sets the position of the PID controller
-   * @param double position (the position you want to set it to)
-   */
-  public void setTransitionPosition(double position) {
-    transitionPIDController.setReference(position, CANSparkBase.ControlType.kPosition, 0, TransitionConstants.TRANSITION_KS, ArbFFUnits.kVoltage);
-  }
-
-  /** Sets the PID controller P value
-   * @param double P (the P value)
-   */
-  public void setTransitionMotorP(double P) {
-    transitionPIDController.setP(P);
-  }
-
   /** Gets the current position of the encoder
    * Unit - Rotations
    * @return Position in rotations
@@ -162,14 +132,5 @@ public class TransitionSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
-   public void initSendable(SendableBuilder builder){
-    builder.setSmartDashboardType("SwerveModule");
-
-    //builder.addBooleanProperty("Transition Sensor Output", this::isNoteInTransition, null);
-    builder.addDoubleProperty("Transition Motor Output", this::getTransitionMotorOutput, null);
-    builder.addDoubleProperty("Time Of Flight In Output", this::getTOFInRange, null);
-    builder.addDoubleProperty("Time Of Flight Out Output", this::getTOFOutRange, null);
-   }
 }
 

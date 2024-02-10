@@ -39,7 +39,7 @@ public class RobotContainer {
 
   // Command \\
   private final DriveCommand driveCommand;
-
+  private final CenterNoteCommand centerNoteCommand;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -49,7 +49,7 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
     driveCommand = new DriveCommand(driveSubsystem, driverController);
-
+    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
     driveSubsystem.setDefaultCommand(driveCommand);
     
     // Configure the trigger bindings
@@ -67,15 +67,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem)
-    //   .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorOutput(transitionSubsystem.TRANSITION_FORWARD_SPEED), transitionSubsystem)));
-    // driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake())
-    //   .alongWith(new InstantCommand(() -> transitionSubsystem.stopTransitionMotor())));
+     driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
+     driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
 
-    // driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem)
-    //   .alongWith(new RunCommand(() -> transitionSubsystem.setTransitionMotorOutput(transitionSubsystem.TRANSITION_REVERSE_SPEED), transitionSubsystem)));
-    // driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake())
-    //   .alongWith(new InstantCommand(() -> transitionSubsystem.stopTransitionMotor())));
+     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
   }
 
   /**
@@ -86,9 +82,5 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return null;
-  }
-
-  public void initSendable(SendableBuilder builder) {
-    
   }
 }
