@@ -17,9 +17,6 @@ public class ShooterAngleCommand extends Command {
 
   ShooterAngleSubsystem angle;
 
-  final TrapezoidProfile.Constraints angleConstraints = 
-    new TrapezoidProfile.Constraints(600, 250);
-
   private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
   
   private TrapezoidProfile.State angleSetpoint = new TrapezoidProfile.State();
@@ -52,8 +49,6 @@ public class ShooterAngleCommand extends Command {
         angleGoal = new TrapezoidProfile.State(-25,0);
         break;
     }
-
-    angleProfile = new TrapezoidProfile(angleConstraints);
 
     timer.start();
   }
