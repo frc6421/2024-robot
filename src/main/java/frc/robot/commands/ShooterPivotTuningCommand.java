@@ -87,6 +87,7 @@ public class ShooterPivotTuningCommand extends Command {
     builder.addDoubleProperty("kS", () -> kS, this::setkS);
     builder.addDoubleProperty("kP", () -> kP, this::setkP);
     builder.addDoubleProperty("Angle", () -> angle, this::setAngle);
+    builder.addDoubleProperty("Current Angle", () -> shooterAngleSubsystem.getAngleEncoderPostition(), null);
   }
 
 }

@@ -57,7 +57,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
     angleMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-    angleMotor.setInverted(false);
+    angleMotor.setInverted(true);
     angleMotor.setSmartCurrentLimit(AngleConstants.CURRENT_LIMIT);
 
     angleMotor.clearFaults();

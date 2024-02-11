@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.ShooterAngleCommand;
+import frc.robot.commands.ShooterPivotTuningCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +26,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
 
-  private final ShooterAngleCommand shooterAngleCommand;
+  private final ShooterPivotTuningCommand shooterPivotTuningCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -35,7 +36,7 @@ public class RobotContainer {
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
 
-    shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
+    shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);
   }
 
   /**
