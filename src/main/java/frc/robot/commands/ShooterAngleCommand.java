@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 
 public class ShooterAngleCommand extends Command {
@@ -35,20 +34,6 @@ public class ShooterAngleCommand extends Command {
   public void initialize() {
     timer.reset();
 
-    switch(RobotContainer.currentAngleState)
-    {
-      case MAX:
-        angleGoal = new TrapezoidProfile.State(55, 0); 
-        break;
-
-      case MID:
-        angleGoal = new TrapezoidProfile.State(15, 0); 
-        break;
-      
-      case MIN:
-        angleGoal = new TrapezoidProfile.State(-25,0);
-        break;
-    }
 
     timer.start();
   }

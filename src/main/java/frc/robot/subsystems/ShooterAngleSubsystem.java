@@ -66,6 +66,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     angleEncoder = angleMotor.getEncoder();
     angleEncoder.setPositionConversionFactor(AngleConstants.DEGREES_PER_MOTOR_ROTATION);
 
+    angleEncoder.setPosition(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
+
     // PID Stuff... fun... \\
     positionMinOutput = -1;
     positionMaxOutput =  1;
@@ -86,15 +88,21 @@ public class ShooterAngleSubsystem extends SubsystemBase {
         
     angleMotorPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
 
-    //Creating the Shuffleboard tab for testing
-    Shuffleboard.getTab("Angle Motor Subsystem").add(this);
   }
   /**
    * Sets the output of the angle motor to go to a certain angle
    * @param angle The angle of which to set the motor to
    */
   public void setAngle(double angle){
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kPercentOut);
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kVoltage);
+  }
+
+    /**
+   * Sets the output of the angle motor to go to a certain angle
+   * @param angle The angle of which to set the motor to
+   */
+  public void setAngle(double angle, double kS){
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, kS, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
   //TODO: Remove the following functions after testing!
@@ -103,7 +111,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    * Sets the new P value of the motor retrived from ShuffleBoard
    * @param P the new P value to set to
    */
-  private void setP(double P){
+  public void setP(double P){
     angleMotorPID.setP(P);
   }
 
@@ -146,5 +154,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void setMotorVoltage(double voltage) {
+    angleMotor.setVoltage(voltage);
   }
 }

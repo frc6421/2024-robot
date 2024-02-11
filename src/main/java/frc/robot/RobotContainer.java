@@ -7,9 +7,7 @@ package frc.robot;
 import frc.robot.commands.ShooterAngleCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants.angleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -27,7 +25,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
 
-  public static angleState currentAngleState;
+  private final ShooterAngleCommand shooterAngleCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -36,6 +34,8 @@ public class RobotContainer {
 
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
+
+    shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
   }
 
   /**
@@ -47,11 +47,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
-    driverController.a().onTrue(new InstantCommand(() -> currentAngleState = angleState.MAX).andThen(new ShooterAngleCommand(shooterAngleSubsystem)));
-    driverController.b().onTrue(new InstantCommand(() -> currentAngleState = angleState.MID).andThen(new ShooterAngleCommand(shooterAngleSubsystem)));
-    driverController.x().onTrue(new InstantCommand(() -> currentAngleState = angleState.MIN).andThen(new ShooterAngleCommand(shooterAngleSubsystem)));
-  }
+  private void configureBindings() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
