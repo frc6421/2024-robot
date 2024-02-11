@@ -79,12 +79,21 @@ public class NoteAlignVisionCommand extends Command {
       // Left yaw is negative, right yaw is positive
       // Down pitch is negative, up pitch is positive
 
-      //TODO determine what units the calculate() outputs, convert to m/s if necessary
-      driveSubsystem.setControl(
-        driveRequest.withVelocityX(xController.calculate(noteTarget.getPitch()))
-        .withVelocityY(0)
-        .withRotationalRate(rotationController.calculate(noteTarget.getYaw()))
-      );
+      // Running these separately because it is set to robot relative drive and we don't want it to arch
+      // around the note
+      //TODO test to see if the X and rotation can be run at the same time
+      if(!rotationController.atSetpoint()) {
+        //TODO determine what units the calculate() outputs, convert to m/s if necessary
+        driveSubsystem.setControl(
+          driveRequest.withVelocityX(0)
+          .withVelocityY(0)
+          .withRotationalRate(rotationController.calculate(noteTarget.getYaw())));
+      } else {
+        driveSubsystem.setControl(
+          driveRequest.withVelocityX(xController.calculate(noteTarget.getPitch()))
+          .withVelocityY(0)
+          .withRotationalRate(0));
+      }
 
     }
     
