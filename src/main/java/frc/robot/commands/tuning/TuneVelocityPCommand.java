@@ -10,6 +10,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.DriveConstants;
@@ -43,6 +44,8 @@ public class TuneVelocityPCommand extends Command {
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
+
+    Shuffleboard.getTab("5: Velocity P").add(this);
   }
 
   // Called when the command is initially scheduled.

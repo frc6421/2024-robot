@@ -18,6 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.CenterNoteCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.tuning.StaticFeedforwardCommand;
+import frc.robot.commands.tuning.TuneCurrentLimitCommand;
+import frc.robot.commands.tuning.TuneVelocityPCommand;
+import frc.robot.commands.tuning.VelocityFeedforwardCommand;
+import frc.robot.commands.tuning.VerifyOdometryCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -44,6 +49,12 @@ public class RobotContainer {
   private final DriveCommand driveCommand;
   private final CenterNoteCommand centerNoteCommand;
 
+  private final VerifyOdometryCommand verifyOdometryCommand;
+  private final TuneCurrentLimitCommand tuneCurrentLimitCommand;
+  private final StaticFeedforwardCommand staticFeedforwardCommand;
+  private final VelocityFeedforwardCommand velocityFeedforwardCommand;
+  private final TuneVelocityPCommand tuneVelocityPCommand;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -57,6 +68,12 @@ public class RobotContainer {
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
 
+    verifyOdometryCommand = new VerifyOdometryCommand(driveSubsystem);
+    tuneCurrentLimitCommand = new TuneCurrentLimitCommand(driveSubsystem);
+    staticFeedforwardCommand = new StaticFeedforwardCommand(driveSubsystem);
+    velocityFeedforwardCommand = new VelocityFeedforwardCommand(driveSubsystem);
+    tuneVelocityPCommand = new TuneVelocityPCommand(driveSubsystem);
+    
     driveSubsystem.setDefaultCommand(driveCommand);
     
     // Configure the trigger bindings
