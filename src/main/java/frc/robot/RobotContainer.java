@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import frc.robot.commands.ShooterPivotTuningCommand;
+import frc.robot.commands.TuneShooter;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,6 +24,10 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
 
   private final ShooterSubsystem shooterSubsystem;
+  private final ShooterAngleSubsystem shooterAngleSubsystem;
+
+  private final ShooterPivotTuningCommand shooterPivotTuningCommand;
+  private final TuneShooter tuneShooter;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -28,6 +35,11 @@ public class RobotContainer {
     configureBindings();
 
     shooterSubsystem = new ShooterSubsystem();
+    shooterAngleSubsystem = new ShooterAngleSubsystem();
+
+    shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);
+    tuneShooter = new TuneShooter(shooterSubsystem);
+
   }
 
   /**
