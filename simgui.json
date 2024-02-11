@@ -1,0 +1,11 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

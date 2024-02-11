@@ -8,9 +8,21 @@ import frc.robot.commands.ShooterPivotTuningCommand;
 import frc.robot.commands.TuneShooter;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.TransitionArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
+import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.commands.CenterNoteCommand;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final TransitionArmSubsystem armSubsystem;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -28,9 +41,35 @@ public class RobotContainer {
 
   private final ShooterPivotTuningCommand shooterPivotTuningCommand;
   private final TuneShooter tuneShooter;
+  // Controllers \\
+  private final CommandXboxController driverController; 
+
+  private static final int driverControllerPort = 0;
+
+  // Subsystems \\
+  private final DriveSubsystem driveSubsystem;
+  private final IntakeSubsystem intakeSubsystem;
+  private final TransitionSubsystem transitionSubsystem;
+
+  // Commands \\
+  private final DriveCommand driveCommand;
+  private final CenterNoteCommand centerNoteCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    driverController = new CommandXboxController(driverControllerPort);
+
+    driveSubsystem = new DriveSubsystem();
+    intakeSubsystem = new IntakeSubsystem();
+    transitionSubsystem = new TransitionSubsystem();
+    armSubsystem = new TransitionArmSubsystem();
+
+    driveCommand = new DriveCommand(driveSubsystem, driverController);
+    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
+
+    driveSubsystem.setDefaultCommand(driveCommand);
+    
     // Configure the trigger bindings
     configureBindings();
 
@@ -40,6 +79,7 @@ public class RobotContainer {
     shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);
     tuneShooter = new TuneShooter(shooterSubsystem);
 
+    
   }
 
   /**
@@ -52,8 +92,22 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
+     driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
+     driverController.leftBumper().whileTrue(centerNoteCommand);
+     driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
 
+     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+     driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_REVERSE_SPEED)));
+     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+     driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0)));
+
+    driverController.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
+
+    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))
+      .andThen(new WaitCommand(0.5))
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0))
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
   }
 
   /**
