@@ -15,7 +15,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static class ShooterConstants{
       public static final int TOP_SHOOTER_CAN_ID = 30;
       public static final int BOTTOM_SHOOTER_CAN_ID = 31;
-      public static final int CURRENT_LIMIT = 60;
+      public static final int CURRENT_LIMIT = 80;
 
       public static final double SHOOTER_P = 0;
       public static final double SHOOTER_I = 0;
@@ -126,8 +126,15 @@ public class ShooterSubsystem extends SubsystemBase {
    * Set both motor voltages.
    * @param voltage voltages of the motor.
    */
-  public void setVoltage(double voltage) {
+  public void setTopVoltage(double voltage) {
     topShooterMotor.setVoltage(voltage);
+  }
+
+    /**
+   * Set both motor voltages.
+   * @param voltage voltages of the motor.
+   */
+  public void setBottomVoltage(double voltage) {
     bottomShooterMotor.setVoltage(voltage);
   }
 

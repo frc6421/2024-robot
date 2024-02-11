@@ -18,7 +18,8 @@ public class TuneShooter extends Command {
     kP
   }
 
-  private double kS;
+  private double topkS;
+  private double bottomkS;
   private double kV;
   private double kP;
   private double setVolocity;
@@ -52,14 +53,16 @@ public class TuneShooter extends Command {
 
     switch (tuneChooser.getSelected()) {
       case kS:
-        shooterSubsystem.setVoltage(kS);
+        shooterSubsystem.setTopVoltage(topkS);
+        shooterSubsystem.setBottomVoltage(bottomkS);
         break;
       case kV:
-        shooterSubsystem.setVoltage(kS + kV);
+        shooterSubsystem.setTopVoltage(topkS + kV);
+        shooterSubsystem.setBottomVoltage(bottomkS + kV);
         break;
       case kP:
         shooterSubsystem.setP(kP);
-        shooterSubsystem.setTuningMotorVelocity(setVolocity, kS + kV);
+        shooterSubsystem.setTuningMotorVelocity(setVolocity, topkS + kV);
         break;
     }
 
@@ -78,7 +81,8 @@ public class TuneShooter extends Command {
       finalTopkV = shooterSubsystem.getTopMotorVoltage() / shooterSubsystem.getTopMotorVelocity();
       finalBottomkV = shooterSubsystem.getBottomMotorVoltage() / shooterSubsystem.getBottomMotorVelocity();
     }
-    shooterSubsystem.setVoltage(0);
+    shooterSubsystem.setTopVoltage(0);
+    shooterSubsystem.setBottomVoltage(0);
   }
 
   // Returns true when the command should end.
@@ -87,8 +91,11 @@ public class TuneShooter extends Command {
     return false;
   }
 
-  private void setkS(double kS) {
-    this.kS = kS;
+  private void setTopkS(double kS) {
+    this.topkS = kS;
+  }
+  private void setBottomkS(double kS) {
+    this.bottomkS = kS;
   }
 
   private void setkV(double kV) {
@@ -106,7 +113,8 @@ public class TuneShooter extends Command {
    @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("kS", () -> kS, this::setkS);
+    builder.addDoubleProperty("topkS", () -> topkS, this::setTopkS);
+    builder.addDoubleProperty("bottomkS", () -> bottomkS, this::setBottomkS);
     builder.addDoubleProperty("kV", () -> kV, this::setkV);
     builder.addDoubleProperty("kP", () -> kP, this::setkP );
     builder.addDoubleProperty("set Velcoty", () -> kP, this::setVolocity);
