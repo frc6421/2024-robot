@@ -12,6 +12,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
@@ -42,7 +43,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
         .withKP(3).withKI(0).withKD(0)
-        .withKS(0).withKV(0).withKA(0);
+        .withKS(0.29).withKV(0.12).withKA(0);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -53,7 +54,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    private static final double SLIP_CURRENT_AMPS = 35;
+    private static final double SLIP_CURRENT_AMPS = 45;
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
@@ -66,7 +67,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final double DRIVE_GEAR_RATIO = 6.746031746031747;
     private static final double STEER_GEAR_RATIO = 21.428571428571427;
     //TODO update after initial measurements and before each competition/everytime treads are changed
-    private static final double WHEEL_RADIUS_INCHES = 1.91;
+    private static final double WHEEL_RADIUS_INCHES = 1.95;
 
     public static final double DRIVE_ROTATIONS_PER_METER = DRIVE_GEAR_RATIO / (2 * Math.PI * Units.inchesToMeters(WHEEL_RADIUS_INCHES));
 
@@ -187,5 +188,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       updateSimState(deltaTime, RobotController.getBatteryVoltage());
     });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  public Pose2d getCurrentPose2d() {
+    return m_odometry.getEstimatedPosition();
   }
 }

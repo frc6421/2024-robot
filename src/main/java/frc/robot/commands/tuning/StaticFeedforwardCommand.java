@@ -8,6 +8,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.PointWheelsAt;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -63,7 +64,9 @@ public class StaticFeedforwardCommand extends Command {
   @Override
   public void initialize() {
     // Set wheels to point forward.
-    driveSubsystem.setControl(zeroWheelRequest);
+    driveSubsystem.setControl(zeroWheelRequest.withModuleDirection(new Rotation2d()));
+    // Reset odometry
+    driveSubsystem.tareEverything();
     // Set chassis speed to zero each time the command starts
     setChassisSpeeds = new ChassisSpeeds();
   }
@@ -87,13 +90,14 @@ public class StaticFeedforwardCommand extends Command {
           + driveSubsystem.getModule(i).getDriveMotor().getMotorVoltage().getValue());
     }
     // Stop the robot.
-    driveSubsystem.setControl(stopRobotRequest);
+    driveSubsystem.setControl(stopRobotRequest.withSpeeds(new ChassisSpeeds(0,0,0)));
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     // Return true of robot moves 1 cm
-    return driveSubsystem.getState().Pose.getX() >= ROBOT_IS_MOVING_METERS;
+    System.out.println("Pose X: " + driveSubsystem.getCurrentPose2d().getX());
+    return driveSubsystem.getCurrentPose2d().getX() >= ROBOT_IS_MOVING_METERS;
   }
 }

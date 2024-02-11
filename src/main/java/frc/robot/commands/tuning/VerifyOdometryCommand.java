@@ -7,6 +7,7 @@ package frc.robot.commands.tuning;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,9 +47,9 @@ public class VerifyOdometryCommand extends Command {
   @Override
   public void initialize() {
     // Point wheels forward
-    driveSubsystem.setControl(zeroWheels);
+    driveSubsystem.setControl(zeroWheels.withModuleDirection(new Rotation2d()));
     // Reset robot Pose
-    driveSubsystem.seedFieldRelative();
+    driveSubsystem.tareEverything();
     // Set drive motors to coast
     driveSubsystem.configNeutralMode(NeutralModeValue.Coast);
   }
@@ -81,7 +82,7 @@ public class VerifyOdometryCommand extends Command {
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("Robot Distance (meters)", () -> driveSubsystem.getState().Pose.getX(), null);
+    builder.addDoubleProperty("Robot Distance (meters)", () -> driveSubsystem.getCurrentPose2d().getX(), null);
     builder.addDoubleProperty("Module 0 Distance (meters)",
         () -> driveSubsystem.getModule(0).getDriveMotor().getPosition().getValue()
             / DriveConstants.DRIVE_ROTATIONS_PER_METER,

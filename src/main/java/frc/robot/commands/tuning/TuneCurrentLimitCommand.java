@@ -7,6 +7,7 @@ package frc.robot.commands.tuning;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.ApplyChassisSpeeds;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.PointWheelsAt;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -64,7 +65,7 @@ public class TuneCurrentLimitCommand extends Command {
     // Set chassis speeds to 0 each time command starts
     setChassisSpeeds = new ChassisSpeeds();
     // Make sure wheels are pointed forward.
-    driveSubsystem.setControl(zeroWheelRequest);
+    driveSubsystem.setControl(zeroWheelRequest.withModuleDirection(new Rotation2d()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.

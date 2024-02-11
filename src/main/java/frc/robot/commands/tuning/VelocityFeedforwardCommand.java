@@ -7,6 +7,7 @@ package frc.robot.commands.tuning;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,6 +30,9 @@ public class VelocityFeedforwardCommand extends Command {
    * Can be positive or negative but should be less than max robot velocity
    */
   private double robotVelocity;
+  
+  // Used to display the calculated kV values on the Shuffleboard
+  private double[] modulekV = {0.0,0.0,0.0,0.0};
 
   /**
    * Used to determine the feed forward voltage needed to get the robot moving
@@ -49,7 +53,7 @@ public class VelocityFeedforwardCommand extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
 
-    robotVelocity = 0;
+    robotVelocity = 0; 
 
     // Swerve request to make sure the wheels point in the x direction
     zeroWheelsRequest = new SwerveRequest.PointWheelsAt();
@@ -64,10 +68,10 @@ public class VelocityFeedforwardCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Reset odometry
-    driveSubsystem.seedFieldRelative();
     // Set wheels to face forward.
-    driveSubsystem.setControl(zeroWheelsRequest);
+    driveSubsystem.setControl(zeroWheelsRequest.withModuleDirection(new Rotation2d()));
+    // Reset odometry
+    driveSubsystem.tareEverything();
     // Set chassis speed based on the velocity set in Shuffleboard
     setChassisSpeeds = new ChassisSpeeds(robotVelocity, 0, 0);
   }
@@ -86,20 +90,21 @@ public class VelocityFeedforwardCommand extends Command {
       double velocity = driveSubsystem.getModule(i).getDriveMotor().getVelocity().getValue();
       System.out.println("Module " + i + " Drive Motor Voltage: " + voltage + " Drive Motor Velocity: " + velocity);
       System.out.println("Module " + i + " Drive Motor kV: " + voltage / velocity + " volts / rpm");
+      modulekV[i] = voltage / velocity;
       
     }
 
     System.out.println("Robot X Velocity: " + driveSubsystem.getSwerveDriveKinematics()
         .toChassisSpeeds(driveSubsystem.getState().ModuleStates).vxMetersPerSecond);
 
-    driveSubsystem.setControl(stopRobotRequest);
+    driveSubsystem.setControl(stopRobotRequest.withSpeeds(new ChassisSpeeds(0,0,0)));
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     // Stop the command when the robot has travelled at least 3.5 meters.
-    return Math.abs(driveSubsystem.getState().Pose.getX()) > 3.5;
+    return Math.abs(driveSubsystem.getCurrentPose2d().getX()) > 3.5;
   }
 
   /**
@@ -118,5 +123,6 @@ public class VelocityFeedforwardCommand extends Command {
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
     builder.addDoubleProperty("X Velocity", () -> robotVelocity, this::setRobotVelocity);
+    builder.addDoubleArrayProperty("Module kP", () -> modulekV, null);
   }
 }
