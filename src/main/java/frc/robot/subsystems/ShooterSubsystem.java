@@ -4,14 +4,12 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkFlex;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class ShooterSubsystem extends SubsystemBase {
     public static class ShooterConstants{
@@ -35,8 +33,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double positionMinOutput;
     private double positionMaxOutput;
-
-    private double setVelocity;
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -82,27 +78,23 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
     bottomShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
     // And the end of the PID Stuff. yay. \\
-
-    //Creating the Shuffleboard tab for testing
-    Shuffleboard.getTab("Shooter Subsystem").add(this);
   }
-
-  public void setVelocity(double velocity){
-    setVelocity = velocity;
-  }
-
-
-  public double getVelocity(){
-    return setVelocity;
+  /**
+   * Runs the motors at a desired velocity
+   * @param velocity the speed of which to run the motors
+   */
+  public void setMotorVelocity(double velocity){
+    topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kVoltage);
+    bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
   /**
    * Runs the motors at a desired velocity
    * @param velocity the speed of which to run the motors
    */
-  public void runMotors(double velocity){
-    topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
-    bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kPercentOut);
+  public void setTuningMotorVelocity(double velocity, double feedForward){
+    topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, feedForward, SparkPIDController.ArbFFUnits.kVoltage);
+    bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, feedForward, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
   /**
@@ -110,8 +102,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return rpm
    */
   public double getTopMotorVelocity(){
-    double rpm = topEncoder.getVelocity();
-    return rpm;
+    return topEncoder.getVelocity();
   }
 
   /**
@@ -119,35 +110,33 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return rpm
    */
   public double getBottomMotorVelocity(){
-    double rpm = bottomEncoder.getVelocity();
-    return rpm;
+    return bottomEncoder.getVelocity();
   }
 
   /**
-   * Changes the P value of the PID control loop of top motor
+   * Changes the P value of the PID control loop of each motor
    * @param P the new P 
    */
-  public void setTopP(double P){
+  public void setP(double P){
+    topShooterPID.setP(P,0);
     bottomShooterPID.setP(P,0);
   }
 
   /**
-   * Changes the P value of the PID control loop of the Bottom Motor
-   * @param P the new P
+   * Set both motor voltages.
+   * @param voltage voltages of the motor.
    */
-  public void setBottomP(double P){
-    bottomShooterPID.setP(P,0);
+  public void setVoltage(double voltage) {
+    topShooterMotor.setVoltage(voltage);
+    bottomShooterMotor.setVoltage(voltage);
   }
 
-  //ShuffleBoard Stuff.
-  public void initSendable(SendableBuilder builder){
-    builder.setSmartDashboardType("ShooterSubsystem");
+  public double getTopMotorVoltage() {
+    return topEncoder.getVelocity();
+  }
 
-    builder.addDoubleProperty("Set Top Motor P", null, this::setTopP);
-    builder.addDoubleProperty("Set Bottom Motor P", null, this::setBottomP);
-    builder.addDoubleProperty("Set Motor Velocity", null, this::setVelocity);
-    builder.addDoubleProperty("Top Motor Velocity", this::getTopMotorVelocity, null);
-    builder.addDoubleProperty("Bottom Motor Velocity", this::getBottomMotorVelocity, null);
+  public double getBottomMotorVoltage() {
+    return bottomEncoder.getVelocity();
   }
 
   @Override

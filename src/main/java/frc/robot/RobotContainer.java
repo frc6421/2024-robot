@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -41,8 +40,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverController.a().toggleOnTrue(new InstantCommand(() -> shooterSubsystem.runMotors(shooterSubsystem.getVelocity())));
-    driverController.b().onTrue(new InstantCommand(() -> shooterSubsystem.runMotors(-shooterSubsystem.getVelocity() / 2)));
   }
 
   /**
