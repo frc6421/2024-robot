@@ -42,6 +42,10 @@ public class CANdleSubsystem extends SubsystemBase {
     public static int mainSecondaryColor;
     public static int mainPattern;
 
+    public static int r;
+    public static int g;
+    public static int b;
+
     public CANdleSubsystem() {
         //Set the CANdle to configure settings
         CANdleConfiguration config = new CANdleConfiguration();
@@ -114,13 +118,13 @@ public class CANdleSubsystem extends SubsystemBase {
         }
     }
 
-    public static void setPrimaryColor(long color){
+    public void setPrimaryColor(long color){
         mainPrimaryColor = (int)color;
     }
-    public static void setSecondaryColor(long color){
+    public void setSecondaryColor(long color){
         mainSecondaryColor = (int)color;
     }
-    public static void setPattern(long pattern){
+    public void setPattern(long pattern){
         mainPattern = (int)pattern;
     }
 
@@ -148,6 +152,7 @@ public class CANdleSubsystem extends SubsystemBase {
         builder.addIntegerProperty("Set G", null, this::setG);
         builder.addIntegerProperty("Set B", null, this::setB);
         builder.addBooleanProperty("Custom Color", null, this::setCustomPattern);
+        
         builder.addIntegerProperty("Set Primary Color", null, this::setPrimaryColor);
         builder.addIntegerProperty("Set Secondary Color", null, this::setSecondaryColor);
         builder.addIntegerProperty("Pattern", null, this::setPattern);
