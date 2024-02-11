@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.TuneShooter;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -23,15 +22,12 @@ public class RobotContainer {
 
   private final ShooterSubsystem shooterSubsystem;
 
-  private final TuneShooter tuneShooter;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
 
     shooterSubsystem = new ShooterSubsystem();
-    tuneShooter = new TuneShooter(shooterSubsystem);
   }
 
   /**
@@ -44,6 +40,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    
+
   }
 
   /**
