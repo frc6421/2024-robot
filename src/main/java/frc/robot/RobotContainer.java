@@ -34,8 +34,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final TransitionArmSubsystem armSubsystem;
 
-  private final CommandXboxController driverController = new CommandXboxController(0);
-
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
 
