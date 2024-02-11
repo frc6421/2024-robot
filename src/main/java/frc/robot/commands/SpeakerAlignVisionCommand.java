@@ -4,12 +4,16 @@
 
 package frc.robot.commands;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -59,12 +63,18 @@ public class SpeakerAlignVisionCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //TODO update to work with both alliances, currently just works on red alliance
-    targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(4).get().toPose2d();
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+
+    if(allianceColor.get().equals(Alliance.Red)) {
+      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(4).get().toPose2d();
+    } else if(allianceColor.get().equals(Alliance.Blue)) {
+      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
+    }
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
     //TODO see what value this outputs
+    //TODO determine if this needs to change sign based on alliance color
     angleToTarget = targetPose.relativeTo(currentPose).getRotation().getDegrees();
 
     currentAngle = driveSubsystem.getCurrentPose2d().getRotation().getDegrees();

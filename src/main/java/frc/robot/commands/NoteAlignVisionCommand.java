@@ -14,9 +14,11 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
 
 public class NoteAlignVisionCommand extends Command {
   DriveSubsystem driveSubsystem;
+  TransitionSubsystem transitionSubsystem;
 
   //TODO update camera name
   PhotonCamera camera7;
@@ -46,15 +48,16 @@ public class NoteAlignVisionCommand extends Command {
   private final SwerveRequest.RobotCentric driveRequest;
 
   /** Creates a new NoteAlignVisionCommand. */
-  public NoteAlignVisionCommand(DriveSubsystem drive) {
+  public NoteAlignVisionCommand(DriveSubsystem drive, TransitionSubsystem transition) {
     driveSubsystem = drive;
+    transitionSubsystem = transition;
 
     camera7 = new PhotonCamera("Camera 7");
 
     driveRequest = new SwerveRequest.RobotCentric();
     
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveSubsystem);
+    addRequirements(driveSubsystem, transitionSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -81,6 +84,7 @@ public class NoteAlignVisionCommand extends Command {
 
       // Running these separately because it is set to robot relative drive and we don't want it to arch
       // around the note
+
       //TODO test to see if the X and rotation can be run at the same time
       if(!rotationController.atSetpoint()) {
         //TODO determine what units the calculate() outputs, convert to m/s if necessary
@@ -111,7 +115,6 @@ public class NoteAlignVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //TODO change to when a TOF sensor in transition is triggered
-    return false;
+    return transitionSubsystem.getTOFInRange() < 350;
   }
 }

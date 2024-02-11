@@ -28,8 +28,7 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final TransitionArmSubsystem armSubsystem;
-
+  
   // Controllers \\
   private final CommandXboxController driverController; 
 
@@ -39,6 +38,7 @@ public class RobotContainer {
   private final DriveSubsystem driveSubsystem;
   private final IntakeSubsystem intakeSubsystem;
   private final TransitionSubsystem transitionSubsystem;
+  private final TransitionArmSubsystem armSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;

@@ -261,10 +261,6 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       
     }
 
-    m_odometry.update(
-      m_pigeon2.getRotation2d(),
-      m_modulePositions);
-
   }
 
   private Optional<EstimatedRobotPose> updatePhotonPoseEstimator(PhotonPoseEstimator poseEstimator) {
