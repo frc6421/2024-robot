@@ -13,5 +13,12 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
- 
+    public static enum RobotStates{
+        DRIVE,
+        INTAKE,
+        SHOOT,
+        AMP,
+        TRAP,
+        CLIMB
+    }
 }
