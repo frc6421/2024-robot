@@ -25,7 +25,9 @@ public class CANdleSubsystem extends SubsystemBase {
         public static double ANIMATION_SPEED = 0.50; // Percent
         public static double LED_BRIGHTNESS = 1.00;  // Percent
         
-        //Color combinations. In RGB.
+        //NOTE: The colors of the CANdle are in GRB. REMEMBER!!!
+
+        //Color combinations. In RGB. 
         public static int COLORS[][] = {
             {255,   0,   0},/* Red */     {255, 165,   0},/* Orange */      {255, 255,   0},/* Yellow */
             { 50, 205,  50},/* Lime */    {144, 238, 144},/* Light Green */ {  0, 255,   0},/* Green */
@@ -41,6 +43,10 @@ public class CANdleSubsystem extends SubsystemBase {
     public int mainSecondaryColor;
     public int mainPattern;
 
+    public int r;
+    public int g;
+    public int b;
+
     public CANdleSubsystem() {
         //Set the CANdle to configure settings
         CANdleConfiguration config = new CANdleConfiguration();
@@ -50,10 +56,11 @@ public class CANdleSubsystem extends SubsystemBase {
         config.brightnessScalar = CANdleConstants.LED_BRIGHTNESS;
         //"Burn"(it doesn't) the settings to the CANdle
         candle.configAllSettings(config);
-
-        candle.clearStickyFaults();
         //Turning off the 5V rail of the CANdle output
         candle.configV5Enabled(false);
+
+        candle.clearStickyFaults();
+        
 
         Shuffleboard.getTab("CANdle Testing").add(this);
     }
@@ -91,18 +98,18 @@ public class CANdleSubsystem extends SubsystemBase {
                 TwinkleAnimation twinkleAnim = new TwinkleAnimation(getColorR(secondaryColor), getColorG(secondaryColor),
                     getColorB(secondaryColor), 0, CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED, null);
                 // Setting the background color before the pattern
-                candle.setLEDs(getColorR(primaryColor), getColorG(primaryColor), getColorB(primaryColor));
+                candle.setLEDs(getColorG(primaryColor), getColorR(primaryColor), getColorB(primaryColor));
                 candle.animate(twinkleAnim);
                 break;
                 
             case 3: // Fade
-                SingleFadeAnimation fadeAnim = new SingleFadeAnimation(getColorR(primaryColor), getColorG(primaryColor), 
+                SingleFadeAnimation fadeAnim = new SingleFadeAnimation(getColorG(primaryColor), getColorR(primaryColor), 
                     getColorB(primaryColor), 0, CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED);
                 candle.animate(fadeAnim);
                 break;
 
             case 4: // Solid
-                candle.setLEDs(getColorR(primaryColor), getColorG(primaryColor), getColorB(primaryColor));
+                candle.setLEDs(getColorG(primaryColor), getColorR(primaryColor), getColorB(primaryColor));
                 break;
             
             default:
@@ -121,9 +128,30 @@ public class CANdleSubsystem extends SubsystemBase {
         mainPattern = (int)pattern;
     }
 
+    public void setR(long R){
+        r = (int)R;
+    }
+    public void setG(long G){
+        g = (int)G;
+    }
+    public void setB(long B){
+        b = (int)B;
+    }
+    public void setCustomPattern(boolean start){
+        if(start){
+            candle.setLEDs(g,r,b);
+        }else{
+            candle.setLEDs(0,0,0);
+        }
+    }
+
     public void initSendable(SendableBuilder builder){
         builder.setSmartDashboardType("CANdleSubsystem");
 
+        builder.addIntegerProperty("Set R", null, this::setR);
+        builder.addIntegerProperty("Set G", null, this::setG);
+        builder.addIntegerProperty("Set B", null, this::setB);
+        builder.addBooleanProperty("Custom Color", null, this::setCustomPattern);
         builder.addIntegerProperty("Set Primary Color", null, this::setPrimaryColor);
         builder.addIntegerProperty("Set Secondary Color", null, this::setSecondaryColor);
         builder.addIntegerProperty("Pattern", null, this::setPattern);
