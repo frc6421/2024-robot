@@ -28,11 +28,11 @@ public class CANdleSubsystem extends SubsystemBase {
         
         //Color combinations. In GRB.
         public static int COLORS[][] = {
-            {0, 255, 0},/* Red */     {95, 255, 31},/* Orange */      {255, 255, 0},/* Yellow */
-            {205, 50, 50},/* Lime */    {238, 144, 144},/* Light Green */ {255, 0, 0},/* Green */
-            {255, 0, 255},/* Cyan */    {216, 173, 230},/* Light Blue */  {0, 0, 255},/* Blue */
-            {0, 128, 128},/* Violet */  {43, 159, 104},/* Magenta */     {49, 222, 99},/* Pink */
-            {255, 255, 255},/* White */   {0, 0, 0},/* Black */
+            {0,   255,   0},/* Red */     {95,  255,  31},/* Orange */      {255, 255,   0},/* Yellow */
+            {205,  50,  50},/* Lime */    {238, 144, 144},/* Light Green */ {255,   0,   0},/* Green */
+            {255,   0, 255},/* Cyan */    {216, 173, 230},/* Light Blue */  {0,     0, 255},/* Blue */
+            {0,   128, 128},/* Violet */  {43,  159, 104},/* Magenta */     {49,  222,  99},/* Pink */
+            {255, 255, 255},/* White */   {0,    0,    0},/* Black */
         };
     }
 
@@ -118,6 +118,7 @@ public class CANdleSubsystem extends SubsystemBase {
         }
     }
 
+    //Setting the colors to their global counterparts
     public void setPrimaryColor(long color){
         mainPrimaryColor = (int)color;
     }
@@ -128,6 +129,8 @@ public class CANdleSubsystem extends SubsystemBase {
         mainPattern = (int)pattern;
     }
 
+    //CUSTOM PATTERNS\\
+    //Setting the colors to their global counterparts
     public void setR(long R){
         r = (int)R;
     }
@@ -158,6 +161,7 @@ public class CANdleSubsystem extends SubsystemBase {
         builder.addIntegerProperty("Pattern", null, this::setPattern);
     }
 
+    //Retrives the colors from the lookup table
     private static int getColorR(int color){
         return CANdleConstants.COLORS[color][0]; 
     }
