@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.CenterNoteCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -52,7 +53,6 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand(driveCommand);
     
     // Configure the trigger bindings
-    currentClimberState = climberState.LOW;
     configureBindings();
     
   }
@@ -72,6 +72,7 @@ public class RobotContainer {
 
      driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
      driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+     
   }
 
   /**

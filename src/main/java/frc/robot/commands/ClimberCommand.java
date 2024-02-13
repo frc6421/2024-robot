@@ -37,20 +37,6 @@ public class ClimberCommand extends Command {
   @Override
   public void initialize() {
     timer.reset();
-    //TODO Robot States
-    switch(RobotContainer.currentClimberState)
-    {
-      case EXTENDED:
-        climberGoal = new TrapezoidProfile.State(0, 0); // TODO positions needed
-        break;
-
-      case LOW:
-        climberGoal = new TrapezoidProfile.State(0, 0); // TODO positions needed
-        break;
-    }
-
-    climberProfile = new TrapezoidProfile(climberConstraints);
-
     timer.start();
   }
 

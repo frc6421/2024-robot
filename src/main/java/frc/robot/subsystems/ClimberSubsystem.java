@@ -6,13 +6,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -50,7 +45,6 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
-  // TODO Trapezoid Profile (Maybe in command)
   //Create new Motors/Controllers
   private CANSparkFlex leftClimberMotor;
   private CANSparkFlex rightClimberMotor;
@@ -59,12 +53,17 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final RelativeEncoder leftClimberEncoder;
   private final RelativeEncoder rightClimberEncoder;
+  public boolean isClimberExtended;
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     // Make new NEO Motors
     leftClimberMotor = new CANSparkFlex(ClimberConstants.LEFT_CLIMBER_CAN_ID, null);
     rightClimberMotor = new CANSparkFlex(ClimberConstants.RIGHT_CLIMBER_CAN_ID, null);
-    
+
+    // Factory default
+    leftClimberMotor.restoreFactoryDefaults();
+    leftClimberMotor.restoreFactoryDefaults();
+
     // PID Controller
     rightClimberPIDController = leftClimberMotor.getPIDController();
     leftClimberPIDController = rightClimberMotor.getPIDController();
@@ -73,9 +72,8 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberEncoder = leftClimberMotor.getEncoder();
     rightClimberEncoder = rightClimberMotor.getEncoder();
 
-    // Factory default
-    leftClimberMotor.restoreFactoryDefaults();
-    leftClimberMotor.restoreFactoryDefaults();
+    // Set bool to false
+    isClimberExtended = false;
 
     // Soft limits
     rightClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
@@ -119,16 +117,23 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param position Used to set the position of the motors
    */
   public void setClimberMotorPosition(double position) {
-    leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
-    rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    if (isClimberExtended) {
+      leftClimberPIDController.setReference(0, CANSparkFlex.ControlType.kPosition);
+      isClimberExtended = false;
+    }
+    else {
+      leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+      isClimberExtended = true;
+    }
   }
 
   /** Returns a value in rotations of the current motor
-   * @return
+   * @return  position as a double (the average position of both motors)
    */
   public double getClimberMotorPosition() {
     return (leftClimberEncoder.getPosition() + rightClimberEncoder.getPosition()) / 2;
   }
+
 
   public void initSendable(SendableBuilder builder){
     builder.setSmartDashboardType("SwerveModule");
