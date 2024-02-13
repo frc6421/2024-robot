@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 public class ClimberSubsystem extends SubsystemBase {
 
   public static class ClimberConstants {
@@ -32,33 +34,30 @@ public class ClimberSubsystem extends SubsystemBase {
 
     //TODO Confirm values
     public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0;
-    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 100;
+    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 5;
 
     // Current Limits
     //TODO Confirm Limits
     public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
-
-    // Command States
-    public static enum climberState {
-      EXTENDED,
-      LOW
-    }
   }
 
   //Create new Motors/Controllers
   private CANSparkFlex leftClimberMotor;
   private CANSparkFlex rightClimberMotor;
+
   private final SparkPIDController rightClimberPIDController;
   private final SparkPIDController leftClimberPIDController;
 
   private final RelativeEncoder leftClimberEncoder;
   private final RelativeEncoder rightClimberEncoder;
+
   public boolean isClimberExtended;
+
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     // Make new NEO Motors
-    leftClimberMotor = new CANSparkFlex(ClimberConstants.LEFT_CLIMBER_CAN_ID, null);
-    rightClimberMotor = new CANSparkFlex(ClimberConstants.RIGHT_CLIMBER_CAN_ID, null);
+    leftClimberMotor = new CANSparkFlex(ClimberConstants.LEFT_CLIMBER_CAN_ID, MotorType.kBrushless);
+    rightClimberMotor = new CANSparkFlex(ClimberConstants.RIGHT_CLIMBER_CAN_ID, MotorType.kBrushless);
 
     // Factory default
     leftClimberMotor.restoreFactoryDefaults();
@@ -96,16 +95,14 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberPIDController.setP(ClimberConstants.CLIMBER_KP, 0);
     leftClimberPIDController.setI(ClimberConstants.CLIMBER_KI, 0);
     leftClimberPIDController.setD(ClimberConstants.CLIMBER_KD, 0);
-    leftClimberPIDController.setSmartMotionMaxVelocity(ClimberConstants.CLIMBER_KV, 0);
 
     rightClimberPIDController.setP(ClimberConstants.CLIMBER_KP, 0);
     rightClimberPIDController.setI(ClimberConstants.CLIMBER_KI, 0);
     rightClimberPIDController.setD(ClimberConstants.CLIMBER_KD, 0);
-    rightClimberPIDController.setSmartMotionMaxVelocity(ClimberConstants.CLIMBER_KV, 0);
 
     // Apply gear ratio
-    leftClimberEncoder.setPositionConversionFactor(360 / ClimberConstants.CLIMBER_GEAR_RATIO);
-    rightClimberEncoder.setPositionConversionFactor(360 / ClimberConstants.CLIMBER_GEAR_RATIO);
+    leftClimberEncoder.setPositionConversionFactor(ClimberConstants.CLIMBER_GEAR_RATIO);
+    rightClimberEncoder.setPositionConversionFactor(ClimberConstants.CLIMBER_GEAR_RATIO);
 
     // Current limits
     leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
@@ -118,11 +115,11 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public void setClimberMotorPosition(double position) {
     if (isClimberExtended) {
-      leftClimberPIDController.setReference(0, CANSparkFlex.ControlType.kPosition);
+      leftClimberPIDController.setReference(0, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
       isClimberExtended = false;
     }
     else {
-      leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+      leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
       isClimberExtended = true;
     }
   }
@@ -136,11 +133,9 @@ public class ClimberSubsystem extends SubsystemBase {
 
 
   public void initSendable(SendableBuilder builder){
-    builder.setSmartDashboardType("SwerveModule");
+    builder.setSmartDashboardType("Climber");
 
     builder.addDoubleProperty("Climber P Value", () -> leftClimberPIDController.getP(), null);
-    builder.addDoubleProperty("Climber I Value", () -> leftClimberPIDController.getI(), null);
-    builder.addDoubleProperty("Climber D Value", () -> leftClimberPIDController.getD(), null);
-    builder.addDoubleProperty("Motor Output", () -> leftClimberMotor.get(), null);
+    builder.addDoubleProperty("Climber Motor Position", () -> getClimberMotorPosition(), null);
   }
 }

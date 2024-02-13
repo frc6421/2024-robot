@@ -92,6 +92,9 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
+
+    driverController.rightTrigger().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(armSubsystem.getArmMotorPositionDeg() + 5)));
+    driverController.leftTrigger().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(armSubsystem.getArmMotorPositionDeg() - 5)));
   }
 
   /**
