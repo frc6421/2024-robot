@@ -6,6 +6,7 @@ package frc.robot.commands.tuning;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,7 +42,7 @@ public class TuneVelocityPCommand extends Command {
     slot0Configs = new Slot0Configs();
 
     zeroWheelsRequest = new SwerveRequest.PointWheelsAt();
-    driveVelocityRequest = new SwerveRequest.ApplyChassisSpeeds();
+    driveVelocityRequest = new SwerveRequest.ApplyChassisSpeeds().withDriveRequestType(DriveRequestType.Velocity);
     stopRobotRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     velocity = 0;
