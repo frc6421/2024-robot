@@ -43,7 +43,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
         .withKP(3).withKI(0).withKD(0)
-        .withKS(0.29).withKV(0.12).withKA(0);
+        .withKS(0.29).withKV(0.15).withKA(0.006);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
