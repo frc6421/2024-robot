@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
@@ -16,8 +17,8 @@ public class ClimberSubsystem extends SubsystemBase {
   public static class ClimberConstants {
 
     // Can ID
-    private static final int LEFT_CLIMBER_CAN_ID = 40;
-    private static final int RIGHT_CLIMBER_CAN_ID = 41;
+    private static final int LEFT_CLIMBER_CAN_ID = 41;
+    private static final int RIGHT_CLIMBER_CAN_ID = 40;
 
     // TODO Limit switch sensors??? (boolean)
     // TODO Value is TBD
@@ -61,11 +62,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Factory default
     leftClimberMotor.restoreFactoryDefaults();
-    leftClimberMotor.restoreFactoryDefaults();
+    rightClimberMotor.restoreFactoryDefaults();
 
     // PID Controller
-    rightClimberPIDController = leftClimberMotor.getPIDController();
-    leftClimberPIDController = rightClimberMotor.getPIDController();
+    rightClimberPIDController = rightClimberMotor.getPIDController();
+    leftClimberPIDController = leftClimberMotor.getPIDController();
     
     // Set Up Encoders
     leftClimberEncoder = leftClimberMotor.getEncoder();
@@ -83,13 +84,14 @@ public class ClimberSubsystem extends SubsystemBase {
     
     // Set motors to brake mode and set direction
     // TODO Confirm which direction config should be
+    leftClimberMotor.setIdleMode(IdleMode.kCoast);
     leftClimberMotor.setInverted(false);
     leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
-    rightClimberMotor.setInverted(false);
+    rightClimberMotor.setIdleMode(IdleMode.kCoast);
     rightClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
 
     // Follower
-    rightClimberMotor.follow(leftClimberMotor, false);
+    rightClimberMotor.follow(leftClimberMotor, true);
 
     // Apply PID
     leftClimberPIDController.setP(ClimberConstants.CLIMBER_KP, 0);
@@ -107,6 +109,9 @@ public class ClimberSubsystem extends SubsystemBase {
     // Current limits
     leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
     rightClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
+
+    leftClimberEncoder.setPosition(0);
+    rightClimberEncoder.setPosition(0);
   }
 
   /** Sets the climber arms to a set position
@@ -114,14 +119,16 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param position Used to set the position of the motors
    */
   public void setClimberMotorPosition(double position) {
-    if (isClimberExtended) {
-      leftClimberPIDController.setReference(0, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
-      isClimberExtended = false;
-    }
-    else {
-      leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
-      isClimberExtended = true;
-    }
+    leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    // if (isClimberExtended) {
+    //   leftClimberPIDController.setReference(0, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
+    //   isClimberExtended = false;
+    // }
+    // else {
+    //   leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
+    //   isClimberExtended = true;
+    // }
   }
 
   /** Returns a value in rotations of the current motor
@@ -131,11 +138,30 @@ public class ClimberSubsystem extends SubsystemBase {
     return (leftClimberEncoder.getPosition() + rightClimberEncoder.getPosition()) / 2;
   }
 
-
-  public void initSendable(SendableBuilder builder){
-    builder.setSmartDashboardType("Climber");
-
-    builder.addDoubleProperty("Climber P Value", () -> leftClimberPIDController.getP(), null);
-    builder.addDoubleProperty("Climber Motor Position", () -> getClimberMotorPosition(), null);
+  public double getClimberLeftMotorPosition() {
+    return leftClimberEncoder.getPosition();
   }
+
+  public double getClimberRightMotorPosition() {
+    return rightClimberEncoder.getPosition();
+  }
+
+  public void setClimberP(double p)
+  {
+    leftClimberPIDController.setP(p);
+    rightClimberPIDController.setP(p);
+  }
+
+  public void setClimberVoltage(double v)
+  {
+    leftClimberMotor.setVoltage(v);
+    rightClimberMotor.setVoltage(v);
+  }
+
+  // public void initSendable(SendableBuilder builder){
+  //   builder.setSmartDashboardType("Climber");
+
+  //   builder.addDoubleProperty("Climber P Value", () -> leftClimberPIDController.getP(), null);
+  //   builder.addDoubleProperty("Climber Motor Position", () -> getClimberMotorPosition(), null);
+  // }
 }

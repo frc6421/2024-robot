@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.CenterNoteCommand;
+import frc.robot.commands.ClimberTuning;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -46,6 +47,8 @@ public class RobotContainer {
   private final DriveCommand driveCommand;
   private final CenterNoteCommand centerNoteCommand;
 
+  private final ClimberTuning climberTuning;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -55,9 +58,11 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
+    climberSubsystem = new ClimberSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
+    climberTuning = new ClimberTuning(climberSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
     
