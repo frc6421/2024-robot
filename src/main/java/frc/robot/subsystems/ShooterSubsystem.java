@@ -5,10 +5,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkFlex;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -16,110 +17,101 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final int TOP_SHOOTER_CAN_ID = 30;
       public static final int BOTTOM_SHOOTER_CAN_ID = 31;
       public static final int CURRENT_LIMIT = 80;
+      //TODO: Verify that this is the maximum speed the motors can achieve. 
+      public static final int TOP_MAXIMUM_SPEED_IN_RPM = 6000;
+      public static final int BOTTOM_MAXIMUM_SPEED_IN_RPM = 6000;
 
-      public static final double SHOOTER_P = 0;
-      public static final double SHOOTER_I = 0;
-      public static final double SHOOTER_D = 0;
+      public static final double TOP_KS = 0;
+      public static final double TOP_KV = 0;
+      public static final double TOP_KP = 0;
+      public static final double TOP_KI = 0;
+      public static final double TOP_KD = 0;
+
+      public static final double BOTTOM_KS = 0;
+      public static final double BOTTOM_KV = 0;
+      public static final double BOTTOM_KP = 0;
+      public static final double BOTTOM_KI = 0;
+      public static final double BOTTOM_KD = 0;
     }
     //Creating the objects for the motors and their encoders, respectivly
-    private CANSparkFlex topShooterMotor;
-    private CANSparkFlex bottomShooterMotor;
+    private TalonFX topShooterMotor;
+    private TalonFX bottomShooterMotor;
 
-    private SparkPIDController topShooterPID;
-    private SparkPIDController bottomShooterPID;
+    private TalonFXConfiguration topShooterConfig;
+    private TalonFXConfiguration bottomShooterConfig;
 
-    private static RelativeEncoder topEncoder;
-    private static RelativeEncoder bottomEncoder;
-
-    private double positionMinOutput;
-    private double positionMaxOutput;
+    private DutyCycleOut topDutyCycle;
+    private DutyCycleOut bottomDutyCycle;
+    
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
 
     //Setting their CAN ID and the type
-    topShooterMotor = new CANSparkFlex(ShooterConstants.TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
-    bottomShooterMotor = new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_CAN_ID, MotorType.kBrushless);
+    topShooterMotor = new TalonFX(ShooterConstants.TOP_SHOOTER_CAN_ID);
+    bottomShooterMotor = new TalonFX(ShooterConstants.BOTTOM_SHOOTER_CAN_ID);
 
-    //Reseting them to defaults
-    topShooterMotor.restoreFactoryDefaults();
-    bottomShooterMotor.restoreFactoryDefaults();
+    topShooterMotor.getConfigurator().apply(topShooterConfig);
+    bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
 
-    topShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
-    bottomShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
+    topShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    bottomShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    //TODO: Verify Inverts
+    topShooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    bottomShooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    topShooterMotor.setInverted(false);
-    topShooterMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
 
-    //Setting the bottom motor to follow
-    bottomShooterMotor.follow(topShooterMotor, true);
+    topShooterConfig.Slot0.kS = ShooterConstants.TOP_KS;
+    topShooterConfig.Slot0.kV = ShooterConstants.TOP_KV;
+    topShooterConfig.Slot0.kP = ShooterConstants.TOP_KP;
+    topShooterConfig.Slot0.kI = ShooterConstants.TOP_KI;
+    topShooterConfig.Slot0.kD = ShooterConstants.TOP_KD;
 
-    //Setting the encoders
-    topEncoder = topShooterMotor.getEncoder();
-    bottomEncoder = bottomShooterMotor.getEncoder();
+    bottomShooterConfig.Slot0.kS = ShooterConstants.BOTTOM_KS;
+    bottomShooterConfig.Slot0.kV = ShooterConstants.BOTTOM_KV;
+    bottomShooterConfig.Slot0.kP = ShooterConstants.BOTTOM_KP;
+    bottomShooterConfig.Slot0.kI = ShooterConstants.BOTTOM_KI;
+    bottomShooterConfig.Slot0.kD = ShooterConstants.BOTTOM_KD;
 
-    // PID Stuff... fun... \\
-    positionMinOutput = -1;
-    positionMaxOutput =  1;
-
-    topShooterPID = topShooterMotor.getPIDController();
-    bottomShooterPID = bottomShooterMotor.getPIDController();
+    topShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT;
+    bottomShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT;
     
-    topShooterPID.setFeedbackDevice(topEncoder);
-    bottomShooterPID.setFeedbackDevice(bottomEncoder);
-
-    topShooterPID.setP(ShooterConstants.SHOOTER_P, 0);
-    topShooterPID.setI(ShooterConstants.SHOOTER_I, 0);
-    topShooterPID.setD(ShooterConstants.SHOOTER_D, 0);
-    bottomShooterPID.setP(ShooterConstants.SHOOTER_P, 0);
-    bottomShooterPID.setI(ShooterConstants.SHOOTER_I, 0);
-    bottomShooterPID.setD(ShooterConstants.SHOOTER_D, 0);
-        
-    topShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
-    bottomShooterPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
-    // And the end of the PID Stuff. yay. \\
+    topDutyCycle = new DutyCycleOut(0);
+    bottomDutyCycle = new DutyCycleOut(0);
   }
   /**
    * Runs the motors at a desired velocity
    * @param velocity the speed of which to run the motors
    */
   public void setMotorVelocity(double velocity){
-    topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kVoltage);
-    bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, velocity, SparkPIDController.ArbFFUnits.kVoltage);
+    topDutyCycle.Output = (velocity / ShooterConstants.TOP_MAXIMUM_SPEED_IN_RPM);
+    bottomDutyCycle.Output = (velocity / ShooterConstants.BOTTOM_MAXIMUM_SPEED_IN_RPM);
   }
 
   /**
    * Runs the motors at a desired velocity
    * @param velocity the speed of which to run the motors
    */
+  //TODO: Find out how the heck to do this
   public void setTuningMotorVelocity(double velocity, double feedForward){
-    topShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, feedForward, SparkPIDController.ArbFFUnits.kVoltage);
-    bottomShooterPID.setReference(velocity, CANSparkFlex.ControlType.kVelocity, 0, feedForward, SparkPIDController.ArbFFUnits.kVoltage);
+    
   }
 
-  /**
-   * Gets the current RPM of the top motor
-   * @return rpm
-   */
+  
   public double getTopMotorVelocity(){
-    return topEncoder.getVelocity();
+    return topShooterMotor.getVelocity().refresh().getValue();
   }
 
-  /**
-   * Gets the current RPM of the bottom motor
-   * @return rpm
-   */
   public double getBottomMotorVelocity(){
-    return bottomEncoder.getVelocity();
+    return bottomShooterMotor.getVelocity().refresh().getValue();
   }
 
-  /**
-   * Changes the P value of the PID control loop of each motor
-   * @param P the new P 
-   */
-  public void setP(double P){
-    topShooterPID.setP(P,0);
-    bottomShooterPID.setP(P,0);
+  public void setTopP(double P){
+    topShooterConfig.Slot0.kP = P;
+  }
+
+  public void setBottomP(double P){
+    bottomShooterConfig.Slot0.kP = P;
   }
 
   /**
@@ -139,11 +131,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getTopMotorVoltage() {
-    return topEncoder.getVelocity();
+    return topShooterMotor.getMotorVoltage().refresh().getValue();
   }
 
   public double getBottomMotorVoltage() {
-    return bottomEncoder.getVelocity();
+    return bottomShooterMotor.getMotorVoltage().refresh().getValue();
   }
 
   @Override

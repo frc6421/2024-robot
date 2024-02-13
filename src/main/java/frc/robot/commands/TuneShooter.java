@@ -13,15 +13,20 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class TuneShooter extends Command {
 
   private enum Tune {
-    kS,
-    kV,
-    kP
+    topkS,
+    topkV,
+    topkP,
+    bottomkS,
+    bottomkV,
+    bottomkP
   }
 
   private double topkS;
   private double bottomkS;
-  private double kV;
-  private double kP;
+  private double topkV;
+  private double bottomkV;
+  private double topkP;
+  private double bottomkP;
   private double setVolocity;
   private double finalTopVelocity;
   private double finalBottomVelocity;
@@ -36,9 +41,12 @@ public class TuneShooter extends Command {
     shooterSubsystem = shooter;
 
     tuneChooser = new SendableChooser<Tune>();
-    tuneChooser.setDefaultOption("kS", Tune.kS);
-    tuneChooser.addOption("kV", Tune.kV);
-    tuneChooser.addOption("kP", Tune.kP);
+    tuneChooser.setDefaultOption("topkS", Tune.topkS);
+    tuneChooser.addOption("bottomkS", Tune.bottomkS);
+    tuneChooser.addOption("topkV", Tune.topkV);
+    tuneChooser.addOption("bottomkV", Tune.bottomkV);
+    tuneChooser.addOption("topkP", Tune.topkP);
+    tuneChooser.addOption("bottomP", Tune.bottomkP);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
@@ -52,17 +60,26 @@ public class TuneShooter extends Command {
   public void initialize() {
 
     switch (tuneChooser.getSelected()) {
-      case kS:
+      case topkS:
         shooterSubsystem.setTopVoltage(topkS);
+        break;
+      case topkV:
+        shooterSubsystem.setTopVoltage(topkS + topkV);
+        break;
+      case topkP:
+        shooterSubsystem.setTopP(topkP);
+        shooterSubsystem.setTuningMotorVelocity(setVolocity, topkS + topkV);
+        break;
+      //Bottom Shooter
+      case bottomkS:
         shooterSubsystem.setBottomVoltage(bottomkS);
         break;
-      case kV:
-        shooterSubsystem.setTopVoltage(topkS + kV);
-        shooterSubsystem.setBottomVoltage(bottomkS + kV);
+      case bottomkV:
+        shooterSubsystem.setBottomVoltage(bottomkS + bottomkV);
         break;
-      case kP:
-        shooterSubsystem.setP(kP);
-        shooterSubsystem.setTuningMotorVelocity(setVolocity, topkS + kV);
+      case bottomkP:
+        shooterSubsystem.setBottomP(bottomkP);
+        shooterSubsystem.setTuningMotorVelocity(setVolocity, bottomkS + bottomkV);
         break;
     }
 
@@ -77,7 +94,7 @@ public class TuneShooter extends Command {
   public void end(boolean interrupted) {
     finalTopVelocity = shooterSubsystem.getTopMotorVelocity();
     finalBottomVelocity = shooterSubsystem.getBottomMotorVelocity();
-    if (tuneChooser.getSelected() == Tune.kV) {
+    if (tuneChooser.getSelected() == Tune.topkV || tuneChooser.getSelected() == Tune.bottomkV) {
       finalTopkV = shooterSubsystem.getTopMotorVoltage() / shooterSubsystem.getTopMotorVelocity();
       finalBottomkV = shooterSubsystem.getBottomMotorVoltage() / shooterSubsystem.getBottomMotorVelocity();
     }
@@ -98,12 +115,20 @@ public class TuneShooter extends Command {
     this.bottomkS = kS;
   }
 
-  private void setkV(double kV) {
-    this.kV = kV;
+  private void setTopkV(double kV) {
+    this.topkV = kV;
   }
 
-  private void setkP(double kP) {
-    this.kP = kP;
+  private void setBottomkV(double kV){
+    this.bottomkV = kV;
+  }
+
+  private void setTopkP(double kP) {
+    this.topkP = kP;
+  }
+
+  private void setBottomkP(double kP){
+    this.bottomkP = kP;
   }
 
   public void setVolocity(double setVolocity) {
@@ -115,8 +140,11 @@ public class TuneShooter extends Command {
     super.initSendable(builder);
     builder.addDoubleProperty("topkS", () -> topkS, this::setTopkS);
     builder.addDoubleProperty("bottomkS", () -> bottomkS, this::setBottomkS);
-    builder.addDoubleProperty("kV", () -> kV, this::setkV);
-    builder.addDoubleProperty("kP", () -> kP, this::setkP );
+    builder.addDoubleProperty("topkV", () -> topkV, this::setTopkV);
+    builder.addDoubleProperty("bottomkV", () -> bottomkV, this::setBottomkV);
+    builder.addDoubleProperty("topkP", () -> topkP, this::setTopkP);
+    builder.addDoubleProperty("bottomP", () -> bottomkP, this::setBottomkP);
+    //TODO: Search how to fix this
     builder.addDoubleProperty("set Velcoty", () -> kP, this::setVolocity);
     builder.addDoubleProperty("Top Motor Velocity", () -> shooterSubsystem.getTopMotorVelocity(), null);
     builder.addDoubleProperty("Bottom Motor Velocity", () -> shooterSubsystem.getBottomMotorVelocity(), null);
