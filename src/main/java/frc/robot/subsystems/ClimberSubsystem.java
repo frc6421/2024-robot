@@ -27,7 +27,7 @@ public class ClimberSubsystem extends SubsystemBase {
     // TODO Put in PID values
     public static final double CLIMBER_KS = 0.0;
     public static final double CLIMBER_KV = 0.0;
-    public static final double CLIMBER_KP = 0.0;
+    public static final double CLIMBER_KP = 0.0; // 0.05
     public static final double CLIMBER_KI = 0.0;
     public static final double CLIMBER_KD = 0.0;
     public static final double CLIMBER_KG = 0.0;
@@ -35,7 +35,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     //TODO Confirm values
     public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0;
-    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 5;
+    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 5; // 147
 
     // Current Limits
     //TODO Confirm Limits
