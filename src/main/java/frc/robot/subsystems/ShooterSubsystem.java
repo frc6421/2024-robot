@@ -37,8 +37,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX topShooterMotor;
     private TalonFX bottomShooterMotor;
 
-    private TalonFXConfiguration topShooterConfig;
-    private TalonFXConfiguration bottomShooterConfig;
+    public TalonFXConfiguration topShooterConfig;
+    public TalonFXConfiguration bottomShooterConfig;
 
     private VelocityVoltage shooterMotorVelocity;
     
