@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -40,8 +40,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFXConfiguration topShooterConfig;
     private TalonFXConfiguration bottomShooterConfig;
 
-    private DutyCycleOut topDutyCycle;
-    private DutyCycleOut bottomDutyCycle;
+    private VelocityVoltage shooterMotorVelocity;
     
 
   /** Creates a new ShooterSubsystem. */
@@ -50,6 +49,11 @@ public class ShooterSubsystem extends SubsystemBase {
     //Setting their CAN ID and the type
     topShooterMotor = new TalonFX(ShooterConstants.TOP_SHOOTER_CAN_ID);
     bottomShooterMotor = new TalonFX(ShooterConstants.BOTTOM_SHOOTER_CAN_ID);
+
+    topShooterConfig = new TalonFXConfiguration();
+    bottomShooterConfig = new TalonFXConfiguration();
+
+    shooterMotorVelocity = new VelocityVoltage(0);
 
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
@@ -75,26 +79,22 @@ public class ShooterSubsystem extends SubsystemBase {
 
     topShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT;
-    
-    topDutyCycle = new DutyCycleOut(0);
-    bottomDutyCycle = new DutyCycleOut(0);
-  }
-  /**
-   * Runs the motors at a desired velocity
-   * @param velocity the speed of which to run the motors
-   */
-  public void setMotorVelocity(double velocity){
-    topDutyCycle.Output = (velocity / ShooterConstants.TOP_MAXIMUM_SPEED_IN_RPM);
-    bottomDutyCycle.Output = (velocity / ShooterConstants.BOTTOM_MAXIMUM_SPEED_IN_RPM);
+
+    topShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    bottomShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    topShooterMotor.getConfigurator().apply(topShooterConfig);
+    bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
   }
 
   /**
    * Runs the motors at a desired velocity
    * @param velocity the speed of which to run the motors
    */
-  //TODO: Find out how the heck to do this
-  public void setTuningMotorVelocity(double velocity, double feedForward){
-    
+  public void setShooterMotorVelocity(double velocity){
+    shooterMotorVelocity.withVelocity(velocity);
+    topShooterMotor.setControl(shooterMotorVelocity);
+    bottomShooterMotor.setControl(shooterMotorVelocity);
   }
 
   
@@ -106,13 +106,20 @@ public class ShooterSubsystem extends SubsystemBase {
     return bottomShooterMotor.getVelocity().refresh().getValue();
   }
 
-  public void setTopP(double P){
+  public void setTopConfig(double P, double S, double V){
     topShooterConfig.Slot0.kP = P;
+    topShooterConfig.Slot0.kS = S;
+    topShooterConfig.Slot0.kV = V;
+    topShooterMotor.getConfigurator().apply(topShooterConfig);
   }
 
-  public void setBottomP(double P){
+  public void setBottomP(double P, double S, double V){
     bottomShooterConfig.Slot0.kP = P;
+    bottomShooterConfig.Slot0.kS = S;
+    bottomShooterConfig.Slot0.kV = V;
+    bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
   }
+
 
   /**
    * Set both motor voltages.
