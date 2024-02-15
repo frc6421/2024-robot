@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
-import frc.robot.commands.CenterNoteCommand;
+import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -42,7 +42,7 @@ public class RobotContainer {
 
   // Commands \\
   private final DriveCommand driveCommand;
-  private final CenterNoteCommand centerNoteCommand;
+  private final IntakeTransitionCommand intakeTransitionCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,7 +55,7 @@ public class RobotContainer {
     armSubsystem = new TransitionArmSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
-    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
+    intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
     
@@ -74,20 +74,19 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-     driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
-     driverController.leftBumper().whileTrue(centerNoteCommand);
-     driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
 
-     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
-     driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_REVERSE_SPEED)));
-     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
-     driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0)));
+    driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
+
+    driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+    driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
 
     driverController.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
 
-    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))
+    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
       .andThen(new WaitCommand(0.5))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0))
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
   }
