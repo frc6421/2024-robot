@@ -26,13 +26,12 @@ public class CANdleSubsystem extends SubsystemBase {
         public static double ANIMATION_SPEED = 0.50; // Percent
         public static double LED_BRIGHTNESS = 1.00;  // Percent
         
-        //Color combinations. In GRB.
+        //Color combinations. In RGB.
         public static int COLORS[][] = {
-            {0,   255,   0},/* Red */     {95,  255,  31},/* Orange */      {255, 255,   0},/* Yellow */
-            {205,  50,  50},/* Lime */    {238, 144, 144},/* Light Green */ {255,   0,   0},/* Green */
-            {255,   0, 255},/* Cyan */    {216, 173, 230},/* Light Blue */  {0,     0, 255},/* Blue */
-            {0,   128, 128},/* Violet */  {43,  159, 104},/* Magenta */     {49,  222,  99},/* Pink */
-            {255, 255, 255},/* White */   {0,    0,    0},/* Black */
+            {255,0,255},/*Fuchsia*/{255,105,180},/*HOT Pink*/{160,32,240},/*Purple*/
+            {255,0,0},/*Red*/{0,255,0},/*Green*/{0,0,255},/*Blue*/
+            {255,255,0},/*Yellow*/
+            {255,255,255},/*White*/{0,0,0},/*Black*/
         };
     }
 
@@ -41,6 +40,8 @@ public class CANdleSubsystem extends SubsystemBase {
     public static int mainPrimaryColor;
     public static int mainSecondaryColor;
     public static int mainPattern;
+
+    public static long numberLEDs;
 
     public static int r;
     public static int g;
@@ -60,7 +61,6 @@ public class CANdleSubsystem extends SubsystemBase {
 
         candle.clearStickyFaults();
         
-
         Shuffleboard.getTab("CANdle Testing").add(this);
     }
 
@@ -68,9 +68,7 @@ public class CANdleSubsystem extends SubsystemBase {
      * Sets the color of the LED strips connected to the CANdle
      * @param primaryColor The color to be used as the base color. The color and
      * the number they correspond to is listed:
-     *    -0: Red   -1: Orange   -2: Yellow   -3: Lime   -4: Light Green   -5: Green
-     *    -6: Cyan   -7: Light Blue   -8: Blue   -9: Violet   -10: Magenta   -11: Pink
-     *    -12: White   -13: Black
+     *    
      * @param secondaryColor The color to be used in the Twinkle pattern as the pattern
      * These colors also come from the list for primaryColor
      * @param animation The animation wanted. The pattern and the number they correspond
@@ -83,20 +81,20 @@ public class CANdleSubsystem extends SubsystemBase {
 
             case 0: // Rainbow
                 RainbowAnimation rainbowAnim = new RainbowAnimation(CANdleConstants.LED_BRIGHTNESS, 
-                    CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED);
+                    CANdleConstants.ANIMATION_SPEED, (int)numberLEDs);
                 candle.animate(rainbowAnim);
                 break;
 
             case 1: // Rainbow Fade
                 RgbFadeAnimation rainbowFadeAnim = new RgbFadeAnimation(CANdleConstants.LED_BRIGHTNESS, 
-                    CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED);
+                    CANdleConstants.ANIMATION_SPEED, (int)numberLEDs);
                 rainbowFadeAnim.setSpeed(animation);
                 candle.animate(rainbowFadeAnim);
                 break;
 
             case 2: // Sparkle with Background
                 TwinkleAnimation twinkleAnim = new TwinkleAnimation(getColorR(secondaryColor), getColorG(secondaryColor),
-                    getColorB(secondaryColor), 0, CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED, TwinklePercent.Percent100);
+                    getColorB(secondaryColor), 0, CANdleConstants.ANIMATION_SPEED, (int)numberLEDs, TwinklePercent.Percent100);
                 // Setting the background color before the pattern
                 candle.setLEDs(getColorG(primaryColor), getColorR(primaryColor), getColorB(primaryColor));
                 candle.animate(twinkleAnim);
@@ -104,7 +102,7 @@ public class CANdleSubsystem extends SubsystemBase {
                 
             case 3: // Fade
                 SingleFadeAnimation fadeAnim = new SingleFadeAnimation(getColorG(primaryColor), getColorR(primaryColor), 
-                    getColorB(primaryColor), 0, CANdleConstants.ANIMATION_SPEED, CANdleConstants.NUMBER_OF_LED);
+                    getColorB(primaryColor), 0, CANdleConstants.ANIMATION_SPEED, (int)numberLEDs);
                 candle.animate(fadeAnim);
                 break;
 
@@ -150,6 +148,8 @@ public class CANdleSubsystem extends SubsystemBase {
 
     public void initSendable(SendableBuilder builder){
         builder.setSmartDashboardType("CANdleSubsystem");
+
+        builder.addIntegerProperty("Number of LED's", ()-> numberLEDs, null);
 
         builder.addIntegerProperty("Set R", null, this::setR);
         builder.addIntegerProperty("Set G", null, this::setG);
