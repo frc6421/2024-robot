@@ -96,7 +96,7 @@ public class TuneVelocityPCommand extends Command {
   @Override
   public boolean isFinished() {
     // Stop the command when the robot has travelled at least 3.5 meters.
-    return Math.abs(driveSubsystem.getCurrentPose2d().getX()) > 3.5;
+    return Math.abs(driveSubsystem.getCurrentPose2d().getX()) > 4.5;
   }
 
   /**
