@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -44,6 +45,8 @@ public class RobotContainer {
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
 
+  public static RobotStates state;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -58,6 +61,8 @@ public class RobotContainer {
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
+
+    state = RobotStates.DRIVE;
     
     // Configure the trigger bindings
     configureBindings();
@@ -74,13 +79,18 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
+    // INTAKE STATE \\
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
 
+    // BARF STATE \\
+    driverController.rightBumper().onTrue(new InstantCommand(() -> state = RobotStates.BARF));
     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
     driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
     driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
+    // AMP STATE \\ 
     driverController.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
 
     driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
@@ -88,6 +98,12 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
+
+    // SHOOT STATE \\
+
+    // TRAP STATE \\ 
+
+    // CLIMB STATE \\
   }
 
   /**

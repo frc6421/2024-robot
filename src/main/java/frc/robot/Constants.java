@@ -19,6 +19,7 @@ public final class Constants {
         SHOOT,
         AMP,
         TRAP,
-        CLIMB
+        CLIMB,
+        BARF
     }
 }
