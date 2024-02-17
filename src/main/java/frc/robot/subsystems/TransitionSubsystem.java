@@ -20,8 +20,7 @@ public class TransitionSubsystem extends SubsystemBase {
 
     private static final double TRANSITION_GEAR_RATIO = 1.6;
 
-    public static final double TRANSITION_FORWARD_SPEED = 0.6;
-    public static final double TRANSITION_REVERSE_SPEED =  -0.6;
+    public static final double TRANSITION_SPEED = 0.3 * 12;
 
     // Its about 400-380 when nothing is detected
     public static final double DETECTION_DISTANCE_MM = 300;
@@ -65,6 +64,7 @@ public class TransitionSubsystem extends SubsystemBase {
   public void setTransitionMotorOutput(double value) {
     transitionMotor.set(value);
   }
+
 
   /**
    * Stops the transition motor
@@ -110,8 +110,9 @@ public class TransitionSubsystem extends SubsystemBase {
   /**Sets the given velocity to the transitionMotor
    * @param double velocity
    */
-  public void setTransitionVoltage(double velocity) {
-    transitionMotor.setVoltage(velocity);
+  public void setTransitionVoltage(double voltage)
+  {
+    transitionMotor.setVoltage(voltage);
   }
 
   /** Gets the current position of the encoder

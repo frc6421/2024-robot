@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
-import frc.robot.commands.CenterNoteCommand;
 import frc.robot.commands.ClimberTuning;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -38,8 +37,6 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public ClimberSubsystem climberSubsystem;
-  private final TransitionArmSubsystem armSubsystem;
 
   // Controllers \\
   private final CommandXboxController driverController; 
@@ -53,6 +50,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
+  public ClimberSubsystem climberSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -80,7 +78,6 @@ public class RobotContainer {
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
 
-    driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
     shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
     shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
