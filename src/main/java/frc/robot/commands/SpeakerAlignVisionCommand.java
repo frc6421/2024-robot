@@ -60,11 +60,7 @@ public class SpeakerAlignVisionCommand extends Command {
   @Override
   public void initialize() {
     rotationController.setTolerance(allowableError);
-  }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
     if(allianceColor.get().equals(Alliance.Red)) {
@@ -72,6 +68,11 @@ public class SpeakerAlignVisionCommand extends Command {
     } else if(allianceColor.get().equals(Alliance.Blue)) {
       targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
     }
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
 
     currentPose = driveSubsystem.getCurrentPose2d();
 

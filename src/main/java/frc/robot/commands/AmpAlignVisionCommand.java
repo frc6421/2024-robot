@@ -89,6 +89,7 @@ public class AmpAlignVisionCommand extends Command {
       targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(6).get().toPose2d();
     }
 
+    //TODO add/subtract robot size if needed
     xController.setGoal(targetPose.getX());
     yController.setGoal(targetPose.getY());
     rotationController.setGoal(targetPose.getRotation().getRadians());
@@ -100,16 +101,25 @@ public class AmpAlignVisionCommand extends Command {
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
+    driveSubsystem.setControl(driveRequest
+      .withVelocityX(xController.calculate(currentPose.getX()))
+      .withVelocityY(yController.calculate(currentPose.getY()))
+      .withRotationalRate(rotationController.calculate(currentPose.getRotation().getRadians())));
     
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    driveSubsystem.setControl(driveRequest
+      .withVelocityX(0)
+      .withVelocityY(0)
+      .withRotationalRate(0));
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint();
   }
 }
