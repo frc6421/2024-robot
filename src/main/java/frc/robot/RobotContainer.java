@@ -24,7 +24,6 @@ import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ShooterAngleCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -59,7 +58,7 @@ public class RobotContainer {
 
   public static RobotStates state;
 
-  private final ShooterAngleCommand shooterAngleCommand;
+  //private final ShooterAngleCommand shooterAngleCommand;
   private final ShooterRevUpCommand shooterRevUpCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -77,7 +76,7 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-    shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
+    //shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
     shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
@@ -131,8 +130,12 @@ public class RobotContainer {
     
     // SHOOT STATE \\
     operatorController.y().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
-      .andThen(new ParallelCommandGroup(shooterRevUpCommand, shooterAngleCommand))
-      .andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))); 
+      .andThen(new ParallelCommandGroup(shooterRevUpCommand, new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)))));
+      //.andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))); 
+    
+    operatorController.b().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
+      .andThen(new ParallelCommandGroup(shooterRevUpCommand, new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))));
+      //.andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))); 
     
     // TODO climber button
     // CLIMB STATE \\
