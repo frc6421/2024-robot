@@ -16,15 +16,16 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final int ANGLE_CAN_ID = 32;
     public static final int CURRENT_LIMIT = 60;
 
-    //TODO: Calibration for P value
+    //PID values
     public static final double ANGLE_KP = 0.16;
     public static final double ANGLE_KI = 0;
     public static final double ANGLE_KD = 0;
 
-    //TODO: Verify that the minimum is the extrusion bellow the shooter
+    //Limits
     public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 49;
     public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
 
+    //Encoder conversions
     public static final int GEAR_RATIO = 180;
     public static final double DEGREES_PER_MOTOR_ROTATION = (360.0 / AngleConstants.GEAR_RATIO);
 
@@ -47,40 +48,49 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     //Reseting to defaults
     angleMotor.restoreFactoryDefaults();
 
+    //Set the idle mode of the motor
     angleMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
+    //Inverts
     angleMotor.setInverted(true);
+
+    //Current limit
     angleMotor.setSmartCurrentLimit(AngleConstants.CURRENT_LIMIT);
 
+    //Clearing faults
     angleMotor.clearFaults();
 
     //Setting encoder with the conversion factor of the gearbox
     angleEncoder = angleMotor.getEncoder();
     angleEncoder.setPositionConversionFactor(AngleConstants.DEGREES_PER_MOTOR_ROTATION);
 
+    //Reseting the encoder to 0
     angleEncoder.setPosition(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
 
-    // PID Stuff... fun... \\
+    //How much of the output range one wants to use
     positionMinOutput = -1;
     positionMaxOutput =  1;
 
+    //Getting the motor for PID
     angleMotorPID = angleMotor.getPIDController();
     
+    //Setting the feedback device of the motor to the built-in encoder
     angleMotorPID.setFeedbackDevice(angleEncoder);
 
+    //Setting motor PID values
     angleMotorPID.setP(AngleConstants.ANGLE_KP, 0);
     angleMotorPID.setI(AngleConstants.ANGLE_KI, 0);
     angleMotorPID.setD(AngleConstants.ANGLE_KD, 0);
 
+    //Setting and enabling the soft limits of the motors
     angleMotor.setSoftLimit(SoftLimitDirection.kForward, AngleConstants.MAXIMIMUM_SOFT_LIMIT_DEGREES);
     angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
-    
     angleMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        
     angleMotorPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
-
   }
+
+
   /**
    * Sets the output of the angle motor to go to a certain angle
    * @param angle The angle of which to set the motor to
@@ -89,23 +99,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
-    /**
-   * Sets the output of the angle motor to go to a certain angle
-   * @param angle The angle of which to set the motor to
-   */
-  public void setAngle(double angle, double kS){
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, kS, SparkPIDController.ArbFFUnits.kVoltage);
-  }
-
-  //TODO: Remove the following functions after testing!
-
-  /**
-   * Sets the new P value of the motor retrived from ShuffleBoard
-   * @param P the new P value to set to
-   */
-  public void setP(double P){
-    angleMotorPID.setP(P);
-  }
 
   /**
    * Gets the position of the encoder to compare to the actual value
@@ -118,9 +111,5 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-
-  public void setMotorVoltage(double voltage) {
-    angleMotor.setVoltage(voltage);
   }
 }

@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.ShooterPivotTuningCommand;
-import frc.robot.commands.ShooterTuningCommand;
-import frc.robot.commands.TuneShooter;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -53,8 +50,6 @@ public class RobotContainer {
 
   // Commands \\
   private final DriveCommand driveCommand;
-  private final ShooterPivotTuningCommand shooterPivotTuningCommand;
-  private final ShooterTuningCommand shooterTuningCommand;
 
   private final IntakeTransitionCommand intakeTransitionCommand;
 
@@ -75,8 +70,6 @@ public class RobotContainer {
 
     driveSubsystem.setDefaultCommand(driveCommand);
     
-    shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);  
-    shooterTuningCommand = new ShooterTuningCommand(shooterSubsystem);
 
     // Configure the trigger bindings
     configureBindings();
