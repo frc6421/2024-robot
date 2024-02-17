@@ -121,6 +121,9 @@ public class RobotContainer {
     driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES)))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))));
+
+    driverController.rightTrigger().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(armSubsystem.getArmMotorPositionDeg() + 5)));
+    driverController.leftTrigger().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(armSubsystem.getArmMotorPositionDeg() - 5)));
   }
 
   /**
