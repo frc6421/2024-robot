@@ -20,8 +20,7 @@ public class TransitionSubsystem extends SubsystemBase {
 
     private static final double TRANSITION_GEAR_RATIO = 1.6;
 
-    public static final double TRANSITION_FORWARD_SPEED = 0.6;
-    public static final double TRANSITION_REVERSE_SPEED =  -0.6;
+    public static final double TRANSITION_SPEED = 0.3 * 12;
 
     // Its about 400-380 when nothing is detected
     public static final double DETECTION_DISTANCE_MM = 300;

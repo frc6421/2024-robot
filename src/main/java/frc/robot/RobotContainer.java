@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.commands.ShooterPivotTuningCommand;
 import frc.robot.commands.ShooterRevUpCommand;
-import frc.robot.commands.TuneShooter;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -24,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
-import frc.robot.commands.CenterNoteCommand;
+import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterAngleCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -37,8 +35,6 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ShooterPivotTuningCommand shooterPivotTuningCommand;
-  private final TuneShooter tuneShooter;
 
   // Controllers \\
   private final CommandXboxController driverController; 
@@ -52,12 +48,10 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
-  private final CANdleSubsystem candleSubsystem;
-
 
   // Commands \\
   private final DriveCommand driveCommand;
-  private final CenterNoteCommand centerNoteCommand;
+  private final IntakeTransitionCommand intakeTransitionCommand;
   private final ShooterRevUpCommand shooterRevUpCommand;
   private final ShooterAngleCommand shooterAngleCommand;
 
@@ -74,19 +68,14 @@ public class RobotContainer {
     shooterAngleSubsystem = new ShooterAngleSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
-    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
+    intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
     shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
     shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
-    
-    candleSubsystem = new CANdleSubsystem();
-    
+
     // Configure the trigger bindings
     configureBindings();
-
-    shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);
-    tuneShooter = new TuneShooter(shooterSubsystem);
   }
 
   /**
@@ -99,29 +88,28 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-     driverController.leftBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED), intakeSubsystem));
-     driverController.leftBumper().whileTrue(centerNoteCommand);
-     driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
 
-     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
-     driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_REVERSE_SPEED)));
-     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
-     driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0)));
+    driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
+
+    driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+    driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
 
     driverController.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
 
-    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))
+    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
       .andThen(new WaitCommand(0.5))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0))
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
     
     driverController.y().whileTrue(new ParallelCommandGroup(shooterRevUpCommand, shooterAngleCommand)
       .andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))));
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED))));
     driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES)))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))));
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED))));
   }
 
   /**
