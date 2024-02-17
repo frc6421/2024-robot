@@ -25,7 +25,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final double ANGLE_KS = 0.187;
 
     //TODO: Verify that the minimum is the extrusion bellow the shooter
-    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 55;
+    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 45;
     public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
 
     public static final int GEAR_RATIO = 180;
