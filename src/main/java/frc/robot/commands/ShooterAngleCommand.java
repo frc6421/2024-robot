@@ -14,9 +14,9 @@ public class ShooterAngleCommand extends Command {
 
   public ShooterAngleCommand(ShooterAngleSubsystem angleSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(angleSubsystem);
-    
     angle = angleSubsystem;
+    
+    addRequirements(angleSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -40,6 +40,6 @@ public class ShooterAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (angle.getAngleEncoderPostition() >= 45 - .1 && angle.getAngleEncoderPostition() <= 45 + .1);
+    return (angle.getAngleEncoderPostition() >= 45 - 0.075 && angle.getAngleEncoderPostition() <= 45 + 0.075);
   }
 }

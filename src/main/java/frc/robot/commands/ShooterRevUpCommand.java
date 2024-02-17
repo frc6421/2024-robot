@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterConstants;
 
 public class ShooterRevUpCommand extends Command {
 
@@ -15,6 +16,7 @@ public class ShooterRevUpCommand extends Command {
   public ShooterRevUpCommand(ShooterSubsystem shooterSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterSubsystem = shooterSubsystem;
+
     addRequirements(shooterSubsystem);
   }
 
@@ -22,7 +24,7 @@ public class ShooterRevUpCommand extends Command {
   @Override
   public void initialize() 
   {
-    shooterSubsystem.setShooterMotorVelocity(0); // TODO determine number
+    shooterSubsystem.setShooterMotorVelocity(ShooterConstants.SHOOTER_SUB_RPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,6 +38,6 @@ public class ShooterRevUpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shooterSubsystem.getBottomMotorVelocity() >= 0 && shooterSubsystem.getTopMotorVelocity() >= 0); // TODO determine number
+    return (shooterSubsystem.getBottomMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM && shooterSubsystem.getTopMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM); // TODO determine number
   }
 }

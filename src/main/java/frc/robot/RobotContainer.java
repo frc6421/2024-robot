@@ -24,6 +24,7 @@ import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterAngleCommand;
+import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -53,6 +54,9 @@ public class RobotContainer {
 
   private final IntakeTransitionCommand intakeTransitionCommand;
 
+  private final ShooterAngleCommand shooterAngleCommand;
+  private final ShooterRevUpCommand shooterRevUpCommand;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -67,6 +71,8 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
+    shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
+    shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
     
