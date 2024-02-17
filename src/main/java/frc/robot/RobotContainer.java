@@ -95,14 +95,14 @@ public class RobotContainer {
      driverController.leftBumper().whileTrue(centerNoteCommand);
      driverController.leftBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
 
-     driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
-     driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_REVERSE_SPEED)));
-     driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
-     driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0)));
+     driverController.leftTrigger().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+     driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_REVERSE_SPEED)));
+     driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+     driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0)));
 
     driverController.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
 
-    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))
+    driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_FORWARD_SPEED))
       .andThen(new WaitCommand(0.5))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))

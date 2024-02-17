@@ -17,12 +17,12 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final int CURRENT_LIMIT = 60;
 
     //TODO: Calibration for P value
-    public static final double ANGLE_KP = 0;
+    public static final double ANGLE_KP = 0.16;
     public static final double ANGLE_KI = 0;
     public static final double ANGLE_KD = 0;
 
     //TODO: Verify that the minimum is the extrusion bellow the shooter
-    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 45;
+    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 49;
     public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
 
     public static final int GEAR_RATIO = 180;
