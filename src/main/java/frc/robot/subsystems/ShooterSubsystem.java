@@ -89,7 +89,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param velocity the speed of which to run the motors
    */
   public void setShooterMotorVelocity(double velocity){
-    shooterMotorVelocity.withVelocity(velocity);
+    shooterMotorVelocity.withVelocity(velocity / 60);
     topShooterMotor.setControl(shooterMotorVelocity);
     bottomShooterMotor.setControl(shooterMotorVelocity);
   }
@@ -99,14 +99,14 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Motor velocity
    */
   public double getTopMotorVelocity(){
-    return topShooterMotor.getVelocity().refresh().getValue();
+    return 60 * topShooterMotor.getVelocity().refresh().getValue();
   }
   /**
    * Gets the velocity of the bottom motor
    * @return Motor velocity
    */
   public double getBottomMotorVelocity(){
-    return bottomShooterMotor.getVelocity().refresh().getValue();
+    return 60 * bottomShooterMotor.getVelocity().refresh().getValue();
   }
   /**
    * Updating the tuning values for the top motor
