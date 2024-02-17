@@ -18,14 +18,14 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final int BOTTOM_SHOOTER_CAN_ID = 31;
       public static final int CURRENT_LIMIT = 80;
 
-      public static final double TOP_KS = 0;
-      public static final double TOP_KV = 0;
+      public static final double TOP_KS = 0.34;
+      public static final double TOP_KV = 0.133;
       public static final double TOP_KP = 0;
       public static final double TOP_KI = 0;
       public static final double TOP_KD = 0;
 
-      public static final double BOTTOM_KS = 0;
-      public static final double BOTTOM_KV = 0;
+      public static final double BOTTOM_KS = 0.34;
+      public static final double BOTTOM_KV = 0.133;
       public static final double BOTTOM_KP = 0;
       public static final double BOTTOM_KI = 0;
       public static final double BOTTOM_KD = 0;
@@ -59,8 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     //TODO: Verify Inverts
     topShooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    bottomShooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
+    bottomShooterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     topShooterConfig.Slot0.kS = ShooterConstants.TOP_KS;
     topShooterConfig.Slot0.kV = ShooterConstants.TOP_KV;

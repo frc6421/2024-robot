@@ -12,17 +12,17 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-
 public class ShooterAngleSubsystem extends SubsystemBase {
   public static class AngleConstants{
     public static final int ANGLE_CAN_ID = 32;
     public static final int CURRENT_LIMIT = 60;
 
     //TODO: Calibration for P value
-    public static final double ANGLE_P = 0;
-    public static final double ANGLE_I = 0;
-    public static final double ANGLE_D = 0;
+    public static final double ANGLE_KP = 0.06;
+    public static final double ANGLE_KI = 0;
+    public static final double ANGLE_KD = 0;
+
+    public static final double ANGLE_KS = 0.187;
 
     //TODO: Verify that the minimum is the extrusion bellow the shooter
     public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 55;
@@ -76,9 +76,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     
     angleMotorPID.setFeedbackDevice(angleEncoder);
 
-    angleMotorPID.setP(AngleConstants.ANGLE_P, 0);
-    angleMotorPID.setI(AngleConstants.ANGLE_I, 0);
-    angleMotorPID.setD(AngleConstants.ANGLE_D, 0);
+    angleMotorPID.setP(AngleConstants.ANGLE_KP, 0);
+    angleMotorPID.setI(AngleConstants.ANGLE_KI, 0);
+    angleMotorPID.setD(AngleConstants.ANGLE_KD, 0);
 
     angleMotor.setSoftLimit(SoftLimitDirection.kForward, AngleConstants.MAXIMIMUM_SOFT_LIMIT_DEGREES);
     angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
@@ -94,15 +94,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    * @param angle The angle of which to set the motor to
    */
   public void setAngle(double angle){
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kVoltage);
-  }
-
-    /**
-   * Sets the output of the angle motor to go to a certain angle
-   * @param angle The angle of which to set the motor to
-   */
-  public void setAngle(double angle, double kS){
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, kS, SparkPIDController.ArbFFUnits.kVoltage);
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, AngleConstants.ANGLE_KS, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
   //TODO: Remove the following functions after testing!
