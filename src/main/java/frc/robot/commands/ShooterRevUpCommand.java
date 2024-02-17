@@ -38,6 +38,6 @@ public class ShooterRevUpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shooterSubsystem.getBottomMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM && shooterSubsystem.getTopMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM); // TODO determine number
+    return (shooterSubsystem.getBottomMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM && shooterSubsystem.getTopMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM);
   }
 }
