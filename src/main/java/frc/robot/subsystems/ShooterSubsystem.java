@@ -19,13 +19,13 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final int CURRENT_LIMIT = 80;
 
       public static final double TOP_KS = 0.34;
-      public static final double TOP_KV = 0.133;
+      public static final double TOP_KV = 0.130;
       public static final double TOP_KP = 0;
       public static final double TOP_KI = 0;
       public static final double TOP_KD = 0;
 
       public static final double BOTTOM_KS = 0.34;
-      public static final double BOTTOM_KV = 0.133;
+      public static final double BOTTOM_KV = 0.130;
       public static final double BOTTOM_KP = 0;
       public static final double BOTTOM_KI = 0;
       public static final double BOTTOM_KD = 0;
@@ -34,8 +34,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX topShooterMotor;
     private TalonFX bottomShooterMotor;
 
-    public TalonFXConfiguration topShooterConfig;
-    public TalonFXConfiguration bottomShooterConfig;
+    private TalonFXConfiguration topShooterConfig;
+    private TalonFXConfiguration bottomShooterConfig;
 
     private VelocityVoltage shooterMotorVelocity;
     
@@ -47,45 +47,54 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterMotor = new TalonFX(ShooterConstants.TOP_SHOOTER_CAN_ID);
     bottomShooterMotor = new TalonFX(ShooterConstants.BOTTOM_SHOOTER_CAN_ID);
 
+    //Creating the motor configs
     topShooterConfig = new TalonFXConfiguration();
     bottomShooterConfig = new TalonFXConfiguration();
 
+    //For setting the velocity
     shooterMotorVelocity = new VelocityVoltage(0);
 
+    //Setting the motors to their certain configs
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
 
+    //Mode of the motor
     topShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     bottomShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    //TODO: Verify Inverts
-    topShooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    bottomShooterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
+    //Motor Inverts
+    topShooterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    bottomShooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    //Setting the PID, kS, and kV of the top motor
     topShooterConfig.Slot0.kS = ShooterConstants.TOP_KS;
     topShooterConfig.Slot0.kV = ShooterConstants.TOP_KV;
     topShooterConfig.Slot0.kP = ShooterConstants.TOP_KP;
     topShooterConfig.Slot0.kI = ShooterConstants.TOP_KI;
     topShooterConfig.Slot0.kD = ShooterConstants.TOP_KD;
 
+    //Setting the PID, kS, and kV of the bottom motor
     bottomShooterConfig.Slot0.kS = ShooterConstants.BOTTOM_KS;
     bottomShooterConfig.Slot0.kV = ShooterConstants.BOTTOM_KV;
     bottomShooterConfig.Slot0.kP = ShooterConstants.BOTTOM_KP;
     bottomShooterConfig.Slot0.kI = ShooterConstants.BOTTOM_KI;
     bottomShooterConfig.Slot0.kD = ShooterConstants.BOTTOM_KD;
 
+    //Current limits
     topShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT;
-
     topShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+    //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
   }
 
+
   /**
    * Runs the motors at a desired velocity
-   * @param velocity the speed of which to run the motors
+   * @param velocity the speed of which to run the motors, in RPM
    */
   public void setShooterMotorVelocity(double velocity){
     shooterMotorVelocity.withVelocity(velocity / 60);
@@ -93,69 +102,24 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomShooterMotor.setControl(shooterMotorVelocity);
   }
 
+
   /**
    * Gets the velocity of the top motor
-   * @return Motor velocity
+   * @return Motor velocity, in RPM
    */
   public double getTopMotorVelocity(){
     return 60 * topShooterMotor.getVelocity().refresh().getValue();
   }
+
+
   /**
    * Gets the velocity of the bottom motor
-   * @return Motor velocity
+   * @return Motor velocity, in RPM
    */
   public double getBottomMotorVelocity(){
     return 60 * bottomShooterMotor.getVelocity().refresh().getValue();
   }
-  /**
-   * Updating the tuning values for the top motor
-   * @param P Top P value
-   * @param S Top S value
-   * @param V Top V value
-   */
-  public void setTopConfig(double P, double S, double V){
-    topShooterConfig.Slot0.kP = P;
-    topShooterConfig.Slot0.kS = S;
-    topShooterConfig.Slot0.kV = V;
-    topShooterMotor.getConfigurator().apply(topShooterConfig);
-  }
-  /**
-   * Updating the tuning values for the bottom motor
-   * @param P Bottom P value
-   * @param S Bottom S value
-   * @param V Bottom V value
-   */
-  public void setBottomConfig(double P, double S, double V){
-    bottomShooterConfig.Slot0.kP = P;
-    bottomShooterConfig.Slot0.kS = S;
-    bottomShooterConfig.Slot0.kV = V;
-    bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
-  }
 
-
-  /**
-   * Set both motor voltages.
-   * @param voltage voltages of the motor.
-   */
-  public void setTopVoltage(double voltage) {
-    topShooterMotor.setVoltage(voltage);
-  }
-
-    /**
-   * Set both motor voltages.
-   * @param voltage voltages of the motor.
-   */
-  public void setBottomVoltage(double voltage) {
-    bottomShooterMotor.setVoltage(voltage);
-  }
-
-  public double getTopMotorVoltage() {
-    return topShooterMotor.getMotorVoltage().refresh().getValue();
-  }
-
-  public double getBottomMotorVoltage() {
-    return bottomShooterMotor.getMotorVoltage().refresh().getValue();
-  }
 
   @Override
   public void periodic() {

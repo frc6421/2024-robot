@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -51,9 +50,8 @@ public class RobotContainer {
 
   // Commands \\
   private final DriveCommand driveCommand;
+
   private final IntakeTransitionCommand intakeTransitionCommand;
-  private final ShooterRevUpCommand shooterRevUpCommand;
-  private final ShooterAngleCommand shooterAngleCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -69,10 +67,9 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-    shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
-    shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
+    
 
     // Configure the trigger bindings
     configureBindings();
