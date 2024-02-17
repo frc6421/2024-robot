@@ -18,10 +18,10 @@ public class IntakeSubsystem extends SubsystemBase {
     //Current Limit
     public static final int INTAKE_STATOR_CURRENT_LIMIT = 80;
 
-    public static final double INTAKE_IN_SPEED = 0.85;
+    public static final double INTAKE_IN_SPEED = 0.85 * 12;
 
     //TODO verify on actual robot
-    public static final double INTAKE_OUT_SPEED = -0.85;
+    public static final double INTAKE_OUT_SPEED = -0.85 * 12;
   }
 
   private CANSparkMax intakeMotor;
@@ -44,6 +44,13 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void setIntakeSpeed(double value) {
     intakeMotor.set(value);
+  }
+
+  /** Sets the intakeMotor output
+   * @param value output to apply
+   */
+  public void setIntakeVoltage(double value) {
+    intakeMotor.setVoltage(value);
   }
 
   /**
