@@ -15,6 +15,7 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
+import frc.robot.subsystems.CANdleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -36,7 +37,6 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-
   private final ShooterPivotTuningCommand shooterPivotTuningCommand;
   private final TuneShooter tuneShooter;
 
@@ -52,6 +52,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
+  private final CANdleSubsystem candleSubsystem;
 
 
   // Commands \\
@@ -79,13 +80,13 @@ public class RobotContainer {
 
     driveSubsystem.setDefaultCommand(driveCommand);
     
+    candleSubsystem = new CANdleSubsystem();
+    
     // Configure the trigger bindings
     configureBindings();
 
     shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);
     tuneShooter = new TuneShooter(shooterSubsystem);
-
-    
   }
 
   /**
