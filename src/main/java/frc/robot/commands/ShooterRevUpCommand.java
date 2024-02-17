@@ -5,41 +5,37 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShooterAngleSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShooterAngleCommand extends Command {
-  /** Creates a new ShooterAngleCommand. */
+public class ShooterRevUpCommand extends Command {
 
-  ShooterAngleSubsystem angle;
+  private final ShooterSubsystem shooterSubsystem;
 
-  public ShooterAngleCommand(ShooterAngleSubsystem angleSubsystem) {
+  /** Creates a new ShooterRevUp. */
+  public ShooterRevUpCommand(ShooterSubsystem shooterSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(angleSubsystem);
-    
-    angle = angleSubsystem;
+    this.shooterSubsystem = shooterSubsystem;
+    addRequirements(shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    angle.setAngle(0); // TODO verify number
+  public void initialize() 
+  {
+    shooterSubsystem.setShooterMotorVelocity(0); // TODO determine number
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-  
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (angle.getAngleEncoderPostition() >= 0 - 1 && angle.getAngleEncoderPostition() <= 0 + 1);
+    return (shooterSubsystem.getBottomMotorVelocity() >= 0 && shooterSubsystem.getTopMotorVelocity() >= 0); // TODO determine number
   }
 }

@@ -17,9 +17,6 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final int TOP_SHOOTER_CAN_ID = 30;
       public static final int BOTTOM_SHOOTER_CAN_ID = 31;
       public static final int CURRENT_LIMIT = 80;
-      //TODO: Verify that this is the maximum speed the motors can achieve. 
-      public static final int TOP_MAXIMUM_SPEED_IN_RPM = 6000;
-      public static final int BOTTOM_MAXIMUM_SPEED_IN_RPM = 6000;
 
       public static final double TOP_KS = 0.34;
       public static final double TOP_KV = 0.130;
@@ -97,11 +94,17 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomShooterMotor.setControl(shooterMotorVelocity);
   }
 
-  
+  /**
+   * Gets the velocity of the top motor
+   * @return Motor velocity
+   */
   public double getTopMotorVelocity(){
     return 60 * topShooterMotor.getVelocity().refresh().getValue();
   }
-
+  /**
+   * Gets the velocity of the bottom motor
+   * @return Motor velocity
+   */
   public double getBottomMotorVelocity(){
     return 60 * bottomShooterMotor.getVelocity().refresh().getValue();
   }

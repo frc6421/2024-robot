@@ -47,7 +47,7 @@ public class ShooterPivotTuningCommand extends Command {
         break;
       case kP:
         shooterAngleSubsystem.setP(kP);
-        shooterAngleSubsystem.setAngle(angle, kS);
+        shooterAngleSubsystem.setAngle(angle);
         break;
     }
   }

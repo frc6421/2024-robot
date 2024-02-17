@@ -17,10 +17,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final int CURRENT_LIMIT = 60;
 
     //TODO: Calibration for P value
-    public static final double ANGLE_kS = 0.187;
-    public static final double ANGLE_P = 0.16;
-    public static final double ANGLE_I = 0;
-    public static final double ANGLE_D = 0;
+    public static final double ANGLE_KP = 0;
+    public static final double ANGLE_KI = 0;
+    public static final double ANGLE_KD = 0;
 
     //TODO: Verify that the minimum is the extrusion bellow the shooter
     public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 45;
@@ -69,9 +68,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     
     angleMotorPID.setFeedbackDevice(angleEncoder);
 
-    angleMotorPID.setP(AngleConstants.ANGLE_P, 0);
-    angleMotorPID.setI(AngleConstants.ANGLE_I, 0);
-    angleMotorPID.setD(AngleConstants.ANGLE_D, 0);
+    angleMotorPID.setP(AngleConstants.ANGLE_KP, 0);
+    angleMotorPID.setI(AngleConstants.ANGLE_KI, 0);
+    angleMotorPID.setD(AngleConstants.ANGLE_KD, 0);
 
     angleMotor.setSoftLimit(SoftLimitDirection.kForward, AngleConstants.MAXIMIMUM_SOFT_LIMIT_DEGREES);
     angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
@@ -87,7 +86,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    * @param angle The angle of which to set the motor to
    */
   public void setAngle(double angle){
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, AngleConstants.ANGLE_kS, SparkPIDController.ArbFFUnits.kVoltage);
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
     /**

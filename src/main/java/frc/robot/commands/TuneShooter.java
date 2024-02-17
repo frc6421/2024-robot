@@ -24,11 +24,20 @@ public class TuneShooter extends Command {
   public SimpleWidget topkSWidget;
   public SimpleWidget topkVWidget;
 
+  public SimpleWidget bottomkPWidget;
+  public SimpleWidget bottomkSWidget;
+  public SimpleWidget bottomkVWidget;
+
   public SimpleWidget readTopkPWidget;
+  public SimpleWidget readBottomkPWidget;
 
   private double topkP;
   private double topkS;
   private double topkV;
+
+  private double bottomkP;
+  private double bottomkS;
+  private double bottomkV;
 
   private final ShooterSubsystem shooterSubsystem;
 
@@ -40,9 +49,14 @@ public class TuneShooter extends Command {
     addRequirements(shooter);
     final ShuffleboardTab tab = Shuffleboard.getTab("Shooter Tuning");
     tab.add(this);
+    //Adding of the top and bottom widgets
     topkPWidget = tab.add("Top kP", shooterSubsystem.topShooterConfig.Slot0.kP).withWidget(BuiltInWidgets.kTextView);
     topkSWidget = tab.add("Top kS", shooterSubsystem.topShooterConfig.Slot0.kS).withWidget(BuiltInWidgets.kTextView);
     topkVWidget = tab.add("Top kV", shooterSubsystem.topShooterConfig.Slot0.kV).withWidget(BuiltInWidgets.kTextView);
+
+    bottomkPWidget = tab.add("Bottom kP", shooterSubsystem.bottomShooterConfig.Slot0.kP).withWidget(BuiltInWidgets.kTextView);
+    bottomkSWidget = tab.add("Bottom kS", shooterSubsystem.bottomShooterConfig.Slot0.kS).withWidget(BuiltInWidgets.kTextView);
+    bottomkVWidget = tab.add("Bottom kV", shooterSubsystem.bottomShooterConfig.Slot0.kV).withWidget(BuiltInWidgets.kTextView);
   }
 
   // Called when the command is initially scheduled.
@@ -54,6 +68,7 @@ public class TuneShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //Updating the top shooter tuning values
     topkP = topkPWidget.getEntry().getDouble(shooterSubsystem.topShooterConfig.Slot0.kP);
     topkS = topkSWidget.getEntry().getDouble(shooterSubsystem.topShooterConfig.Slot0.kS);
     topkV = topkVWidget.getEntry().getDouble(shooterSubsystem.topShooterConfig.Slot0.kV);
@@ -75,12 +90,14 @@ public class TuneShooter extends Command {
    @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
+    //Inputing tuning values
     builder.addDoubleProperty("Read Top kP", () -> shooterSubsystem.topShooterConfig.Slot0.kP, null);
     builder.addDoubleProperty("Read Top kS", () -> shooterSubsystem.topShooterConfig.Slot0.kS, null);
     builder.addDoubleProperty("Read Top kV", () -> shooterSubsystem.topShooterConfig.Slot0.kV, null);
     builder.addDoubleProperty("Read Bottom kP", () -> shooterSubsystem.bottomShooterConfig.Slot0.kP, null);
     builder.addDoubleProperty("Read Bottom kS", () -> shooterSubsystem.bottomShooterConfig.Slot0.kS, null);
     builder.addDoubleProperty("Read Bottom kV", () -> shooterSubsystem.bottomShooterConfig.Slot0.kV, null);
+    //Setting velocity, ect.
     builder.addDoubleProperty("Set Velocity", () -> setVelocity, null);
     builder.addDoubleProperty("Top Motor Velocity", () -> shooterSubsystem.getTopMotorVelocity(), null);
     builder.addDoubleProperty("Bottom Motor Velocity", () -> shooterSubsystem.getBottomMotorVelocity(), null);
