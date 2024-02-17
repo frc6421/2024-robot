@@ -39,8 +39,10 @@ public class RobotContainer {
 
   // Controllers \\
   private final CommandXboxController driverController; 
+  private final CommandXboxController operatorController;
 
   private static final int driverControllerPort = 0;
+  private static final int operatorControllerPort = 1;
 
   // Subsystems \\
   private final DriveSubsystem driveSubsystem;
@@ -55,17 +57,16 @@ public class RobotContainer {
 
   private final IntakeTransitionCommand intakeTransitionCommand;
 
-<<<<<<< HEAD
   public static RobotStates state;
-=======
+
   private final ShooterAngleCommand shooterAngleCommand;
   private final ShooterRevUpCommand shooterRevUpCommand;
->>>>>>> ShooterCommands
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     driverController = new CommandXboxController(driverControllerPort);
+    operatorController = new CommandXboxController(operatorControllerPort);
 
     driveSubsystem = new DriveSubsystem();
     intakeSubsystem = new IntakeSubsystem();
@@ -82,7 +83,6 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand(driveCommand);
 
     state = RobotStates.DRIVE;
-    
 
     // Configure the trigger bindings
     configureBindings();
@@ -103,40 +103,41 @@ public class RobotContainer {
     // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker
 
     // INTAKE STATE \\
+    driverController.leftBumper().onTrue(new InstantCommand(() -> state = RobotStates.INTAKE));
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
+    driverController.leftBumper().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
-    // BARF STATE \\
-    driverController.rightBumper().onTrue(new InstantCommand(() -> state = RobotStates.BARF));
-    driverController.rightBumper().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
-    driverController.rightBumper().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
-    driverController.rightBumper().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
-    driverController.rightBumper().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
-    driverController.rightBumper().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
+    // BARF STATE \\ 
+    driverController.leftTrigger().onTrue(new InstantCommand(() -> state = RobotStates.BARF));
+    driverController.leftTrigger().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+    driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
+    driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
 
-    // AMP STATE \\ 
-    driverController.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
-
-    driverController.x().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
+    // Scores
+    driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
       .andThen(new WaitCommand(0.5))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
-<<<<<<< HEAD
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
+      .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
+      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
+      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
 
+    // Arm out
+    operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90))));
+    
     // SHOOT STATE \\
+    operatorController.y().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
+      .andThen(new ParallelCommandGroup(shooterRevUpCommand, shooterAngleCommand))
+      .andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))); 
+    
+    // TODO climber button
+    // CLIMB STATE \\
+    //operatorController.x().onTrue();
 
     // TRAP STATE \\ 
-
-    // CLIMB STATE \\
-=======
-    
-    driverController.y().whileTrue(new ParallelCommandGroup(shooterRevUpCommand, shooterAngleCommand)
-      .andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))));
-    driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
-      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES)))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))));
->>>>>>> ShooterCommands
   }
 
   /**
