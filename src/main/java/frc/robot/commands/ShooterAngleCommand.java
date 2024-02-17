@@ -22,7 +22,7 @@ public class ShooterAngleCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    angle.setAngle(0); // TODO verify number
+    angle.setAngle(45); // TODO verify number
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,6 +40,6 @@ public class ShooterAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (angle.getAngleEncoderPostition() >= 0 - 1 && angle.getAngleEncoderPostition() <= 0 + 1);
+    return (angle.getAngleEncoderPostition() >= 45 - .1 && angle.getAngleEncoderPostition() <= 45 + .1);
   }
 }
