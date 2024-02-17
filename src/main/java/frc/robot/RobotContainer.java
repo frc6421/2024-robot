@@ -6,6 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoTestCommand;
+import frc.robot.commands.BlueCenterLineThreePieceCommand;
+import frc.robot.commands.BlueFourPieceCommand;
+import frc.robot.commands.BlueTwoPieceCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
@@ -19,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.commands.RedFourPieceCommand;
+import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -45,7 +50,13 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
+
   private final AutoTestCommand autoTest;
+  BlueTwoPieceCommand blueTwoPiece;
+  RedTwoPieceCommand redTwoPiece;
+  BlueFourPieceCommand blueFourPiece;
+  RedFourPieceCommand redFourPiece;
+  BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -61,10 +72,15 @@ public class RobotContainer {
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
-    
-    // Configure the trigger bindings
 
     autoTest = new AutoTestCommand(driveSubsystem);
+    blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem);
+    redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem);
+    blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem);
+    redFourPiece = new RedFourPieceCommand(driveSubsystem, intakeSubsystem);
+    blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem);
+
+    // Configure the trigger bindings
     configureBindings();
     
   }
@@ -105,6 +121,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autoTest;
+    return blueTwoPiece;
   }
 }

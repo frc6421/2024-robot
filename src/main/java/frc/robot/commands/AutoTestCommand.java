@@ -42,8 +42,8 @@ public class AutoTestCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 4)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
@@ -54,7 +54,7 @@ public class AutoTestCommand extends SequentialCommandGroup {
     
     Trajectory testTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.TEST_START, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.TEST_END, new Rotation2d(0))), forwardConfig);
+        new Pose2d(TrajectoryConstants.TEST_END, new Rotation2d(Units.degreesToRadians(90)))), forwardConfig);
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
@@ -92,6 +92,7 @@ public class AutoTestCommand extends SequentialCommandGroup {
     builder.setSmartDashboardType("Command");
     builder.addDoubleProperty("X", () -> driveSubsystem.getState().Pose.getX(), null);
     builder.addDoubleProperty("Y", () -> driveSubsystem.getState().Pose.getY(), null);
+    builder.addDoubleProperty("Rotation", () -> driveSubsystem.getState().Pose.getRotation().getDegrees(), null);
   }
 
 }

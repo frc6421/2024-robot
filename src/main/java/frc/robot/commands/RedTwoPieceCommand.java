@@ -13,34 +13,40 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
+public class RedTwoPieceCommand extends SequentialCommandGroup {
   private DriveSubsystem driveSubsystem;
+  private IntakeSubsystem intakeSubsystem;
 
-  /** Creates a new onePieceLeave. */
-  public BlueOnePieceLeaveCommand(DriveSubsystem drive) {
+  // private Field2d field;
+  /** Creates a new RedTwoPieceCommand. */
+  public RedTwoPieceCommand(DriveSubsystem drive, IntakeSubsystem intake) {
 
     driveSubsystem = drive;
-    addRequirements(driveSubsystem);
+    intakeSubsystem = intake;
+    addRequirements(driveSubsystem, intakeSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND + 0.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 3.5,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 4)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
@@ -49,13 +55,21 @@ public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
 
-    Trajectory leaveStartZoneTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.ONE_PIECE_START, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.ONE_PIECE_SHOOT, new Rotation2d(0))), forwardConfig);
-    
-    Trajectory testTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.TEST_START, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.TEST_END, new Rotation2d(0))), forwardConfig);
+    // robot leaves start zone and moves to pick up note at podium
+    Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(0)),
+        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(0))), reverseConfig);
+
+    // Simulation
+    // field = new Field2d();
+
+    // if (RobotBase.isSimulation()) {
+       // SmartDashboard.putData(field);
+
+       // field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
+      
+       // field.getObject("Red Drive to Podium Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+     // }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
@@ -69,8 +83,8 @@ public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
         new PIDController(AutoConstants.Y_DRIVE_P, AutoConstants.Y_DRIVE_I, AutoConstants.Y_DRIVE_D),
         thetaController);
 
-    SwerveControllerCommand leaveStartZoneCommand = new SwerveControllerCommand(
-        testTrajectory,
+    SwerveControllerCommand driveToFirstNoteCommand = new SwerveControllerCommand(
+        driveToFirstNoteTrajectory,
         driveSubsystem::getPose2d,
         driveSubsystem.kinematics,
         holonomicDriveController,
@@ -80,9 +94,12 @@ public class BlueOnePieceLeaveCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new InstantCommand(() -> driveSubsystem.tareEverything()), 
-        leaveStartZoneCommand, 
-        new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds()))
+      new InstantCommand(() -> driveSubsystem.tareEverything()), 
+      // score pre-loaded piece 
+      new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED)),
+      driveToFirstNoteCommand, 
+      new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds()))
+      // stop intake and score second piece
     );
   }
 }

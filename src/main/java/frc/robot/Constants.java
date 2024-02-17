@@ -21,15 +21,15 @@ public final class Constants {
   }
   public static class AutoConstants {
 
-    public static final double THETA_P = 1; // TODO update values
+    public static final double THETA_P = 2.31; // TODO update values
     public static final double THETA_I = 0; // TODO update values
     public static final double THETA_D = 0; // TODO update values
     
-    public static final double X_DRIVE_P = 0.01; // TODO update values
+    public static final double X_DRIVE_P = 2.31; // TODO update values
     public static final double X_DRIVE_I = 0;
     public static final double X_DRIVE_D = 0;
 
-    public static final double Y_DRIVE_P = 0.01; // TODO update values
+    public static final double Y_DRIVE_P = 2.31; // TODO update values
     public static final double Y_DRIVE_I = 0;
     public static final double Y_DRIVE_D = 0;
 
@@ -44,19 +44,49 @@ public final class Constants {
 
   
 public static class TrajectoryConstants {
-    public static final double CENTER_OF_ROBOT_LENGTH = Units.inchesToMeters(18.625);
-    public static final double CENTER_OF_ROBOT_WIDTH = Units.inchesToMeters(17.5);
 
-    public static final Translation2d ORIGIN = new Translation2d(0, 0);
+  public static final double CENTER_OF_ROBOT_LENGTH = Units.inchesToMeters(18.625);
+  public static final double CENTER_OF_ROBOT_WIDTH = Units.inchesToMeters(17.5);
 
-    public static final Translation2d PODIUM = new Translation2d(Units.inchesToMeters(114), Units.inchesToMeters(161.62));
+  public static final Translation2d ORIGIN = new Translation2d(0, 0);
 
-    public static final Translation2d ONE_PIECE_START = new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(100)); // THIS IS A COMPLETE GUESS
+  public static final Translation2d BLUE_PODIUM = new Translation2d(Units.inchesToMeters(114), Units.inchesToMeters(161.5));
+  public static final Translation2d FRONT_OF_BLUE_PODIUM = new Translation2d(Units.inchesToMeters(94), Units.inchesToMeters(161.5));
 
-    public static final Translation2d ONE_PIECE_SHOOT = new Translation2d(Units.inchesToMeters(114), Units.inchesToMeters(100)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
 
-    public static final Translation2d TEST_START = new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
-    public static final Translation2d TEST_END = new Translation2d(Units.inchesToMeters(72), Units.inchesToMeters(0)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
+  public static final Translation2d TEST_START = new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0)); 
+  public static final Translation2d TEST_END = new Translation2d(Units.inchesToMeters(72), Units.inchesToMeters(0));
+
+  public static final Translation2d BLUE_SUSSEX_SCORE = new Translation2d(Units.inchesToMeters(128), Units.inchesToMeters(218.5));
+  public static final Translation2d RED_SUSSEX_SCORE = new Translation2d(Units.inchesToMeters(523), Units.inchesToMeters(218.5));
+
+
+  public static final Translation2d NOTE1 = new Translation2d(Units.inchesToMeters(114)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE2 = new Translation2d(Units.inchesToMeters(114)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
+  public static final Translation2d NOTE3 = new Translation2d(Units.inchesToMeters(114)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(275.5));
+
+  public static final Translation2d NOTE4_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(30.5));
+  public static final Translation2d NOTE5_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(95.5));
+  public static final Translation2d NOTE6_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE7_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(227.5));
+  public static final Translation2d NOTE8_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(293.5));
+
+  public static final Translation2d NOTE4_RED = new Translation2d(Units.inchesToMeters(325)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(30.5));
+  public static final Translation2d NOTE5_RED = new Translation2d(Units.inchesToMeters(325)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(95.5));
+  public static final Translation2d NOTE6_RED = new Translation2d(Units.inchesToMeters(325)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE7_RED = new Translation2d(Units.inchesToMeters(325)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(227.5));
+  public static final Translation2d NOTE8_RED = new Translation2d(Units.inchesToMeters(325)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(293.5));
+
+  public static final Translation2d NOTE9 = new Translation2d(Units.inchesToMeters(537)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE10 = new Translation2d(Units.inchesToMeters(537)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
+  public static final Translation2d NOTE11 = new Translation2d(Units.inchesToMeters(537)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(275.5));
+
+  public static final Translation2d FRONT_CENTER_BLUE_SUBWOOFER = new Translation2d(Units.inchesToMeters(36)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
+  public static final Translation2d FRONT_CENTER_RED_SUBWOOFER = new Translation2d(Units.inchesToMeters(615)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
+
+  public static final Translation2d BLUE_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(164), Units.inchesToMeters(200));
+  public static final Translation2d BLUE_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(36)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(60));
+  public static final Translation2d BLUE_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(164), Units.inchesToMeters(111.5));
 
   }
 
