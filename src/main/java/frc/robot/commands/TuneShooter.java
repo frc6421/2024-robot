@@ -57,7 +57,7 @@ public class TuneShooter extends Command {
     topkP = topkPWidget.getEntry().getDouble(shooterSubsystem.topShooterConfig.Slot0.kP);
     topkS = topkSWidget.getEntry().getDouble(shooterSubsystem.topShooterConfig.Slot0.kS);
     topkV = topkVWidget.getEntry().getDouble(shooterSubsystem.topShooterConfig.Slot0.kV);
-    shooterSubsystem.setTopConfig(topkP, topkS, topkV);
+    shooterSubsystem.setTopConfig(topkP);
   }
 
   // Called once the command ends or is interrupted.

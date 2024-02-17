@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.ShooterPivotTuningCommand;
+import frc.robot.commands.ShooterTuningCommand;
 import frc.robot.commands.TuneShooter;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -37,8 +38,6 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
 
-  private final ShooterPivotTuningCommand shooterPivotTuningCommand;
-  private final TuneShooter tuneShooter;
   // Controllers \\
   private final CommandXboxController driverController; 
 
@@ -52,6 +51,9 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final CenterNoteCommand centerNoteCommand;
+  private final ShooterPivotTuningCommand shooterPivotTuningCommand;
+  private final ShooterTuningCommand shooterTuningCommand;
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -62,22 +64,18 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
-
-    driveCommand = new DriveCommand(driveSubsystem, driverController);
-    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
-
-    driveSubsystem.setDefaultCommand(driveCommand);
-    
-    // Configure the trigger bindings
-    configureBindings();
-
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
 
-    shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);
-    tuneShooter = new TuneShooter(shooterSubsystem);
-
+    driveCommand = new DriveCommand(driveSubsystem, driverController);
+    driveSubsystem.setDefaultCommand(driveCommand);
     
+    centerNoteCommand = new CenterNoteCommand(transitionSubsystem);
+    shooterPivotTuningCommand = new ShooterPivotTuningCommand(shooterAngleSubsystem);  
+    shooterTuningCommand = new ShooterTuningCommand(shooterSubsystem);
+
+    // Configure the trigger bindings
+    configureBindings();
   }
 
   /**

@@ -5,14 +5,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkMax;
-
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class ShooterAngleSubsystem extends SubsystemBase {
   public static class AngleConstants{
@@ -20,22 +17,18 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final int CURRENT_LIMIT = 60;
 
     //TODO: Calibration for P value
-    public static final double ANGLE_P = 0;
+    public static final double ANGLE_kS = 0.187;
+    public static final double ANGLE_P = 0.16;
     public static final double ANGLE_I = 0;
     public static final double ANGLE_D = 0;
 
     //TODO: Verify that the minimum is the extrusion bellow the shooter
-    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 55;
+    public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 45;
     public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
 
     public static final int GEAR_RATIO = 180;
     public static final double DEGREES_PER_MOTOR_ROTATION = (360.0 / AngleConstants.GEAR_RATIO);
 
-    public static enum angleState {
-      MAX,  
-      MID,
-      MIN
-    }
   }
   //Creating the object for the motor and encoder
   private CANSparkMax angleMotor;
@@ -94,7 +87,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    * @param angle The angle of which to set the motor to
    */
   public void setAngle(double angle){
-    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kVoltage);
+    angleMotorPID.setReference(angle, CANSparkMax.ControlType.kPosition, 0, AngleConstants.ANGLE_kS, SparkPIDController.ArbFFUnits.kVoltage);
   }
 
     /**
@@ -116,39 +109,11 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   /**
-   * Sets the new FF value of the motor retrived from ShuffleBoard
-   * @param FF the new FF value to set to
-   */
-  private void setFF(double FF){
-    angleMotorPID.setFF(FF);
-  }
-  
-  /**
    * Gets the position of the encoder to compare to the actual value
    * @return Arm position, in degrees
    */
   public double getAngleEncoderPostition(){
     return angleEncoder.getPosition();
-  }
-  /**
-   * Gets the velocity of the encoder to see if the motor is "jittering"
-   * @return The Motor velocity, in RPM
-   */
-  private double getAngleEncoderVelocity(){
-    return angleEncoder.getVelocity();
-  }
-
-  //Shuffleboard stuff. Don't ask.
-  public void initSendable(SendableBuilder builder){
-    builder.setSmartDashboardType("AngleSubsystem");
-
-
-    builder.addDoubleProperty("Set P", null, this::setP);
-    builder.addDoubleProperty("Set FF", null, this::setFF);
-    builder.addDoubleProperty("Set Angle", null, this::setAngle);
-
-    builder.addDoubleProperty("Encoder Value", this::getAngleEncoderPostition, null);
-    builder.addDoubleProperty("Encoder Velocity", this::getAngleEncoderVelocity, null);
   }
 
   @Override
