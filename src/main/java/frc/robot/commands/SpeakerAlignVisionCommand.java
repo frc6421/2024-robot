@@ -22,6 +22,7 @@ public class SpeakerAlignVisionCommand extends Command {
   DriveSubsystem driveSubsystem;
 
   //TODO update max velocity and acceleration
+  // In rad/sec
   private static final double maxAngularVelocity = 2 * Math.PI;
   private static final double maxAngularAcceleration = Math.PI;
 
@@ -31,7 +32,8 @@ public class SpeakerAlignVisionCommand extends Command {
   private double angleToTarget;
   private double currentAngle;
 
-  private double allowableError = 2;
+  // In radians
+  private double allowableError = 0.04;
 
   //TODO update PID values
   private static final double rotationP = 0;
@@ -75,9 +77,9 @@ public class SpeakerAlignVisionCommand extends Command {
 
     //TODO see what value this outputs
     //TODO determine if this needs to change sign based on alliance color
-    angleToTarget = targetPose.relativeTo(currentPose).getRotation().getDegrees();
+    angleToTarget = targetPose.relativeTo(currentPose).getRotation().getRadians();
 
-    currentAngle = driveSubsystem.getCurrentPose2d().getRotation().getDegrees();
+    currentAngle = driveSubsystem.getCurrentPose2d().getRotation().getRadians();
 
     rotationController.setGoal(currentAngle + angleToTarget);
 
