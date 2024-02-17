@@ -2,7 +2,10 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem"
+      "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem",
+      "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
+      "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
+      "/Shuffleboard/Shooter Tuning/TuneShooter": "Command"
     }
   },
   "NetworkTables Info": {

@@ -4,13 +4,18 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.ShooterAngleSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
+import frc.robot.subsystems.CANdleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -19,6 +24,8 @@ import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ShooterAngleCommand;
+import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -29,7 +36,6 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final TransitionArmSubsystem armSubsystem;
 
   // Controllers \\
   private final CommandXboxController driverController; 
@@ -40,12 +46,21 @@ public class RobotContainer {
   private final DriveSubsystem driveSubsystem;
   private final IntakeSubsystem intakeSubsystem;
   private final TransitionSubsystem transitionSubsystem;
+  private final ShooterSubsystem shooterSubsystem;
+  private final ShooterAngleSubsystem shooterAngleSubsystem;
+  private final TransitionArmSubsystem armSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
+
   private final IntakeTransitionCommand intakeTransitionCommand;
 
+<<<<<<< HEAD
   public static RobotStates state;
+=======
+  private final ShooterAngleCommand shooterAngleCommand;
+  private final ShooterRevUpCommand shooterRevUpCommand;
+>>>>>>> ShooterCommands
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -56,14 +71,19 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
+    shooterSubsystem = new ShooterSubsystem();
+    shooterAngleSubsystem = new ShooterAngleSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
+    shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
+    shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
     state = RobotStates.DRIVE;
     
+
     // Configure the trigger bindings
     configureBindings();
   }
@@ -101,12 +121,22 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
+<<<<<<< HEAD
 
     // SHOOT STATE \\
 
     // TRAP STATE \\ 
 
     // CLIMB STATE \\
+=======
+    
+    driverController.y().whileTrue(new ParallelCommandGroup(shooterRevUpCommand, shooterAngleCommand)
+      .andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))));
+    driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
+      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES)))
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))));
+>>>>>>> ShooterCommands
   }
 
   /**
