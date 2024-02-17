@@ -25,11 +25,11 @@ public final class Constants {
     public static final double THETA_I = 0; // TODO update values
     public static final double THETA_D = 0; // TODO update values
     
-    public static final double X_DRIVE_P = 2.3; // TODO update values
+    public static final double X_DRIVE_P = 0.01; // TODO update values
     public static final double X_DRIVE_I = 0;
     public static final double X_DRIVE_D = 0;
 
-    public static final double Y_DRIVE_P = 2.3; // TODO update values
+    public static final double Y_DRIVE_P = 0.01; // TODO update values
     public static final double Y_DRIVE_I = 0;
     public static final double Y_DRIVE_D = 0;
 
