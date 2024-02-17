@@ -64,7 +64,6 @@ public class IntakeTransitionCommand extends Command {
     {
       // TODO LED pink
       transitionSubsystem.setTransitionVoltage((-1.0 * TransitionConstants.TRANSITION_SPEED) / 4);
-      System.out.println("Counter: " + counter);
       counter = 0;
       possibleOverShoot = true;
     }

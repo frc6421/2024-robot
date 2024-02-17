@@ -12,7 +12,8 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
-import frc.robot.subsystems.CANdleSubsystem;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -53,13 +54,9 @@ public class RobotContainer {
 
   // Commands \\
   private final DriveCommand driveCommand;
-
   private final IntakeTransitionCommand intakeTransitionCommand;
 
   public static RobotStates state;
-
-  //private final ShooterAngleCommand shooterAngleCommand;
-  private final ShooterRevUpCommand shooterRevUpCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -76,15 +73,16 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-    //shooterAngleCommand = new ShooterAngleCommand(shooterAngleSubsystem);
-    shooterRevUpCommand = new ShooterRevUpCommand(shooterSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
     state = RobotStates.DRIVE;
+    
 
     // Configure the trigger bindings
     configureBindings();
+
+    //Shuffleboard.getTab("Competition").add("Robot State", state);
   }
 
   /**
@@ -102,9 +100,7 @@ public class RobotContainer {
     // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker
 
     // INTAKE STATE \\
-    driverController.leftBumper().onTrue(new InstantCommand(() -> state = RobotStates.INTAKE));
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
-    driverController.leftBumper().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
     // BARF STATE \\ 
     driverController.leftTrigger().onTrue(new InstantCommand(() -> state = RobotStates.BARF));
@@ -115,27 +111,34 @@ public class RobotContainer {
     driverController.leftTrigger().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
     // Scores
+    // TODO Profile for transition arm
     driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
+      .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
       .andThen(new WaitCommand(0.5))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
       .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
 
-    // Arm out
+    // Arm out for AMP
     operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90))));
+      .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
+      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90))))));
     
     // SHOOT STATE \\
-    operatorController.y().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
-      .andThen(new ParallelCommandGroup(shooterRevUpCommand, new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)))));
-      //.andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))); 
-    
+
+    // Sub
     operatorController.b().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
-      .andThen(new ParallelCommandGroup(shooterRevUpCommand, new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))));
-      //.andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))); 
+      .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem), new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)))
+      .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))));
+    
+    // Podium
+    operatorController.y().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
+      .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))
+      .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))));
     
     // TODO climber button
     // CLIMB STATE \\
