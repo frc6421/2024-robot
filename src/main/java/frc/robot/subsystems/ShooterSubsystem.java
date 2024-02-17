@@ -17,9 +17,6 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final int TOP_SHOOTER_CAN_ID = 30;
       public static final int BOTTOM_SHOOTER_CAN_ID = 31;
       public static final int CURRENT_LIMIT = 80;
-      //TODO: Verify that this is the maximum speed the motors can achieve. 
-      public static final int TOP_MAXIMUM_SPEED_IN_RPM = 6000;
-      public static final int BOTTOM_MAXIMUM_SPEED_IN_RPM = 6000;
 
       public static final double TOP_KS = 0;
       public static final double TOP_KV = 0;
@@ -97,23 +94,39 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomShooterMotor.setControl(shooterMotorVelocity);
   }
 
-  
+  /**
+   * Gets the velocity of the top motor
+   * @return Motor velocity
+   */
   public double getTopMotorVelocity(){
     return topShooterMotor.getVelocity().refresh().getValue();
   }
-
+  /**
+   * Gets the velocity of the bottom motor
+   * @return Motor velocity
+   */
   public double getBottomMotorVelocity(){
     return bottomShooterMotor.getVelocity().refresh().getValue();
   }
-
+  /**
+   * Updating the tuning values for the top motor
+   * @param P Top P value
+   * @param S Top S value
+   * @param V Top V value
+   */
   public void setTopConfig(double P, double S, double V){
     topShooterConfig.Slot0.kP = P;
     topShooterConfig.Slot0.kS = S;
     topShooterConfig.Slot0.kV = V;
     topShooterMotor.getConfigurator().apply(topShooterConfig);
   }
-
-  public void setBottomP(double P, double S, double V){
+  /**
+   * Updating the tuning values for the bottom motor
+   * @param P Bottom P value
+   * @param S Bottom S value
+   * @param V Bottom V value
+   */
+  public void setBottomConfig(double P, double S, double V){
     bottomShooterConfig.Slot0.kP = P;
     bottomShooterConfig.Slot0.kS = S;
     bottomShooterConfig.Slot0.kV = V;
