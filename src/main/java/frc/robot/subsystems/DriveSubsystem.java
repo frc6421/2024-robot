@@ -63,7 +63,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    public static final double SPEED_AT_12_VOLTS_METERS_PER_SEC = 4.52;
+    public static final double SPEED_AT_12_VOLTS_METERS_PER_SEC = 4.73;
 
     // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
     // This may need to be tuned to your individual robot
@@ -71,13 +71,14 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     private static final double DRIVE_GEAR_RATIO = 6.746031746031747;
     private static final double STEER_GEAR_RATIO = 21.428571428571427;
+    //TODO update after initial measurements and before each competition/everytime treads are changed
     private static final double WHEEL_RADIUS_INCHES = 1.91;
 
     private static final boolean STEER_MOTOR_REVERSED = true;
     private static final boolean INVERT_LEFT_SIDE = false;
     private static final boolean INVERT_RIGHT_SIDE = true;
 
-    private static final int PIGEON_CAN_ID = 30;
+    private static final int PIGEON_CAN_ID = 18;
 
     // These are only used for simulation
     private static final double STEER_INERTIA = 0.00001;
@@ -111,37 +112,37 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int FRONT_LEFT_DRIVE_MOTOR_CAN_ID = 12;
     private static final int FRONT_LEFT_STEER_MOTOR_CAN_ID = 13;
     private static final int FRONT_LEFT_CANCODER_CAN_ID = 13;
-    private static final double FRONT_LEFT_ENCODER_OFFSET = -0.20947265625;
+    private static final double FRONT_LEFT_ENCODER_OFFSET = -0.28809;
 
-    private static final double FRONT_LEFT_X_POS_INCHES = 10.375;
-    private static final double FRONT_LEFT_Y_POS_INCHES = 9.375;
+    private static final double FRONT_LEFT_X_POS_INCHES = 8.125;
+    private static final double FRONT_LEFT_Y_POS_INCHES = 22.75 / 2;
 
     // Front Right
     private static final int FRONT_RIGHT_DRIVE_MOTOR_CAN_ID = 10;
     private static final int FRONT_RIGHT_STEER_MOTOR_CAN_ID = 11;
     private static final int FRONT_RIGHT_CANCODER_CAN_ID = 11;
-    private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.40478515625;
+    private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.26978;
 
-    private static final double FRONT_RIGHT_X_POS_INCHES = 10.375;
-    private static final double FRONT_RIGHT_Y_POS_INCHES = -9.375;
+    private static final double FRONT_RIGHT_X_POS_INCHES = 8.125;
+    private static final double FRONT_RIGHT_Y_POS_INCHES = -22.75 / 2;
 
     // Back Left
     private static final int BACK_LEFT_DRIVE_MOTOR_CAN_ID = 16;
     private static final int BACK_LEFT_STEER_MOTOR_CAN_ID = 17;
     private static final int BACK_LEFT_CANCODER_CAN_ID = 17;
-    private static final double BACK_LEFT_ENCODER_OFFSET = 0.199462890625;
+    private static final double BACK_LEFT_ENCODER_OFFSET = -0.37476;
 
-    private static final double BACK_LEFT_X_POS_INCHES = -10.375;
-    private static final double BACK_LEFT_Y_POS_INCHES = 9.375;
+    private static final double BACK_LEFT_X_POS_INCHES = -12.625;
+    private static final double BACK_LEFT_Y_POS_INCHES = 22.75 / 2;
 
     // Back Right
     private static final int BACK_RIGHT_DRIVE_MOTOR_CAN_ID = 14;
     private static final int BACK_RIGHT_STEER_MOTOR_CAN_ID = 15;
     private static final int BACK_RIGHT_CANCODER_CAN_ID = 15;
-    private static final double BACK_RIGHT_ENCODER_OFFSET = 0.319580078125;
+    private static final double BACK_RIGHT_ENCODER_OFFSET = 0.02148;
 
-    private static final double BACK_RIGHT_X_POS_INCHES = -10.375;
-    private static final double BACK_RIGHT_Y_POS_INCHES = -9.375;
+    private static final double BACK_RIGHT_X_POS_INCHES = -12.625;
+    private static final double BACK_RIGHT_Y_POS_INCHES = -22.75 / 2;
 
     private static final SwerveModuleConstants frontLeft = constantCreator.createModuleConstants(
         FRONT_LEFT_STEER_MOTOR_CAN_ID, FRONT_LEFT_DRIVE_MOTOR_CAN_ID, FRONT_LEFT_CANCODER_CAN_ID, FRONT_LEFT_ENCODER_OFFSET,
@@ -155,7 +156,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final SwerveModuleConstants backRight = constantCreator.createModuleConstants(
         BACK_RIGHT_STEER_MOTOR_CAN_ID, BACK_RIGHT_DRIVE_MOTOR_CAN_ID, BACK_RIGHT_CANCODER_CAN_ID, BACK_RIGHT_ENCODER_OFFSET,
         Units.inchesToMeters(BACK_RIGHT_X_POS_INCHES), Units.inchesToMeters(BACK_RIGHT_Y_POS_INCHES), INVERT_RIGHT_SIDE);
+    public static final double DRIVE_SLEW_RATE = 7.5;
   }
+
 
   public DriveSubsystem() {
     super(DriveConstants.drivetrainConstants, 

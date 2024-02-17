@@ -56,7 +56,7 @@ public static class TrajectoryConstants {
     public static final Translation2d ONE_PIECE_SHOOT = new Translation2d(Units.inchesToMeters(114), Units.inchesToMeters(100)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
 
     public static final Translation2d TEST_START = new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
-    public static final Translation2d TEST_END = new Translation2d(Units.inchesToMeters(36), Units.inchesToMeters(0)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
+    public static final Translation2d TEST_END = new Translation2d(Units.inchesToMeters(72), Units.inchesToMeters(0)); // I DONT ACTUALLY KNOW THESE DIMENSIONS (PLS CAD)
 
   }
 
