@@ -113,6 +113,7 @@ public class RobotContainer {
     driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
     driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
     driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
+    driverController.leftTrigger().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
     // Scores
     driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
