@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
@@ -11,7 +10,6 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 public class ClimberSubsystem extends SubsystemBase {
 
   public static class ClimberConstants {
@@ -121,14 +119,6 @@ public class ClimberSubsystem extends SubsystemBase {
   public void setClimberMotorPosition(double position) {
     leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
     rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
-    // if (isClimberExtended) {
-    //   leftClimberPIDController.setReference(0, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
-    //   isClimberExtended = false;
-    // }
-    // else {
-    //   leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KV, ArbFFUnits.kVoltage);
-    //   isClimberExtended = true;
-    // }
   }
 
   /** Returns a value in rotations of the current motor
@@ -157,11 +147,4 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberMotor.setVoltage(v);
     rightClimberMotor.setVoltage(v);
   }
-
-  // public void initSendable(SendableBuilder builder){
-  //   builder.setSmartDashboardType("Climber");
-
-  //   builder.addDoubleProperty("Climber P Value", () -> leftClimberPIDController.getP(), null);
-  //   builder.addDoubleProperty("Climber Motor Position", () -> getClimberMotorPosition(), null);
-  // }
 }
