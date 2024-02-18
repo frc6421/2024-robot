@@ -19,6 +19,7 @@ import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -63,7 +64,7 @@ public class RobotContainer {
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
 
-  private final AutoTestCommand autoTest;
+  //private final AutoTestCommand autoTest;
   BlueTwoPieceCommand blueTwoPiece;
   RedTwoPieceCommand redTwoPiece;
   BlueFourPieceCommand blueFourPiece;
@@ -71,6 +72,8 @@ public class RobotContainer {
   BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
   
   public static RobotStates state;
+
+  private SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -90,7 +93,7 @@ public class RobotContainer {
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
-    autoTest = new AutoTestCommand(driveSubsystem);
+    //autoTest = new AutoTestCommand(driveSubsystem);
     blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem);
     redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem);
     blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem);
@@ -98,6 +101,14 @@ public class RobotContainer {
     blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem);
 
     state = RobotStates.DRIVE;
+
+    autoChooser = new SendableChooser<>();
+
+    autoChooser.addOption("Blue 2 Piece", blueTwoPiece);
+    autoChooser.addOption("Red 2 Piece", redTwoPiece);
+    autoChooser.addOption("Blue 4 Piece", blueFourPiece);
+    autoChooser.addOption("Red 4 Piece", redFourPiece);
+
     
 
     // Configure the trigger bindings
@@ -179,6 +190,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return blueTwoPiece;
+    return autoChooser.getSelected();
   }
 }
