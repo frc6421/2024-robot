@@ -47,10 +47,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public ApplyModuleStates autoDriveRequest;
 
   // PhotonVision Cameras
-  private PhotonCamera Camera1;
-  private PhotonCamera Camera2;
-  private PhotonCamera Camera3;
-  private PhotonCamera Camera4;
+  private PhotonCamera camera1;
+  private PhotonCamera camera2;
+  private PhotonCamera camera3;
+  private PhotonCamera camera4;
 
   private PhotonPoseEstimator camera1PoseEstimator;
   private PhotonPoseEstimator camera2PoseEstimator;
@@ -197,24 +197,29 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       startSimThread();
     }
 
+    // Back left camera
+    camera3 = new PhotonCamera("Camera_1_OV9281_USB_Camera");
+    // Back right camera
+    camera4 = new PhotonCamera("Camera_6_OV9281_USB_Camera");
+
     camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        Camera1,
+        camera1,
         new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
 
     camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        Camera2,
+        camera2,
         new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
 
     camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        Camera3,
+        camera3,
         new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
 
     camera4PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        Camera4,
+        camera4,
         new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
   }
 
