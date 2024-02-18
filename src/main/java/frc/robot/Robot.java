@@ -56,7 +56,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() { 
     // Set LEDs to red with white twinkle on disable
-    CANdleSubsystem.setPattern(1, 0, 4);
+    //CANdleSubsystem.setPattern(1, 0, 4);
+    CANdleSubsystem.setLEDColor(255, 0, 0);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -84,6 +85,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    m_robotContainer.resetShooter();
   }
 
   /** This function is called periodically during operator control. */

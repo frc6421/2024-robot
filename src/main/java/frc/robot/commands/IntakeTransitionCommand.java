@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.RobotStates;
+import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
@@ -40,6 +41,8 @@ public class IntakeTransitionCommand extends Command {
 
     counter = 0;
 
+    CANdleSubsystem.setLEDColor(0, 0, 0);
+
     transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED);
     intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_IN_SPEED);
   }
@@ -62,20 +65,22 @@ public class IntakeTransitionCommand extends Command {
     if(transitionSubsystem.timeOfFlightIn.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
     {
-      // TODO LED pink
+
       transitionSubsystem.setTransitionVoltage((-1.0 * TransitionConstants.TRANSITION_SPEED) / 4);
       counter = 0;
       possibleOverShoot = true;
     }
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) 
-  {
-    // TODO LED pink
+  public void end(boolean interrupted) {
+    
     intakeSubsystem.setIntakeVoltage(0);
     transitionSubsystem.setTransitionVoltage(0);
+    //CANdleSubsystem.setPattern(0, 0, 4);
+    CANdleSubsystem.setLEDColor(255, 0, 255);
 
     RobotContainer.state = RobotStates.DRIVE;
   }

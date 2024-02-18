@@ -11,6 +11,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
@@ -47,15 +48,15 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public ApplyModuleStates autoDriveRequest;
 
   // PhotonVision Cameras
-  private PhotonCamera camera1;
-  private PhotonCamera camera2;
-  private PhotonCamera camera3;
-  private PhotonCamera camera4;
+  // private PhotonCamera camera1;
+  // private PhotonCamera camera2;
+  // private PhotonCamera camera3;
+  // private PhotonCamera camera4;
 
-  private PhotonPoseEstimator camera1PoseEstimator;
-  private PhotonPoseEstimator camera2PoseEstimator;
-  private PhotonPoseEstimator camera3PoseEstimator;
-  private PhotonPoseEstimator camera4PoseEstimator;
+  // private PhotonPoseEstimator camera1PoseEstimator;
+  // private PhotonPoseEstimator camera2PoseEstimator;
+  // private PhotonPoseEstimator camera3PoseEstimator;
+  // private PhotonPoseEstimator camera4PoseEstimator;
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -193,34 +194,50 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
       autoDriveRequest = new ApplyModuleStates();
 
+      ParentDevice.optimizeBusUtilizationForAll(
+        getModule(0).getDriveMotor(),
+        getModule(0).getSteerMotor(),
+        getModule(0).getCANcoder(),
+        getModule(1).getDriveMotor(),
+        getModule(1).getSteerMotor(),
+        getModule(1).getCANcoder(),
+        getModule(2).getDriveMotor(),
+        getModule(2).getSteerMotor(),
+        getModule(2).getCANcoder(),
+        getModule(3).getDriveMotor(),
+        getModule(3).getSteerMotor(),
+        getModule(3).getCANcoder(),
+        getPigeon2()
+        );
+
     if (Utils.isSimulation()) {
       startSimThread();
     }
 
     // Back left camera
-    camera3 = new PhotonCamera("Camera_1_OV9281_USB_Camera");
+    //camera3 = new PhotonCamera("Camera_1_OV9281_USB_Camera");
     // Back right camera
-    camera4 = new PhotonCamera("Camera_6_OV9281_USB_Camera");
+    //camera4 = new PhotonCamera("Camera_6_OV9281_USB_Camera");
 
-    camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        camera1,
-        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+    // camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    //     camera1,
+    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
 
-    camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        camera2,
-        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+    // camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    //     camera2,
+    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
 
-    camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        camera3,
-        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+    // camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    //     camera3,
+    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
 
-    camera4PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        camera4,
-        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+    // camera4PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    //     camera4,
+    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -288,39 +305,39 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   @Override
   public void periodic() {
 
-    Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
-    Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
-    Optional<EstimatedRobotPose> pose3 = updatePhotonPoseEstimator(camera3PoseEstimator);
-    Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
+    // Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
+    // Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
+    // Optional<EstimatedRobotPose> pose3 = updatePhotonPoseEstimator(camera3PoseEstimator);
+    // Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
 
     //TODO determine if we need to reject bad vision pose estimates
-    if(pose1.isPresent()) {
+    // if(pose1.isPresent()) {
 
-      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-          pose1.get().timestampSeconds);
+    //   addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+    //       pose1.get().timestampSeconds);
       
-    }
+    // }
 
-    if(pose2.isPresent()) {
+    // if(pose2.isPresent()) {
 
-      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-          pose2.get().timestampSeconds);
+    //   addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+    //       pose2.get().timestampSeconds);
       
-    }
+    // }
 
-    if(pose3.isPresent()) {
+    // if(pose3.isPresent()) {
 
-      addVisionMeasurement(pose3.get().estimatedPose.toPose2d(),
-          pose3.get().timestampSeconds);
+    //   addVisionMeasurement(pose3.get().estimatedPose.toPose2d(),
+    //       pose3.get().timestampSeconds);
       
-    }
+    // }
 
-    if(pose4.isPresent()) {
+    // if(pose4.isPresent()) {
 
-      addVisionMeasurement(pose4.get().estimatedPose.toPose2d(),
-          pose4.get().timestampSeconds);
+    //   addVisionMeasurement(pose4.get().estimatedPose.toPose2d(),
+    //       pose4.get().timestampSeconds);
       
-    }
+    // }
 
   }
 

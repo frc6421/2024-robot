@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -88,6 +89,9 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+    //Optimize CAN utilization
+    ParentDevice.optimizeBusUtilizationForAll(topShooterMotor, bottomShooterMotor);
+
     //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
@@ -102,6 +106,15 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorVelocity.withVelocity(velocity / 60);
     topShooterMotor.setControl(shooterMotorVelocity);
     bottomShooterMotor.setControl(shooterMotorVelocity);
+  }
+
+  /**
+   * Stops the shooter motors
+   * @return
+   */
+  public void stopShooterMotor() {
+    topShooterMotor.stopMotor();
+    bottomShooterMotor.stopMotor();
   }
 
 

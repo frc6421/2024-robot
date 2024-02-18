@@ -61,7 +61,11 @@ public class CANdleSubsystem extends SubsystemBase {
 
         candle.clearStickyFaults();
         
-        Shuffleboard.getTab("CANdle Testing").add(this);
+        //Shuffleboard.getTab("CANdle Testing").add(this);
+    }
+
+    public static void setLEDColor(int r, int g, int b) {
+        candle.setLEDs(b, g, r, 0, 0, CANdleConstants.NUMBER_OF_LED);
     }
 
     /**
@@ -144,21 +148,6 @@ public class CANdleSubsystem extends SubsystemBase {
         }else{
             candle.setLEDs(0,0,0);
         }
-    }
-
-    public void initSendable(SendableBuilder builder){
-        builder.setSmartDashboardType("CANdleSubsystem");
-
-        builder.addIntegerProperty("Number of LED's", ()-> numberLEDs, null);
-
-        builder.addIntegerProperty("Set R", null, this::setR);
-        builder.addIntegerProperty("Set G", null, this::setG);
-        builder.addIntegerProperty("Set B", null, this::setB);
-        builder.addBooleanProperty("Custom Color", null, this::setCustomPattern);
-        
-        builder.addIntegerProperty("Set Primary Color", null, this::setPrimaryColor);
-        builder.addIntegerProperty("Set Secondary Color", null, this::setSecondaryColor);
-        builder.addIntegerProperty("Pattern", null, this::setPattern);
     }
 
     //Retrives the colors from the lookup table

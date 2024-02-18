@@ -34,6 +34,7 @@ import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -59,6 +60,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
+  //private final CANdleSubsystem candleSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -87,6 +89,7 @@ public class RobotContainer {
     armSubsystem = new TransitionArmSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
+    //candleSubsystem = new CANdleSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
@@ -94,8 +97,8 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand(driveCommand);
 
     //autoTest = new AutoTestCommand(driveSubsystem);
-    blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem);
-    redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem);
+    blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem);
     redFourPiece = new RedFourPieceCommand(driveSubsystem, intakeSubsystem);
     blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem);
@@ -104,16 +107,16 @@ public class RobotContainer {
 
     autoChooser = new SendableChooser<>();
 
-    autoChooser.addOption("Blue 2 Piece", blueTwoPiece);
+    autoChooser.setDefaultOption("Blue 2 Piece", blueTwoPiece);
     autoChooser.addOption("Red 2 Piece", redTwoPiece);
     autoChooser.addOption("Blue 4 Piece", blueFourPiece);
     autoChooser.addOption("Red 4 Piece", redFourPiece);
-
     
 
     // Configure the trigger bindings
     configureBindings();
 
+    Shuffleboard.getTab("Competition").add("Auto Chooser", autoChooser);
     //Shuffleboard.getTab("Competition").add("Robot State", state);
   }
 
@@ -191,5 +194,13 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return autoChooser.getSelected();
+  }
+
+  /**
+   * Resets shooter to start teleop
+   */
+  public void resetShooter() {
+    shooterSubsystem.stopShooterMotor();
+    shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
   }
 }
