@@ -123,6 +123,8 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
 
     // Arm out for AMP
+
+    
     operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
