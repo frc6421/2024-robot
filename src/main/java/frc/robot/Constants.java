@@ -90,4 +90,13 @@ public static class TrajectoryConstants {
 
   }
 
+    public static enum RobotStates{
+        DRIVE,
+        INTAKE,
+        SHOOT,
+        AMP,
+        TRAP,
+        CLIMB,
+        BARF
+    }
 }
