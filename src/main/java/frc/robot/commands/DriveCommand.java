@@ -4,11 +4,15 @@
 
 package frc.robot.commands;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,6 +34,8 @@ public class DriveCommand extends Command {
 
   private final SlewRateLimiter xDriveSlew;
   private final SlewRateLimiter yDriveSlew;
+
+  private int invert = 1;
 
   /** Creates a new DriveCommand. */
   public DriveCommand(DriveSubsystem drive, CommandXboxController controller) {
@@ -59,6 +65,12 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+
+    if(allianceColor.get().equals(Alliance.Red)) {
+      invert = -1;
+    }
+
     double xSpeed;
     double ySpeed;
 
@@ -66,8 +78,8 @@ public class DriveCommand extends Command {
     ySpeed = yDriveSlew.calculate(-driverController.getLeftX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
 
     driveSubsystem.setControl(
-        driveRequest.withVelocityX(xSpeed)
-        .withVelocityY(ySpeed)
+        driveRequest.withVelocityX(xSpeed * invert)
+        .withVelocityY(ySpeed * invert)
         .withRotationalRate(-driverController.getRightX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC));
   }
 
