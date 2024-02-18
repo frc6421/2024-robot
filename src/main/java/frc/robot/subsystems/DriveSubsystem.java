@@ -1,8 +1,14 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusCode;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
@@ -17,6 +23,11 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -34,6 +45,17 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private double m_lastSimTime;
   public SwerveDriveKinematics kinematics;
   public ApplyModuleStates autoDriveRequest;
+
+  // PhotonVision Cameras
+  private PhotonCamera Camera1;
+  private PhotonCamera Camera2;
+  private PhotonCamera Camera3;
+  private PhotonCamera Camera4;
+
+  private PhotonPoseEstimator camera1PoseEstimator;
+  private PhotonPoseEstimator camera2PoseEstimator;
+  private PhotonPoseEstimator camera3PoseEstimator;
+  private PhotonPoseEstimator camera4PoseEstimator;
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -174,6 +196,26 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
+
+    camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera1,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+
+    camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera2,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+
+    camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera3,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+
+    camera4PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        Camera4,
+        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -236,5 +278,56 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
   public Pose2d getPose2d() {
     return getState().Pose;
+  }
+
+  @Override
+  public void periodic() {
+
+    Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
+    Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
+    Optional<EstimatedRobotPose> pose3 = updatePhotonPoseEstimator(camera3PoseEstimator);
+    Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
+
+    //TODO determine if we need to reject bad vision pose estimates
+    if(pose1.isPresent()) {
+
+      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+          pose1.get().timestampSeconds);
+      
+    }
+
+    if(pose2.isPresent()) {
+
+      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+          pose2.get().timestampSeconds);
+      
+    }
+
+    if(pose3.isPresent()) {
+
+      addVisionMeasurement(pose3.get().estimatedPose.toPose2d(),
+          pose3.get().timestampSeconds);
+      
+    }
+
+    if(pose4.isPresent()) {
+
+      addVisionMeasurement(pose4.get().estimatedPose.toPose2d(),
+          pose4.get().timestampSeconds);
+      
+    }
+
+  }
+
+  private Optional<EstimatedRobotPose> updatePhotonPoseEstimator(PhotonPoseEstimator poseEstimator) {
+    return poseEstimator.update();
+  }
+
+  /**
+   * Gets the estimated pose 
+   * @return estimated pose from pose estimator (Pose2d)
+   */
+  public Pose2d getCurrentPose2d() {
+    return m_odometry.getEstimatedPosition();
   }
 }
