@@ -33,7 +33,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
       public static final double SHOOTER_SUB_RPM = 3000;
     }
-    //Creating the objects for the motors and their encoders, respectivly
+    //Creating the objects for the motors and their encoders, respectively
     private TalonFX topShooterMotor;
     private TalonFX bottomShooterMotor;
 

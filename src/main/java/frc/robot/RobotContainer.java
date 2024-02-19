@@ -34,7 +34,7 @@ import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterRevUpCommand;
-import frc.robot.subsystems.CANdleSubsystem;
+//import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -193,7 +193,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autoChooser.getSelected();
+    //return autoChooser.getSelected();
+    return null;
   }
 
   /**
