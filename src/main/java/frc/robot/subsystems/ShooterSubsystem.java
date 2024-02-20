@@ -89,6 +89,9 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+    topShooterMotor.optimizeBusUtilization();
+    bottomShooterMotor.optimizeBusUtilization();
+
     //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);

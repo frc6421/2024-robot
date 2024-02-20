@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -24,16 +26,20 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.RobotContainer;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -57,6 +63,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private PhotonPoseEstimator camera2PoseEstimator;
   // private PhotonPoseEstimator camera3PoseEstimator;
   // private PhotonPoseEstimator camera4PoseEstimator;
+
+  private AprilTagFieldLayout hallwayAprilTagFieldLayout;
+  private final String fieldLayoutJSON = "Hallway_Field.json";
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -194,8 +203,33 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
       autoDriveRequest = new ApplyModuleStates();
 
+      ParentDevice.optimizeBusUtilizationForAll(
+        getModule(0).getDriveMotor(),
+        getModule(0).getSteerMotor(),
+        getModule(0).getCANcoder(),
+        getModule(1).getDriveMotor(),
+        getModule(1).getSteerMotor(),
+        getModule(1).getCANcoder(),
+        getModule(2).getDriveMotor(),
+        getModule(2).getSteerMotor(),
+        getModule(2).getCANcoder(),
+        getModule(3).getDriveMotor(),
+        getModule(3).getSteerMotor(),
+        getModule(3).getCANcoder(),
+        getPigeon2()
+      );
+
     if (Utils.isSimulation()) {
       startSimThread();
+    }
+
+    try {
+      Path fieldLayoutPath = Filesystem.getDeployDirectory().toPath().resolve(fieldLayoutJSON);
+
+      hallwayAprilTagFieldLayout = new AprilTagFieldLayout(fieldLayoutPath);
+
+    } catch (IOException ex) {
+      DriverStation.reportError("Unable to open field layout: " + fieldLayoutJSON, ex.getStackTrace());
     }
 
     PhotonCamera.setVersionCheckEnabled(false);
@@ -206,12 +240,13 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Back right camera
     camera2 = new PhotonCamera("Camera6");
 
-    camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //TODO change field layout for real field
+    camera1PoseEstimator = new PhotonPoseEstimator(hallwayAprilTagFieldLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera1,
         new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(135))));
 
-    camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    camera2PoseEstimator = new PhotonPoseEstimator(hallwayAprilTagFieldLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera2,
         new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(-135))));
@@ -298,19 +333,19 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
 
     //TODO determine if we need to reject bad vision pose estimates
-    if(pose1.isPresent()) {
+    // if(pose1.isPresent()) {
 
-      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-          pose1.get().timestampSeconds);
+    //   addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+    //       pose1.get().timestampSeconds);
       
-    }
+    // }
 
-    if(pose2.isPresent()) {
+    // if(pose2.isPresent()) {
 
-      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-          pose2.get().timestampSeconds);
+    //   addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+    //       pose2.get().timestampSeconds);
       
-    }
+    // }
 
     // if(pose3.isPresent()) {
 
