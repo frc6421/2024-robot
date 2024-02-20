@@ -205,18 +205,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
       ParentDevice.optimizeBusUtilizationForAll(
         getModule(0).getDriveMotor(),
-        getModule(0).getSteerMotor(),
-        getModule(0).getCANcoder(),
         getModule(1).getDriveMotor(),
-        getModule(1).getSteerMotor(),
-        getModule(1).getCANcoder(),
         getModule(2).getDriveMotor(),
-        getModule(2).getSteerMotor(),
-        getModule(2).getCANcoder(),
-        getModule(3).getDriveMotor(),
-        getModule(3).getSteerMotor(),
-        getModule(3).getCANcoder(),
-        getPigeon2()
+        getModule(3).getDriveMotor()
       );
 
     if (Utils.isSimulation()) {
