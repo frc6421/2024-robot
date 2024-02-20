@@ -48,13 +48,13 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public ApplyModuleStates autoDriveRequest;
 
   // PhotonVision Cameras
-  // private PhotonCamera camera1;
-  // private PhotonCamera camera2;
+  private PhotonCamera camera1;
+  private PhotonCamera camera2;
   // private PhotonCamera camera3;
   // private PhotonCamera camera4;
 
-  // private PhotonPoseEstimator camera1PoseEstimator;
-  // private PhotonPoseEstimator camera2PoseEstimator;
+  private PhotonPoseEstimator camera1PoseEstimator;
+  private PhotonPoseEstimator camera2PoseEstimator;
   // private PhotonPoseEstimator camera3PoseEstimator;
   // private PhotonPoseEstimator camera4PoseEstimator;
 
@@ -194,40 +194,27 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
       autoDriveRequest = new ApplyModuleStates();
 
-      ParentDevice.optimizeBusUtilizationForAll(
-        getModule(0).getDriveMotor(),
-        //getModule(0).getSteerMotor(),
-        //getModule(0).getCANcoder(),
-        getModule(1).getDriveMotor(),
-        //getModule(1).getSteerMotor(),
-        //getModule(1).getCANcoder(),
-        getModule(2).getDriveMotor(),
-        //getModule(2).getSteerMotor(),
-        //getModule(2).getCANcoder(),
-        getModule(3).getDriveMotor(),
-        //getModule(3).getSteerMotor(),
-        //getModule(3).getCANcoder(),
-        getPigeon2()
-        );
-
     if (Utils.isSimulation()) {
       startSimThread();
     }
 
+    PhotonCamera.setVersionCheckEnabled(false);
+
     // Back left camera
-    //camera3 = new PhotonCamera("Camera_1_OV9281_USB_Camera");
+    camera1 = new PhotonCamera("Camera1");
+
     // Back right camera
-    //camera4 = new PhotonCamera("Camera_6_OV9281_USB_Camera");
+    camera2 = new PhotonCamera("Camera6");
 
-    // camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //     camera1,
-    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+    camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        camera1,
+        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(135))));
 
-    // camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //     camera2,
-    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
+    camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        camera2,
+        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(-135))));
 
     // camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
     //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -305,25 +292,25 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   @Override
   public void periodic() {
 
-    // Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
-    // Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
+    Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
+    Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
     // Optional<EstimatedRobotPose> pose3 = updatePhotonPoseEstimator(camera3PoseEstimator);
     // Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
 
     //TODO determine if we need to reject bad vision pose estimates
-    // if(pose1.isPresent()) {
+    if(pose1.isPresent()) {
 
-    //   addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-    //       pose1.get().timestampSeconds);
+      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+          pose1.get().timestampSeconds);
       
-    // }
+    }
 
-    // if(pose2.isPresent()) {
+    if(pose2.isPresent()) {
 
-    //   addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-    //       pose2.get().timestampSeconds);
+      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+          pose2.get().timestampSeconds);
       
-    // }
+    }
 
     // if(pose3.isPresent()) {
 

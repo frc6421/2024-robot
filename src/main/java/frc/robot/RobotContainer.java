@@ -17,6 +17,10 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
+
+import com.ctre.phoenix.unmanaged.Unmanaged;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -80,8 +84,13 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    // Comment this line out to use TunerX, uncomment to improve CAN utilization
+    Unmanaged.setPhoenixDiagnosticsStartTime(-1);
+
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
+
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     driveSubsystem = new DriveSubsystem();
     intakeSubsystem = new IntakeSubsystem();

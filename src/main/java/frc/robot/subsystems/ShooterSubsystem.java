@@ -89,9 +89,6 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    //Optimize CAN utilization
-    ParentDevice.optimizeBusUtilizationForAll(topShooterMotor, bottomShooterMotor);
-
     //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
