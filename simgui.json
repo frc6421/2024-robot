@@ -2,10 +2,33 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem"
+      "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem",
+      "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
+      "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
+      "/Shuffleboard/Shooter Tuning/TuneShooter": "Command",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        "open": true
+      }
     }
   },
   "NetworkTables Info": {
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
     "visible": true
   }
 }

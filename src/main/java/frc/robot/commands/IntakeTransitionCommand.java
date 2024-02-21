@@ -5,6 +5,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
+import frc.robot.Constants.RobotStates;
+//import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
@@ -32,9 +35,13 @@ public class IntakeTransitionCommand extends Command {
   @Override
   public void initialize() {
 
+    RobotContainer.state = RobotStates.INTAKE;
+
     possibleOverShoot = false;
 
     counter = 0;
+
+    //CANdleSubsystem.setLEDColor(0, 0, 0);
 
     transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED);
     intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_IN_SPEED);
@@ -43,41 +50,46 @@ public class IntakeTransitionCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(transitionSubsystem.timeOfFlightIn.getRange() <= 350 && transitionSubsystem.timeOfFlightOut.getRange() >= 350)
+    if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
+       transitionSubsystem.timeOfFlightOut.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM)
     {
       transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 2);
-      //TODO Can we turn off intake here?
-      //intakeSubsystem.setIntakeVoltage(0);
     }
-    if(transitionSubsystem.timeOfFlightIn.getRange() <= 350 && transitionSubsystem.timeOfFlightOut.getRange() <= 350)
+    if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
+       transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
     {
       intakeSubsystem.setIntakeVoltage(0);
       transitionSubsystem.setTransitionVoltage(0);
       counter++;
     }
-    if(transitionSubsystem.timeOfFlightIn.getRange() >= 350 && transitionSubsystem.timeOfFlightOut.getRange() <= 350)
+    if(transitionSubsystem.timeOfFlightIn.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM && 
+       transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
     {
-      // TODO LED pink
+
       transitionSubsystem.setTransitionVoltage((-1.0 * TransitionConstants.TRANSITION_SPEED) / 4);
-      System.out.println("Counter: " + counter);
       counter = 0;
       possibleOverShoot = true;
     }
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) 
-  {
-    // TODO LED pink
+  public void end(boolean interrupted) {
+    
     intakeSubsystem.setIntakeVoltage(0);
     transitionSubsystem.setTransitionVoltage(0);
+    //CANdleSubsystem.setPattern(0, 0, 4);
+    //CANdleSubsystem.setLEDColor(255, 0, 255);
+
+    RobotContainer.state = RobotStates.DRIVE;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return (counter >= 30) 
-    || ((transitionSubsystem.timeOfFlightIn.getRange() > 350 && transitionSubsystem.timeOfFlightOut.getRange() > 350) && possibleOverShoot);
+    || ((transitionSubsystem.timeOfFlightIn.getRange() > TransitionConstants.DETECTION_DISTANCE_MM && 
+         transitionSubsystem.timeOfFlightOut.getRange() > TransitionConstants.DETECTION_DISTANCE_MM) && possibleOverShoot);
   }
 }
