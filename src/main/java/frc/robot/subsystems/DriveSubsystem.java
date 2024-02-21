@@ -33,10 +33,12 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.RobotContainer;
@@ -56,13 +58,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   // PhotonVision Cameras
   private PhotonCamera camera1;
   private PhotonCamera camera2;
-  // private PhotonCamera camera3;
-  // private PhotonCamera camera4;
 
   private PhotonPoseEstimator camera1PoseEstimator;
   private PhotonPoseEstimator camera2PoseEstimator;
-  // private PhotonPoseEstimator camera3PoseEstimator;
-  // private PhotonPoseEstimator camera4PoseEstimator;
 
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
   private final String fieldLayoutJSON = "Hallway_Field.json";
@@ -203,12 +201,12 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
       autoDriveRequest = new ApplyModuleStates();
 
-      ParentDevice.optimizeBusUtilizationForAll(
-        getModule(0).getDriveMotor(),
-        getModule(1).getDriveMotor(),
-        getModule(2).getDriveMotor(),
-        getModule(3).getDriveMotor()
-      );
+      // ParentDevice.optimizeBusUtilizationForAll(
+      //   getModule(0).getDriveMotor(),
+      //   getModule(1).getDriveMotor(),
+      //   getModule(2).getDriveMotor(),
+      //   getModule(3).getDriveMotor()
+      // );
 
     if (Utils.isSimulation()) {
       startSimThread();
@@ -235,22 +233,13 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     camera1PoseEstimator = new PhotonPoseEstimator(hallwayAprilTagFieldLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera1,
-        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(135))));
+        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135))));
 
     camera2PoseEstimator = new PhotonPoseEstimator(hallwayAprilTagFieldLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera2,
-        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(-135))));
+        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135))));
 
-    // camera3PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //     camera3,
-    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
-
-    // camera4PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //     camera4,
-    //     new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)));
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -320,37 +309,25 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
     Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
-    // Optional<EstimatedRobotPose> pose3 = updatePhotonPoseEstimator(camera3PoseEstimator);
-    // Optional<EstimatedRobotPose> pose4 = updatePhotonPoseEstimator(camera4PoseEstimator);
 
     //TODO determine if we need to reject bad vision pose estimates
-    // if(pose1.isPresent()) {
+    if(pose1.isPresent()) {
 
-    //   addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-    //       pose1.get().timestampSeconds);
+      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+          pose1.get().timestampSeconds);
+
+    }
+
+    if(pose2.isPresent()) {
+
+      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+          pose2.get().timestampSeconds);
       
-    // }
+    }
 
-    // if(pose2.isPresent()) {
-
-    //   addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-    //       pose2.get().timestampSeconds);
-      
-    // }
-
-    // if(pose3.isPresent()) {
-
-    //   addVisionMeasurement(pose3.get().estimatedPose.toPose2d(),
-    //       pose3.get().timestampSeconds);
-      
-    // }
-
-    // if(pose4.isPresent()) {
-
-    //   addVisionMeasurement(pose4.get().estimatedPose.toPose2d(),
-    //       pose4.get().timestampSeconds);
-      
-    // }
+    SmartDashboard.putNumber("Pose Estimator X", Units.metersToInches(m_odometry.getEstimatedPosition().getX()));
+    SmartDashboard.putNumber("Pose Estimator Y", Units.metersToInches(m_odometry.getEstimatedPosition().getY()));
+    SmartDashboard.putNumber("Pose Estimator Rotation", m_odometry.getEstimatedPosition().getRotation().getDegrees());
 
   }
 
@@ -365,4 +342,5 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public Pose2d getCurrentPose2d() {
     return m_odometry.getEstimatedPosition();
   }
+
 }

@@ -43,6 +43,7 @@ import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.VisionTestCommand;
 //import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -74,6 +75,8 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
+
+  private final VisionTestCommand visionTestCommand;
 
   //private final AutoTestCommand autoTest;
   BlueTwoPieceCommand blueTwoPiece;
@@ -107,6 +110,8 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
+
+    visionTestCommand = new VisionTestCommand(driveSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
@@ -172,6 +177,8 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
       .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
+
+    driverController.a().whileTrue(visionTestCommand);
 
     // Arm out for AMP
 
