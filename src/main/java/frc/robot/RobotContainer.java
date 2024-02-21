@@ -6,7 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -30,8 +32,6 @@ public class RobotContainer {
     
     ledSubsystem = new LEDSubsystem();
 
-    ledSubsystem.setColor(255, 0, 125);
-
     // Configure the trigger bindings
     configureBindings();
   }
@@ -46,7 +46,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
+    // Hot pink is intake, blue is for amp
+    // m_driverController.a().onTrue(new InstantCommand(() -> ledSubsystem.setColor(LEDColors.BLUE)));
+    // m_driverController.x().onTrue(new InstantCommand(() -> ledSubsystem.setColor(LEDColors.HOT_PINK)));
+    // m_driverController.y().onTrue(new InstantCommand(() -> ledSubsystem.setColor(LEDColors.OFF)));
   }
 
   /**
@@ -59,3 +62,4 @@ public class RobotContainer {
     return null;
   }
 }
+

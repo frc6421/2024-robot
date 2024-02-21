@@ -4,14 +4,25 @@
 
 package frc.robot.subsystems;
 
+import java.util.concurrent.TimeUnit;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 
 public class LEDSubsystem extends SubsystemBase {
 
   public static class LEDConstants {
-    public static int NUMBER_OF_LEDS = 60;
+    public static int NUMBER_OF_LEDS = 10;
+
+    public static enum LEDColors{
+      OFF,
+      BLUE,
+      HOT_PINK,
+      //RAINBOW
+    }
+
   }
 
   public AddressableLED led;
@@ -21,7 +32,7 @@ public class LEDSubsystem extends SubsystemBase {
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem() 
   {
-    led = new AddressableLED(1);
+    led = new AddressableLED(0);
     ledBuffer = new AddressableLEDBuffer(LEDConstants.NUMBER_OF_LEDS);
 
     led.setLength(LEDConstants.NUMBER_OF_LEDS);
@@ -33,12 +44,27 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
-  public void setColor(int g, int r, int b) {
+  /**
+   * Setting the LED strips to a color, in GRB!!!!
+   * @param color the color to set them to
+   */
+  public void setColor(LEDColors color) {
       for(int i = 0; i < LEDConstants.NUMBER_OF_LEDS; i++) {
-        // GRB
-        ledBuffer.setRGB(i, g, r, b);
+        switch(color){
+          case BLUE:
+            ledBuffer.setRGB(i,0,0,255);
+            break;
+
+          case HOT_PINK:
+            ledBuffer.setRGB(i,0,255,70);
+            break;
+
+          case OFF:
+            ledBuffer.setRGB(i,0,0,0);
+            break;
+        }
       }
-      led.setData(ledBuffer);
+    led.setData(ledBuffer);
   }
 }
+
