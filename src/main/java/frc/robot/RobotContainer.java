@@ -99,7 +99,7 @@ public class RobotContainer {
     //autoTest = new AutoTestCommand(driveSubsystem);
     blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem);
+    blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redFourPiece = new RedFourPieceCommand(driveSubsystem, intakeSubsystem);
     blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem);
 

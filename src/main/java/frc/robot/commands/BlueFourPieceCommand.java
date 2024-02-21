@@ -21,13 +21,19 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -35,14 +41,21 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 public class BlueFourPieceCommand extends SequentialCommandGroup {
   private DriveSubsystem driveSubsystem;
   private IntakeSubsystem intakeSubsystem;
+  private TransitionSubsystem transitionSubsystem;
+  private ShooterSubsystem shooterSubsystem;
+  private ShooterAngleSubsystem shooterAngleSubsystem;
+
 
    private Field2d field;
   /** Creates a new BlueTwoPieceCommand. */
-  public BlueFourPieceCommand(DriveSubsystem drive, IntakeSubsystem intake) {
+  public BlueFourPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
 
     driveSubsystem = drive;
     intakeSubsystem = intake;
-    addRequirements(driveSubsystem, intakeSubsystem);
+    transitionSubsystem = transition;
+    shooterSubsystem = shooter;
+    shooterAngleSubsystem = shooterAngle;
+    addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem ,shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
         AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
@@ -69,18 +82,18 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.NOTE3, new Rotation2d(0))), forwardConfig);
 
 
-    // Simulation
-     //field = new Field2d();
+     // Simulation
+     field = new Field2d();
 
-     //if (RobotBase.isSimulation()) {
-        //SmartDashboard.putData(field);
+     if (RobotBase.isSimulation()) {
+        SmartDashboard.putData(field);
 
-        //field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
+        field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
-        //field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-        //field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-        //field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
-      //}
+        field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+        field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+        field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
+      }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
@@ -120,14 +133,40 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> driveSubsystem.tareEverything()), 
-      // score pre-loaded piece 
-      new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED)), 
-      driveToFirstNoteCommand,
+      new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
+      // shoot preload
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+      new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+      new WaitCommand(0.25),
+      new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+      // go to and shoot first note
+      new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+      new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
-      // stop intake and score second piece
-      driveToSecondNoteCommand,
-      driveToThirdNoteCommand
+      new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+      // go to and shoot second note
+      new ParallelDeadlineGroup(driveToSecondNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+      new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+      new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
+      new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+      // go to and shoot third note
+      new ParallelDeadlineGroup(driveToThirdNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+      new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+      new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
+      new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+      new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
     );
   }
 }
+
+
