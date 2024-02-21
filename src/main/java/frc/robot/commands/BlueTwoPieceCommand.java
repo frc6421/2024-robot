@@ -111,12 +111,11 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      // score pre-loaded piece 
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(IntakeConstants.INTAKE_IN_SPEED)),
       driveToFirstNoteCommand, 
       new InstantCommand(() -> intakeSubsystem.stopIntake()),
-      driveToScoreCommand,
+      driveToScoreCommand, 
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds()))
     );
