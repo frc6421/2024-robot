@@ -10,6 +10,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 public class ClimberSubsystem extends SubsystemBase {
 
   public static class ClimberConstants {
@@ -23,16 +24,15 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final double CLIMBER_GEAR_RATIO = 1;
     // Velocity control
     // TODO Put in PID values
-    public static final double CLIMBER_KS = 0.0;
-    public static final double CLIMBER_KV = 0.0;
+    public static final double CLIMBER_KS = -0.4;
     public static final double CLIMBER_KP = 0.0; // 0.05
     public static final double CLIMBER_KI = 0.0;
     public static final double CLIMBER_KD = 0.0;
-    public static final double CLIMBER_KG = 0.0;
+    public static final double CLIMBER_KG = -0.6;
 
 
     //TODO Confirm values
-    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0;
+    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0; // 40 for climbing
     public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 5; // 147
 
     // Current Limits
@@ -82,10 +82,10 @@ public class ClimberSubsystem extends SubsystemBase {
     
     // Set motors to brake mode and set direction
     // TODO Confirm which direction config should be
-    leftClimberMotor.setIdleMode(IdleMode.kCoast);
+    leftClimberMotor.setIdleMode(IdleMode.kBrake);
     leftClimberMotor.setInverted(false);
     leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
-    rightClimberMotor.setIdleMode(IdleMode.kCoast);
+    rightClimberMotor.setIdleMode(IdleMode.kBrake);
     rightClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
 
     // Follower
@@ -117,8 +117,10 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param position Used to set the position of the motors
    */
   public void setClimberMotorPosition(double position) {
-    leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
-    rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    //leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberLeftMotorPosition() * 360), ArbFFUnits.kVoltage);
+    //rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition);
+    rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberRightMotorPosition() * 360), ArbFFUnits.kVoltage);
   }
 
   /** Returns a value in rotations of the current motor
