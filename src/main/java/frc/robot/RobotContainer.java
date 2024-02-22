@@ -12,7 +12,6 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
-import frc.robot.subsystems.CANdleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -116,7 +115,6 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))));
     
     driverController.y().whileTrue(new ParallelCommandGroup(shooterRevUpCommand, shooterAngleCommand)
-      .andThen(new InstantCommand(() -> CANdleSubsystem.setPattern(1, 0, 4)))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))));
     driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES)))

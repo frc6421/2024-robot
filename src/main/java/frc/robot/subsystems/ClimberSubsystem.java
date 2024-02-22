@@ -23,17 +23,17 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final double CLIMBER_GEAR_RATIO = 1;
     // Velocity control
     // TODO Put in PID values
-    public static final double CLIMBER_KS = 0.0;
+    public static final double CLIMBER_KS = -0.4;
     public static final double CLIMBER_KV = 0.0;
-    public static final double CLIMBER_KP = 0.0; // 0.05
+    public static final double CLIMBER_KP = 0.05; // 0.05
     public static final double CLIMBER_KI = 0.0;
     public static final double CLIMBER_KD = 0.0;
-    public static final double CLIMBER_KG = 0.0;
+    public static final double CLIMBER_KG = -0.6;
 
 
     //TODO Confirm values
     public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0;
-    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 5; // 147
+    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 147; // 147
 
     // Current Limits
     //TODO Confirm Limits
@@ -49,8 +49,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final RelativeEncoder leftClimberEncoder;
   private final RelativeEncoder rightClimberEncoder;
-
-  public boolean isClimberExtended;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
@@ -70,18 +68,18 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberEncoder = leftClimberMotor.getEncoder();
     rightClimberEncoder = rightClimberMotor.getEncoder();
 
-    // Set bool to false
-    isClimberExtended = false;
-
     // Soft limits
     rightClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
     rightClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
+
+    // TODO verify soft limits
+    rightClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    rightClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
     leftClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
     leftClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
     
     // Set motors to brake mode and set direction
-    // TODO Confirm which direction config should be
     leftClimberMotor.setIdleMode(IdleMode.kCoast);
     leftClimberMotor.setInverted(false);
     leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
@@ -134,17 +132,5 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public double getClimberRightMotorPosition() {
     return rightClimberEncoder.getPosition();
-  }
-
-  public void setClimberP(double p)
-  {
-    leftClimberPIDController.setP(p);
-    rightClimberPIDController.setP(p);
-  }
-
-  public void setClimberVoltage(double v)
-  {
-    leftClimberMotor.setVoltage(v);
-    rightClimberMotor.setVoltage(v);
   }
 }
