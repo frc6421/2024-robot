@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.OptimizeSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
@@ -51,6 +52,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
+  private final OptimizeSubsystem optimizeSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -70,6 +72,7 @@ public class RobotContainer {
     armSubsystem = new TransitionArmSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
+    optimizeSubsystem = new OptimizeSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
@@ -78,6 +81,7 @@ public class RobotContainer {
 
     state = RobotStates.DRIVE;
     
+    optimizeSubsystem.bottomShooterOptimize(shooterSubsystem);
 
     // Configure the trigger bindings
     configureBindings();

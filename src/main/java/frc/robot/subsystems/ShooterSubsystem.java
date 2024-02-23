@@ -94,8 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
 
     //Optimize
-    optimizeSubsystem.topShooterOptimize(this);
-    optimizeSubsystem.bottomShooterOptimize(this);
+    // optimizeSubsystem.topShooterOptimize(this);
+    // optimizeSubsystem.bottomShooterOptimize(this);
   }
 
 
