@@ -6,13 +6,11 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -24,7 +22,6 @@ public class VisionTestCommand extends Command {
   private static final double maxLinearVelocity = 2;
   private static final double maxLinearAcceleration = 2;
 
-  //TODO update max velocity and acceleration
   // In radians/sec
   private static final double maxAngularVelocity = 2 * Math.PI;
   private static final double maxAngularAcceleration = 2 * Math.PI;
@@ -47,7 +44,6 @@ public class VisionTestCommand extends Command {
   private static final double yI = 0;
   private static final double yD = 0;
 
-  //TODO update PID values
   private static final double rotationP = 5;
   private static final double rotationI = 0;
   private static final double rotationD = 0;

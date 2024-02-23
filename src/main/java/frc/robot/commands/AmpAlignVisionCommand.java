@@ -25,32 +25,31 @@ public class AmpAlignVisionCommand extends Command {
   private static final double maxLinearVelocity = 2;
   private static final double maxLinearAcceleration = 2;
 
-  //TODO update max velocity and acceleration
   // In radians/sec
   private static final double maxAngularVelocity = 2 * Math.PI;
-  private static final double maxAngularAcceleration = Math.PI;
+  private static final double maxAngularAcceleration = 2 * Math.PI;
 
   private Pose2d targetPose;
   private Pose2d currentPose;
 
   // In meters
-  private double allowableXError = 0.02;
+  private double allowableXError = 0.025;
   // In meters
-  private double allowableYError = 0.02;
+  private double allowableYError = 0.025;
   // In radians
   private double allowableAngleError = 0.04;
 
-  //TODO update PID values
-  private static final double xP = 0;
+
+  private static final double xP = 2.31;
   private static final double xI = 0;
   private static final double xD = 0;
 
-  private static final double yP = 0;
+  private static final double yP = 2.31;
   private static final double yI = 0;
   private static final double yD = 0;
+  
 
-  //TODO update PID values
-  private static final double rotationP = 0;
+  private static final double rotationP = 5;
   private static final double rotationI = 0;
   private static final double rotationD = 0;
 
@@ -81,14 +80,6 @@ public class AmpAlignVisionCommand extends Command {
     yController.setTolerance(allowableYError);
     rotationController.setTolerance(allowableAngleError);
 
-    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
-
-    if(allianceColor.get().equals(Alliance.Red)) {
-      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(5).get().toPose2d();
-    } else if(allianceColor.get().equals(Alliance.Blue)) {
-      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(6).get().toPose2d();
-    }
-
     //TODO add/subtract robot size if needed
     xController.setGoal(targetPose.getX());
     yController.setGoal(targetPose.getY());
@@ -98,6 +89,14 @@ public class AmpAlignVisionCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+
+    if(allianceColor.get().equals(Alliance.Red)) {
+      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(5).get().toPose2d();
+    } else if(allianceColor.get().equals(Alliance.Blue)) {
+      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(6).get().toPose2d();
+    }
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
@@ -120,6 +119,6 @@ public class AmpAlignVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint();
+    return xController.atGoal() && yController.atGoal() && rotationController.atGoal();
   }
 }

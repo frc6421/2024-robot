@@ -21,10 +21,9 @@ public class SpeakerAlignVisionCommand extends Command {
 
   DriveSubsystem driveSubsystem;
 
-  //TODO update max velocity and acceleration
   // In rad/sec
   private static final double maxAngularVelocity = 2 * Math.PI;
-  private static final double maxAngularAcceleration = Math.PI;
+  private static final double maxAngularAcceleration = 2 * Math.PI;
 
   private Pose2d targetPose;
   private Pose2d currentPose;
@@ -35,8 +34,7 @@ public class SpeakerAlignVisionCommand extends Command {
   // In radians
   private double allowableError = 0.04;
 
-  //TODO update PID values
-  private static final double rotationP = 0;
+  private static final double rotationP = 5;
   private static final double rotationI = 0;
   private static final double rotationD = 0;
 
@@ -60,6 +58,11 @@ public class SpeakerAlignVisionCommand extends Command {
   @Override
   public void initialize() {
     rotationController.setTolerance(allowableError);
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
 
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
@@ -68,11 +71,6 @@ public class SpeakerAlignVisionCommand extends Command {
     } else if(allianceColor.get().equals(Alliance.Blue)) {
       targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
     }
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
