@@ -355,8 +355,4 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     return m_odometry.getEstimatedPosition();
   }
 
-  public double getPoseAmbiguity(PhotonCamera camera) {
-    return camera.getLatestResult().targets.get(0).getPoseAmbiguity();
-  }
-
 }
