@@ -33,14 +33,15 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final double SHOOTER_SUB_RPM = 3000;
     }
     //Creating the objects for the motors and their encoders, respectivly
-    private TalonFX topShooterMotor;
-    private TalonFX bottomShooterMotor;
+    public TalonFX topShooterMotor;
+    public TalonFX bottomShooterMotor;
 
     private TalonFXConfiguration topShooterConfig;
     private TalonFXConfiguration bottomShooterConfig;
 
     private VelocityVoltage shooterMotorVelocity;
     
+    private OptimizeSubsystem optimizeSubsystem;
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -91,6 +92,10 @@ public class ShooterSubsystem extends SubsystemBase {
     //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
+
+    //Optimize
+    optimizeSubsystem.topShooterOptimize(this);
+    optimizeSubsystem.bottomShooterOptimize(this);
   }
 
 
