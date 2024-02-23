@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
-import frc.robot.commands.ClimberTuning;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
@@ -61,8 +60,6 @@ public class RobotContainer {
 
   public static RobotStates state;
 
-  private final ClimberTuning climberTuning;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -76,7 +73,6 @@ public class RobotContainer {
     climberSubsystem = new ClimberSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
-    climberTuning = new ClimberTuning(climberSubsystem);
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
 
@@ -85,12 +81,11 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand(driveCommand);
 
     state = RobotStates.DRIVE;
-    
 
     // Configure the trigger bindings
     configureBindings();
 
-    //Shuffleboard.getTab("Competition").add("Robot State", state);
+    Shuffleboard.getTab("Competition").add("Robot State", state.toString());
   }
 
   /**

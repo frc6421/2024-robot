@@ -110,7 +110,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Motor velocity, in RPM
    */
   public double getTopMotorVelocity(){
-    return 60 * topShooterMotor.getVelocity().refresh().getValue();
+    return 60 * topShooterMotor.getVelocity().getValue();
   }
 
 
@@ -119,7 +119,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Motor velocity, in RPM
    */
   public double getBottomMotorVelocity(){
-    return 60 * bottomShooterMotor.getVelocity().refresh().getValue();
+    return 60 * bottomShooterMotor.getVelocity().getValue();
   }
 
 
