@@ -122,7 +122,7 @@ public class RobotContainer {
     //autoTest = new AutoTestCommand(driveSubsystem);
     blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem);
+    blueFourPiece = new BlueFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redFourPiece = new RedFourPieceCommand(driveSubsystem, intakeSubsystem);
     blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem);
 
@@ -217,7 +217,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //return autoChooser.getSelected();
-    return null;
+    return blueTwoPiece;
   }
 
   /**

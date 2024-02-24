@@ -69,17 +69,17 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.NOTE11, new Rotation2d(0))), reverseConfig);
 
     // Simulation
-     field = new Field2d();
+    //  field = new Field2d();
 
-     if (RobotBase.isSimulation()) {
-        SmartDashboard.putData(field);
+    //  if (RobotBase.isSimulation()) {
+    //     SmartDashboard.putData(field);
 
-        field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
+    //     field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
-        field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-        field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-        field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
-      }
+    //     field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
+    //   }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,

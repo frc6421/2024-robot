@@ -120,14 +120,13 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      // score pre-loaded piece 
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      new ParallelCommandGroup(new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), driveToFirstNoteCommand),
+      new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
       driveToScoreCommand,
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
       new ShooterRevUpCommand(shooterSubsystem),

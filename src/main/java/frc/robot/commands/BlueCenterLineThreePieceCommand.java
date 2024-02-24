@@ -84,19 +84,19 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
 
 
     // Simulation
-     field = new Field2d();
+    //  field = new Field2d();
 
-     if (RobotBase.isSimulation()) {
-        SmartDashboard.putData(field);
+    //  if (RobotBase.isSimulation()) {
+    //     SmartDashboard.putData(field);
 
-        field.setRobotPose(scorePreloadTrajectory.getInitialPose());
+    //     field.setRobotPose(scorePreloadTrajectory.getInitialPose());
 
-        field.getObject("Preload").setTrajectory(scorePreloadTrajectory);
-       // field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-       // field.getObject("Drive to score one Trajectory").setTrajectory(driveBackToScoreOneTrajectory);
-        //field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-        //field.getObject("Drive to score two Trajectory").setTrajectory(driveBackToScoreTwoTrajectory);
-      }
+    //     field.getObject("Preload").setTrajectory(scorePreloadTrajectory);
+    //     field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //     field.getObject("Drive to score one Trajectory").setTrajectory(driveBackToScoreOneTrajectory);
+    //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //     field.getObject("Drive to score two Trajectory").setTrajectory(driveBackToScoreTwoTrajectory);
+    //   }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
