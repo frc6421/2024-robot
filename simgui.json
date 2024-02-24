@@ -3,10 +3,54 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem",
+      "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
       "/Shuffleboard/Shooter Tuning/TuneShooter": "Command",
       "/SmartDashboard/Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "1 Preload": {
+          "style": "Line"
+        },
+        "2 Preload": {
+          "style": "Line"
+        },
+        "Drive to first Trajectory": {
+          "style": "Line"
+        },
+        "Drive to score 1 Trajectory": {
+          "style": "Line"
+        },
+        "Drive to score 2 Trajectory": {
+          "style": "Line"
+        },
+        "Drive to score 3 Trajectory": {
+          "style": "Line"
+        },
+        "Drive to score one Trajectory": {
+          "style": "Line"
+        },
+        "Drive to score two Trajectory": {
+          "style": "Line"
+        },
+        "Drive to second Trajectory": {
+          "style": "Line"
+        },
+        "Drive to third Trajectory": {
+          "style": "Line"
+        },
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {

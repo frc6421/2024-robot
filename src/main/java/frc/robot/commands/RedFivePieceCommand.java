@@ -39,7 +39,7 @@ import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class RedFourPieceCommand extends SequentialCommandGroup {
+public class RedFivePieceCommand extends SequentialCommandGroup {
   private DriveSubsystem driveSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private TransitionSubsystem transitionSubsystem;
@@ -48,7 +48,7 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
 
    private Field2d field;
   /** Creates a new BlueTwoPieceCommand. */
-  public RedFourPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
+  public RedFivePieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
 
     driveSubsystem = drive;
     intakeSubsystem = intake;
@@ -93,6 +93,15 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.NOTE11, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
 
+     Trajectory driveToFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE8_RED, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
+
+    Trajectory driveToScoreFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.NOTE8_RED, new Rotation2d(Units.degreesToRadians(180))),
+        // add way point so doesnt hit stage pls
+        new Pose2d(TrajectoryConstants.RED_SUSSEX_SCORE, new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
+
     // Simulation
     //  field = new Field2d();
 
@@ -101,12 +110,14 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
 
     //     field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
-    //     field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-    //     field.getObject("Drive to score 1 Trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
-    //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-    //     field.getObject("Drive to score 2 Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
-    //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
-    //     field.getObject("Drive to score 3 Trajectory").setTrajectory(driveToScoreThirdNoteTrajectory);
+    //     // field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //     // field.getObject("Drive to score 1 Trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
+    //     // field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //     // field.getObject("Drive to score 2 Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
+    //     // field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
+    //     // field.getObject("Drive to score 3 Trajectory").setTrajectory(driveToScoreThirdNoteTrajectory);
+    //     field.getObject("Drive to 4 Trajectory").setTrajectory(driveToFourthNoteTrajectory);
+    //     field.getObject("Drive to score 4 Trajectory").setTrajectory(driveToScoreFourthNoteTrajectory);
     //   }
 
     var thetaController = new ProfiledPIDController(
@@ -168,6 +179,22 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         holonomicDriveController,
         driveSubsystem::autoSetModuleStates,
         driveSubsystem);
+
+    SwerveControllerCommand driveToFourthNoteCommand = new SwerveControllerCommand(
+        driveToFourthNoteTrajectory,
+        driveSubsystem::getPose2d,
+        driveSubsystem.kinematics,
+        holonomicDriveController,
+        driveSubsystem::autoSetModuleStates,
+        driveSubsystem);
+
+    SwerveControllerCommand driveToScoreFourthNoteCommand = new SwerveControllerCommand(
+        driveToScoreFourthNoteTrajectory,
+        driveSubsystem::getPose2d,
+        driveSubsystem.kinematics,
+        holonomicDriveController,
+        driveSubsystem::autoSetModuleStates,
+        driveSubsystem);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -204,6 +231,16 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+      new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+      new WaitCommand(0.25),
+      new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+      // fourth note slay
+      new ParallelDeadlineGroup( 
+        new SequentialCommandGroup(driveToFourthNoteCommand, driveToScoreFourthNoteCommand), 
+        new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),

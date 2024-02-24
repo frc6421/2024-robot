@@ -17,11 +17,13 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -45,7 +47,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
-  // private Field2d field;
+   private Field2d field;
   /** Creates a new RedTwoPieceCommand. */
   public RedTwoPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
 
@@ -70,23 +72,23 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
 
     // robot leaves start zone and moves to pick up note at podium
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(0))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.RED_SUSSEX_SCORE, new Rotation2d(0))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_SUSSEX_SCORE, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     // Simulation
     // field = new Field2d();
 
     // if (RobotBase.isSimulation()) {
-       // SmartDashboard.putData(field);
+    //    SmartDashboard.putData(field);
 
-       // field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
+    //    field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
-       // field.getObject("Red Drive to Podium Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-     // }
+    //    field.getObject("Red Drive to Podium Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //  }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
@@ -120,18 +122,18 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      // score pre-loaded piece 
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      new ParallelCommandGroup(new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), driveToFirstNoteCommand),
+      new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
       driveToScoreCommand,
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+      new WaitCommand(0.25),
       new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor())

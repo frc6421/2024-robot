@@ -58,13 +58,13 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 3,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 3)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND + 0.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED + 1.5)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
 
@@ -120,18 +120,18 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      // score pre-loaded piece 
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      new ParallelCommandGroup(new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), driveToFirstNoteCommand),
+      new ParallelDeadlineGroup(new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), driveToFirstNoteCommand),
       driveToScoreCommand,
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+      new WaitCommand(0.25),
       new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor())

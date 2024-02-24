@@ -53,7 +53,7 @@ public class IntakeTransitionCommand extends Command {
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM)
     {
-      transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 2);
+      transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 1.5);
     }
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
