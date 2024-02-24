@@ -64,6 +64,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private double poseRejectionThreshold = 1.0;
 
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
+
   private final String fieldLayoutJSON = "Hallway_Field.json";
 
   public class DriveConstants {

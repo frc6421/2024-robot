@@ -74,7 +74,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
-  //private final CANdleSubsystem candleSubsystem;
+  private final LEDSubsystem ledSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -110,7 +110,7 @@ public class RobotContainer {
     armSubsystem = new TransitionArmSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
-    //candleSubsystem = new CANdleSubsystem();
+    ledSubsystem = new LEDSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);

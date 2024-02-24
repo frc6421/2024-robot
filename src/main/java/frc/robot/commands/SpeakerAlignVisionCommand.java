@@ -47,6 +47,7 @@ public class SpeakerAlignVisionCommand extends Command {
   /** Creates a new SpeakerAlignVisionCommand. */
   public SpeakerAlignVisionCommand(DriveSubsystem drive) {
     driveSubsystem = drive;
+    rotationController.setTolerance(allowableError);
 
     driveRequest = new SwerveRequest.FieldCentric();
 
@@ -57,13 +58,6 @@ public class SpeakerAlignVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    rotationController.setTolerance(allowableError);
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
     if(allianceColor.get().equals(Alliance.Red)) {
@@ -71,10 +65,15 @@ public class SpeakerAlignVisionCommand extends Command {
     } else if(allianceColor.get().equals(Alliance.Blue)) {
       targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
     }
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
-    //TODO see what value this outputs
+    //TODO see what value this outputs (check pos./neg.)
     //TODO determine if this needs to change sign based on alliance color
     angleToTarget = targetPose.relativeTo(currentPose).getRotation().getRadians();
 
@@ -98,6 +97,6 @@ public class SpeakerAlignVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return rotationController.atSetpoint();
+    return rotationController.atGoal();
   }
 }
