@@ -84,9 +84,16 @@ public static class TrajectoryConstants {
   public static final Translation2d FRONT_CENTER_BLUE_SUBWOOFER = new Translation2d(Units.inchesToMeters(36)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
   public static final Translation2d FRONT_CENTER_RED_SUBWOOFER = new Translation2d(Units.inchesToMeters(615)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
 
-  public static final Translation2d BLUE_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(164), Units.inchesToMeters(200));
-  public static final Translation2d BLUE_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(36)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(60));
-  public static final Translation2d BLUE_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(164), Units.inchesToMeters(111.5));
+  public static final Translation2d BLUE_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(154), Units.inchesToMeters(218.5));
+  public static final Translation2d BLUE_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(0)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(80));
+  public static final Translation2d BLUE_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(189), Units.inchesToMeters(161.5));
+  public static final Translation2d BLUE_EDGE_OF_STAGE = new Translation2d(Units.inchesToMeters(219), Units.inchesToMeters(161.5));
+
+  public static final Translation2d RED_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(497), Units.inchesToMeters(218.5));
+  public static final Translation2d RED_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(651)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(80));
+  public static final Translation2d RED_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(462), Units.inchesToMeters(161.5));
+  public static final Translation2d RED_EDGE_OF_STAGE = new Translation2d(Units.inchesToMeters(432), Units.inchesToMeters(161.5));
+
 
   }
 
