@@ -103,7 +103,8 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     private static final double DRIVE_GEAR_RATIO = 6.746031746031747;
     private static final double STEER_GEAR_RATIO = 21.428571428571427;
-    //TODO update after initial measurements and before each competition/everytime treads are changed
+    // TODO update after initial measurements and before each competition/everytime
+    // treads are changed
     private static final double WHEEL_RADIUS_INCHES = 1.91;
 
     private static final boolean STEER_MOTOR_REVERSED = true;
@@ -177,38 +178,42 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final double BACK_RIGHT_Y_POS_INCHES = -22.75 / 2;
 
     private static final SwerveModuleConstants frontLeft = constantCreator.createModuleConstants(
-        FRONT_LEFT_STEER_MOTOR_CAN_ID, FRONT_LEFT_DRIVE_MOTOR_CAN_ID, FRONT_LEFT_CANCODER_CAN_ID, FRONT_LEFT_ENCODER_OFFSET,
+        FRONT_LEFT_STEER_MOTOR_CAN_ID, FRONT_LEFT_DRIVE_MOTOR_CAN_ID, FRONT_LEFT_CANCODER_CAN_ID,
+        FRONT_LEFT_ENCODER_OFFSET,
         Units.inchesToMeters(FRONT_LEFT_X_POS_INCHES), Units.inchesToMeters(FRONT_LEFT_Y_POS_INCHES), INVERT_LEFT_SIDE);
     private static final SwerveModuleConstants frontRight = constantCreator.createModuleConstants(
-        FRONT_RIGHT_STEER_MOTOR_CAN_ID, FRONT_RIGHT_DRIVE_MOTOR_CAN_ID, FRONT_RIGHT_CANCODER_CAN_ID, FRONT_RIGHT_ENCODER_OFFSET,
-        Units.inchesToMeters(FRONT_RIGHT_X_POS_INCHES), Units.inchesToMeters(FRONT_RIGHT_Y_POS_INCHES), INVERT_RIGHT_SIDE);
+        FRONT_RIGHT_STEER_MOTOR_CAN_ID, FRONT_RIGHT_DRIVE_MOTOR_CAN_ID, FRONT_RIGHT_CANCODER_CAN_ID,
+        FRONT_RIGHT_ENCODER_OFFSET,
+        Units.inchesToMeters(FRONT_RIGHT_X_POS_INCHES), Units.inchesToMeters(FRONT_RIGHT_Y_POS_INCHES),
+        INVERT_RIGHT_SIDE);
     private static final SwerveModuleConstants backLeft = constantCreator.createModuleConstants(
         BACK_LEFT_STEER_MOTOR_CAN_ID, BACK_LEFT_DRIVE_MOTOR_CAN_ID, BACK_LEFT_CANCODER_CAN_ID, BACK_LEFT_ENCODER_OFFSET,
         Units.inchesToMeters(BACK_LEFT_X_POS_INCHES), Units.inchesToMeters(BACK_LEFT_Y_POS_INCHES), INVERT_LEFT_SIDE);
     private static final SwerveModuleConstants backRight = constantCreator.createModuleConstants(
-        BACK_RIGHT_STEER_MOTOR_CAN_ID, BACK_RIGHT_DRIVE_MOTOR_CAN_ID, BACK_RIGHT_CANCODER_CAN_ID, BACK_RIGHT_ENCODER_OFFSET,
-        Units.inchesToMeters(BACK_RIGHT_X_POS_INCHES), Units.inchesToMeters(BACK_RIGHT_Y_POS_INCHES), INVERT_RIGHT_SIDE);
+        BACK_RIGHT_STEER_MOTOR_CAN_ID, BACK_RIGHT_DRIVE_MOTOR_CAN_ID, BACK_RIGHT_CANCODER_CAN_ID,
+        BACK_RIGHT_ENCODER_OFFSET,
+        Units.inchesToMeters(BACK_RIGHT_X_POS_INCHES), Units.inchesToMeters(BACK_RIGHT_Y_POS_INCHES),
+        INVERT_RIGHT_SIDE);
     public static final double DRIVE_SLEW_RATE = 7.5;
   }
 
-
   public DriveSubsystem() {
-    super(DriveConstants.drivetrainConstants, 
-      DriveConstants.frontLeft,
-      DriveConstants.frontRight,
-      DriveConstants.backLeft,
-      DriveConstants.backRight);
+    super(DriveConstants.drivetrainConstants,
+        DriveConstants.frontLeft,
+        DriveConstants.frontRight,
+        DriveConstants.backLeft,
+        DriveConstants.backRight);
 
-      kinematics = m_kinematics;
+    kinematics = m_kinematics;
 
-      autoDriveRequest = new ApplyModuleStates();
+    autoDriveRequest = new ApplyModuleStates();
 
-      // ParentDevice.optimizeBusUtilizationForAll(
-      //   getModule(0).getDriveMotor(),
-      //   getModule(1).getDriveMotor(),
-      //   getModule(2).getDriveMotor(),
-      //   getModule(3).getDriveMotor()
-      // );
+    // ParentDevice.optimizeBusUtilizationForAll(
+    // getModule(0).getDriveMotor(),
+    // getModule(1).getDriveMotor(),
+    // getModule(2).getDriveMotor(),
+    // getModule(3).getDriveMotor()
+    // );
 
     if (Utils.isSimulation()) {
       startSimThread();
@@ -234,12 +239,16 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera1,
-        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135))));
+        new Transform3d(
+            new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)),
+            new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135))));
 
     camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera2,
-        new Transform3d(new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)), new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135))));
+        new Transform3d(
+            new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)),
+            new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135))));
 
   }
 
@@ -277,7 +286,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
       return StatusCode.OK;
     }
-    
+
     public ApplyModuleStates withModuleStates(SwerveModuleState[] state) {
       this.States = state;
       return this;
@@ -311,33 +320,36 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
     Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
 
-    //TODO test rejecting bad pose estimates
-    if(pose1.isPresent()) {
+    if (!DriverStation.isAutonomous()) {
+      // TODO test rejecting bad pose estimates
+      if (pose1.isPresent()) {
 
-      if(Math.abs(pose1.get().estimatedPose.toPose2d().getX() - getCurrentPose2d().getX()) < poseRejectionThreshold
-        || Math.abs(pose1.get().estimatedPose.toPose2d().getY() - getCurrentPose2d().getY()) < poseRejectionThreshold) {
+        // if (Math.abs(pose1.get().estimatedPose.toPose2d().getX() - getCurrentPose2d().getX()) < poseRejectionThreshold
+        //     || Math.abs(
+        //         pose1.get().estimatedPose.toPose2d().getY() - getCurrentPose2d().getY()) < poseRejectionThreshold) {
 
           addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-            pose1.get().timestampSeconds);
+              pose1.get().timestampSeconds);
 
-        }
-      
-    }
+        //}
 
-    if(pose2.isPresent()) {
+      }
 
-      if(Math.abs(pose2.get().estimatedPose.toPose2d().getX() - getCurrentPose2d().getX()) < poseRejectionThreshold
-        || Math.abs(pose2.get().estimatedPose.toPose2d().getY() - getCurrentPose2d().getY()) < poseRejectionThreshold) {
+      if (pose2.isPresent()) {
+
+        // if (Math.abs(pose2.get().estimatedPose.toPose2d().getX() - getCurrentPose2d().getX()) < poseRejectionThreshold
+        //     || Math.abs(
+        //         pose2.get().estimatedPose.toPose2d().getY() - getCurrentPose2d().getY()) < poseRejectionThreshold) {
 
           addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-            pose2.get().timestampSeconds);
+              pose2.get().timestampSeconds);
 
-        }
-      
+       // }
+      }
+
     }
-    
 
-    //TODO remove for competition
+    // TODO remove for competition
     SmartDashboard.putNumber("Pose Estimator X", Units.metersToInches(m_odometry.getEstimatedPosition().getX()));
     SmartDashboard.putNumber("Pose Estimator Y", Units.metersToInches(m_odometry.getEstimatedPosition().getY()));
     SmartDashboard.putNumber("Pose Estimator Rotation", m_odometry.getEstimatedPosition().getRotation().getDegrees());
@@ -349,7 +361,8 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   }
 
   /**
-   * Gets the estimated pose 
+   * Gets the estimated pose
+   * 
    * @return estimated pose from pose estimator (Pose2d)
    */
   public Pose2d getCurrentPose2d() {

@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,7 +47,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
-  // private Field2d field;
+  private Field2d field;
   /** Creates a new RedTwoPieceCommand. */
   public RedTwoPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
 
@@ -71,23 +72,23 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
 
     // robot leaves start zone and moves to pick up note at podium
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(0))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.RED_SUSSEX_SCORE, new Rotation2d(0))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_SUSSEX_SCORE, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     // Simulation
-    // field = new Field2d();
+    field = new Field2d();
 
-    // if (RobotBase.isSimulation()) {
-       // SmartDashboard.putData(field);
+    if (RobotBase.isSimulation()) {
+       SmartDashboard.putData(field);
 
-       // field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
+       field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
-       // field.getObject("Red Drive to Podium Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-     // }
+       field.getObject("Red Drive to Podium Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+     }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
