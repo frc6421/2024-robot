@@ -9,6 +9,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.RobotStates;
 //import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
@@ -53,7 +54,7 @@ public class IntakeTransitionCommand extends Command {
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM)
     {
-      transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 2);
+      transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 1.5);
     }
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)

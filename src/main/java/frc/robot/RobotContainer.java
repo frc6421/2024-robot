@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AmpAlignVisionCommand;
 import frc.robot.commands.AutoTestCommand;
 import frc.robot.commands.BlueCenterLineThreePieceCommand;
 import frc.robot.commands.BlueFourPieceCommand;
@@ -47,6 +48,7 @@ import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.SpeakerAlignVisionCommand;
 import frc.robot.commands.VisionTestCommand;
 //import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -81,6 +83,8 @@ public class RobotContainer {
   private final IntakeTransitionCommand intakeTransitionCommand;
 
   private final VisionTestCommand visionTestCommand;
+  private final AmpAlignVisionCommand ampAlignVisionCommand;
+  private final SpeakerAlignVisionCommand speakerAlignVisionCommand;
 
   //private final AutoTestCommand autoTest;
   BlueTwoPieceCommand blueTwoPiece;
@@ -114,6 +118,8 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
+    ampAlignVisionCommand = new AmpAlignVisionCommand(driveSubsystem);
+    speakerAlignVisionCommand = new SpeakerAlignVisionCommand(driveSubsystem);
 
     visionTestCommand = new VisionTestCommand(driveSubsystem);
 
@@ -182,7 +188,15 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
       .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
 
-    driverController.a().whileTrue(visionTestCommand);
+    //TODO remove testing buttons
+    driverController.a().whileTrue(speakerAlignVisionCommand);
+
+    driverController.b().onTrue(new InstantCommand(() -> shooterAngleSubsystem.setAngle(23))
+      .alongWith(new InstantCommand(() -> shooterSubsystem.setTopShooterMotorVelocity(4500 - 100)))
+      .alongWith(new InstantCommand(() -> shooterSubsystem.setBottomShooterMotorVelocity(4500))));
+    driverController.x().onTrue(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
+      .alongWith(new InstantCommand(() -> shooterSubsystem.stopShooterMotor())));
+
 
     // Arm out for AMP
     operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)

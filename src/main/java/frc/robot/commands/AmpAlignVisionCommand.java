@@ -12,7 +12,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -124,6 +126,7 @@ public class AmpAlignVisionCommand extends Command {
         .withVelocityX(0)
         .withVelocityY(0)
         .withRotationalRate(0));
+
   }
 
   // Returns true when the command should end.

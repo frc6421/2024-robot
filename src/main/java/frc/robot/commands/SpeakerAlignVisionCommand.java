@@ -6,14 +6,18 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
+import org.photonvision.PhotonUtils;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -28,8 +32,10 @@ public class SpeakerAlignVisionCommand extends Command {
   private Pose2d targetPose;
   private Pose2d currentPose;
 
-  private double angleToTarget;
+  private double calculatedAngle;
   private double currentAngle;
+  private double angleToRotate;
+  private double targetAngle;
 
   // In radians
   private double allowableError = 0.04;
@@ -38,16 +44,21 @@ public class SpeakerAlignVisionCommand extends Command {
   private static final double rotationI = 0;
   private static final double rotationD = 0;
 
-  private static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(maxAngularVelocity, maxAngularAcceleration);
+  private static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(maxAngularVelocity,
+      maxAngularAcceleration);
 
-  private static final ProfiledPIDController rotationController = new ProfiledPIDController(rotationP, rotationI, rotationD, constraints);
+  private static final ProfiledPIDController rotationController = new ProfiledPIDController(rotationP, rotationI,
+      rotationD, constraints);
 
   private final SwerveRequest.FieldCentric driveRequest;
+
+  private Optional<DriverStation.Alliance> allianceColor;
 
   /** Creates a new SpeakerAlignVisionCommand. */
   public SpeakerAlignVisionCommand(DriveSubsystem drive) {
     driveSubsystem = drive;
     rotationController.setTolerance(allowableError);
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
     driveRequest = new SwerveRequest.FieldCentric();
 
@@ -58,13 +69,18 @@ public class SpeakerAlignVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+    allianceColor = DriverStation.getAlliance();
 
-    if(allianceColor.get().equals(Alliance.Red)) {
-      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(4).get().toPose2d();
-    } else if(allianceColor.get().equals(Alliance.Blue)) {
-      targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
+    if (allianceColor.isPresent()) {
+      if (allianceColor.get().equals(Alliance.Red)) {
+        targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(4).get().toPose2d();
+      } else if (allianceColor.get().equals(Alliance.Blue)) {
+        targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
+      }
+    } else {
+      targetPose = driveSubsystem.getCurrentPose2d();
     }
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -72,26 +88,53 @@ public class SpeakerAlignVisionCommand extends Command {
   public void execute() {
 
     currentPose = driveSubsystem.getCurrentPose2d();
+    currentAngle = currentPose.getRotation().getRadians();
 
-    //TODO see what value this outputs (check pos./neg.)
-    //TODO determine if this needs to change sign based on alliance color
-    angleToTarget = targetPose.relativeTo(currentPose).getRotation().getRadians();
+    calculatedAngle = Math.atan((targetPose.getX() - currentPose.getX()) / (targetPose.getY() - currentPose.getY()));
+    //calculatedAngle = PhotonUtils.getYawToPose(currentPose, targetPose).getRadians();
+    //calculatedAngle = targetPose.relativeTo(currentPose).getRotation().getRadians();
 
-    currentAngle = driveSubsystem.getCurrentPose2d().getRotation().getRadians();
+    targetAngle = currentAngle - calculatedAngle;
 
-    rotationController.setGoal(currentAngle + angleToTarget);
+    SmartDashboard.putNumber("angleToTarget", Units.radiansToDegrees(calculatedAngle));
 
-    driveSubsystem.setControl(
-      driveRequest.withRotationalRate(rotationController.calculate(currentAngle)));
+    // if (allianceColor.isPresent()) {
+    //   if (allianceColor.get().equals(Alliance.Red)) {
+    //     if(currentAngle > 0) {
+    //       double flippedAngle = 180 - currentAngle;
+
+    //       if(calculatedAngle > 0) {
+
+
+
+    //       }
+          
+
+    //     } else if(currentAngle < 0) {
+    //       double flipAngle = 180 + currentAngle;
+    //     }
+    //   } else if (allianceColor.get().equals(Alliance.Blue)) {
+    //     angleToRotate = calculatedAngle - currentAngle;
+    //   }
+    // } else {
+    //   targetAngle = currentAngle;
+    // }
+
+    rotationController.setGoal(targetAngle);
+
+    SmartDashboard.putNumber("goal", rotationController.getGoal().position);
+
+    // driveSubsystem.setControl(
+    // driveRequest.withRotationalRate(rotationController.calculate(currentAngle)));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     driveSubsystem.setControl(
-      driveRequest.withVelocityX(0)
-      .withVelocityY(0)
-      .withRotationalRate(0));
+        driveRequest.withVelocityX(0)
+            .withVelocityY(0)
+            .withRotationalRate(0));
   }
 
   // Returns true when the command should end.

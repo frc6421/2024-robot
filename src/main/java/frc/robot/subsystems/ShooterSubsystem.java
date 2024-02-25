@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -57,7 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //For setting the velocity
     shooterMotorVelocity = new VelocityVoltage(0);
 
-    //Setting the motors to their certain configs
+    //Resetting motors to factory defaults
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
 
@@ -92,6 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
+
   }
 
 
@@ -103,6 +105,22 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorVelocity.withVelocity(velocity / 60);
     topShooterMotor.setControl(shooterMotorVelocity);
     bottomShooterMotor.setControl(shooterMotorVelocity);
+  }
+
+  /**
+   * 
+   * @param velocity
+   */
+  public void setTopShooterMotorVelocity(double velocity) {
+    topShooterMotor.setControl(shooterMotorVelocity.withVelocity(velocity / 60));
+  }
+
+  /**
+   * 
+   * @param velocity
+   */
+  public void setBottomShooterMotorVelocity(double velocity) {
+    bottomShooterMotor.setControl(shooterMotorVelocity.withVelocity(velocity / 60));
   }
 
   /**
@@ -136,5 +154,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
+    SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
   }
 }
