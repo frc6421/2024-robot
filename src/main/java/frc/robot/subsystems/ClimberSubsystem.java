@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
@@ -148,5 +150,11 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public double getClimberRightMotorPosition() {
     return rightClimberEncoder.getPosition();
+  }
+
+  public void setClimbVoltage(double voltage)
+  {
+    rightClimberMotor.setVoltage(voltage);
+    leftClimberMotor.setVoltage(voltage);
   }
 }

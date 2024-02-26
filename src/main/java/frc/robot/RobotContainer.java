@@ -124,9 +124,9 @@ public class RobotContainer {
     driverController.leftTrigger().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
     // Scores
-    // TODO Profile for transition arm
     driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
       .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
+      .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
       .andThen(new WaitCommand(0.5))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
@@ -158,7 +158,8 @@ public class RobotContainer {
     
     // TODO climber button
     // CLIMB STATE \\
-    //operatorController.x().onTrue();
+    //operatorController.x().onTrue(new InstantCommand(() -> climberSubsystem.setClimbVoltage(0))); // used for tuning
+    //operatorController.a().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(40)));
 
     // TRAP STATE \\ 
 
