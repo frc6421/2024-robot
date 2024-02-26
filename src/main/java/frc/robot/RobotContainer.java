@@ -163,7 +163,7 @@ public class RobotContainer {
   private void configureBindings() {
 
     // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper)
-    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker
+    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple, 
 
     // INTAKE STATE \\
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
