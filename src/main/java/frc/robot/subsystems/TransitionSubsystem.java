@@ -65,6 +65,7 @@ public class TransitionSubsystem extends SubsystemBase {
     transitionMotor.set(value);
   }
 
+
   /**
    * Stops the transition motor
    * 
@@ -109,8 +110,9 @@ public class TransitionSubsystem extends SubsystemBase {
   /**Sets the given velocity to the transitionMotor
    * @param double velocity
    */
-  public void setTransitionVoltage(double velocity) {
-    transitionMotor.setVoltage(velocity);
+  public void setTransitionVoltage(double voltage)
+  {
+    transitionMotor.setVoltage(voltage);
   }
 
   /** Gets the current position of the encoder

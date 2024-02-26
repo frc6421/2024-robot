@@ -42,11 +42,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
-import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.commands.SpeakerAlignVisionCommand;
 import frc.robot.commands.VisionTestCommand;
@@ -77,6 +79,7 @@ public class RobotContainer {
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
   private final LEDSubsystem ledSubsystem;
+  private final ClimberSubsystem climberSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -112,11 +115,13 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
+    climberSubsystem = new ClimberSubsystem();
+
+    driveCommand = new DriveCommand(driveSubsystem, driverController);
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
     ledSubsystem = new LEDSubsystem();
 
-    driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
     ampAlignVisionCommand = new AmpAlignVisionCommand(driveSubsystem);
     speakerAlignVisionCommand = new SpeakerAlignVisionCommand(driveSubsystem);
@@ -147,6 +152,7 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Competition").add("Auto Chooser", autoChooser);
     //Shuffleboard.getTab("Competition").add("Robot State", state);
+    Shuffleboard.getTab("Competition").add("Robot State", state.toString());
   }
 
   /**
@@ -184,9 +190,8 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
-      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
+      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
 
     //TODO remove testing buttons
     driverController.a().whileTrue(speakerAlignVisionCommand);
@@ -202,7 +207,7 @@ public class RobotContainer {
     operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90))))));
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION)))));
     
     // SHOOT STATE \\
 

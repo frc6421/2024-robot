@@ -46,11 +46,9 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(value);
   }
 
-  /** Sets the intakeMotor output
-   * @param value output to apply
-   */
-  public void setIntakeVoltage(double value) {
-    intakeMotor.setVoltage(value);
+  public void setIntakeVoltage(double voltage)
+  {
+    intakeMotor.setVoltage(voltage);
   }
 
   /**

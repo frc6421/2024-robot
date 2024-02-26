@@ -40,6 +40,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0);
 
     public static final double ARM_GEAR_RATIO_CONVERSION = 360.0 / TransitionArmConstants.ARM_GEAR_RATIO; // degrees
+
+    public static final double ARM_AMP_POSITION = 87.5;
   }
 
   // fields
