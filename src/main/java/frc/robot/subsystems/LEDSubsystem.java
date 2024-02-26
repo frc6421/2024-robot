@@ -12,7 +12,7 @@ import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 public class LEDSubsystem extends SubsystemBase {
 
   public static class LEDConstants {
-    
+
     public static int NUMBER_OF_LEDS = 100;
 
     public static enum LEDColors{
