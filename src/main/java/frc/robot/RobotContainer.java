@@ -9,6 +9,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
@@ -19,6 +20,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+
+import frc.robot.subsystems.LEDSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
@@ -61,6 +66,9 @@ public class RobotContainer {
 
   public static RobotStates state;
 
+  private final LEDSubsystem ledSubsystem;
+    
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -72,6 +80,7 @@ public class RobotContainer {
     transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
     climberSubsystem = new ClimberSubsystem();
+    ledSubsystem = new LEDSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     shooterSubsystem = new ShooterSubsystem();
@@ -142,12 +151,17 @@ public class RobotContainer {
     operatorController.y().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
       .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))
       .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))));
+
+    operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE)));
+
+    operatorController.rightTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
     
     // TODO climber button
     // CLIMB STATE \\
     //operatorController.x().onTrue();
 
     // TRAP STATE \\ 
+
   }
 
   /**
@@ -160,3 +174,4 @@ public class RobotContainer {
     return null;
   }
 }
+
