@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -350,9 +351,16 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     }
 
     // TODO remove for competition
-    SmartDashboard.putNumber("Pose Estimator X", Units.metersToInches(m_odometry.getEstimatedPosition().getX()));
-    SmartDashboard.putNumber("Pose Estimator Y", Units.metersToInches(m_odometry.getEstimatedPosition().getY()));
-    SmartDashboard.putNumber("Pose Estimator Rotation", m_odometry.getEstimatedPosition().getRotation().getDegrees());
+
+    SmartDashboard.putNumber("X before swerve request", m_odometry.getEstimatedPosition().relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset)).getX());
+    SmartDashboard.putNumber("Y before swerve request", m_odometry.getEstimatedPosition().relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset)).getY());
+    SmartDashboard.putNumber("Rotation before swerve request", m_odometry.getEstimatedPosition().relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset)).getRotation().getDegrees());
+
+    SmartDashboard.putNumber("X after swerve request", getState().Pose.getX());
+    SmartDashboard.putNumber("X after swerve request", getState().Pose.getY());
+    SmartDashboard.putNumber("X after swerve request", getState().Pose.getRotation().getDegrees());
+
+    SmartDashboard.putBoolean("Is odometry valid", this.odometryIsValid());
 
   }
 

@@ -45,7 +45,7 @@ public final class Constants {
   
 public static class TrajectoryConstants {
 
-  public static final double CENTER_OF_ROBOT_LENGTH = Units.inchesToMeters(18.625);
+  public static final double CENTER_OF_ROBOT_LENGTH = Units.inchesToMeters(18.375);
   public static final double CENTER_OF_ROBOT_WIDTH = Units.inchesToMeters(17.5);
 
   public static final Translation2d ORIGIN = new Translation2d(0, 0);
