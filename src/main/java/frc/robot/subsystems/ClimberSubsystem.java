@@ -22,9 +22,8 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final int LEFT_CLIMBER_CAN_ID = 41;
     private static final int RIGHT_CLIMBER_CAN_ID = 40;
 
-    // TODO Get the dang gear ratio
-    // Gear ration 
-    private static final double CLIMBER_GEAR_RATIO = 1;
+    // Gear ratio 
+    private static final double CLIMBER_GEAR_RATIO = 25;
 
     // PID
     public static final double CLIMBER_KS = -0.4;
@@ -33,9 +32,11 @@ public class ClimberSubsystem extends SubsystemBase {
     public static final double CLIMBER_KD = 0.0;
     public static final double CLIMBER_KG = -0.6;
 
+    public static final double CLIMBER_CLIMB_IN_POS = 1218;
+
     // Soft Limits
     public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0; // 40 for climbing
-    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 147;
+    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 4513;
 
     // Current Limits
     public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
@@ -74,14 +75,14 @@ public class ClimberSubsystem extends SubsystemBase {
     rightClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
     rightClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
 
-    rightClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    rightClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    // rightClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    // rightClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
     leftClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
     leftClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
 
-    leftClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    leftClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    // leftClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    // leftClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     
     // Idle modes
     leftClimberMotor.setIdleMode(IdleMode.kBrake);
@@ -117,6 +118,8 @@ public class ClimberSubsystem extends SubsystemBase {
     // Zeros the motors
     leftClimberEncoder.setPosition(0);
     rightClimberEncoder.setPosition(0);
+
+    Shuffleboard.getTab("Climber Tuning").add(this);
   }
 
   /** 
@@ -156,5 +159,21 @@ public class ClimberSubsystem extends SubsystemBase {
   {
     rightClimberMotor.setVoltage(voltage);
     leftClimberMotor.setVoltage(voltage);
+  }
+
+  public void setClimbP(double P)
+  {
+    leftClimberPIDController.setP(P);
+    rightClimberPIDController.setP(P);
+  }
+
+  public double getP()
+  {
+    return leftClimberPIDController.getP();
+  }
+  public void initSendable(SendableBuilder builder)
+  {
+    super.initSendable(builder);
+    builder.addDoubleProperty("Current Position:", () -> getClimberMotorPosition(),null);
   }
 }

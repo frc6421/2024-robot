@@ -27,7 +27,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.subsystems.ClimberSubsystem.ClimberConstants;
 import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ClimberTuning;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
@@ -63,6 +65,7 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
+  //private final ClimberTuning climberTuning;
 
   public static RobotStates state;
 
@@ -87,6 +90,8 @@ public class RobotContainer {
     shooterAngleSubsystem = new ShooterAngleSubsystem();
 
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
+
+    //climberTuning = new ClimberTuning(climberSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
@@ -155,6 +160,11 @@ public class RobotContainer {
     operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
 
     operatorController.rightTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE)));
+
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS)));
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
+    
+    //operatorController.x().onTrue(new InstantCommand(() -> climberSubsystem.setClimbVoltage(0)));
     
     // TODO climber button
     // CLIMB STATE \\
