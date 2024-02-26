@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
@@ -52,7 +53,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
-  public ClimberSubsystem climberSubsystem;
+  private final ClimberSubsystem climberSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -121,15 +122,14 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
-      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
+      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
 
     // Arm out for AMP
     operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90))))));
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION)))));
     
     // SHOOT STATE \\
 
