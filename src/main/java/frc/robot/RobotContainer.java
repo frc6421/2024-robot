@@ -24,8 +24,9 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-    
+
   private final LEDSubsystem ledSubsystem;
+    
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -46,10 +47,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Hot pink is intake, blue is for amp
-    // m_driverController.a().onTrue(new InstantCommand(() -> ledSubsystem.setColor(LEDColors.BLUE)));
-    // m_driverController.x().onTrue(new InstantCommand(() -> ledSubsystem.setColor(LEDColors.HOT_PINK)));
-    // m_driverController.y().onTrue(new InstantCommand(() -> ledSubsystem.setColor(LEDColors.OFF)));
+    m_driverController.a().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE)));
+    m_driverController.x().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.HOT_PINK)));
+    m_driverController.b().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
+    m_driverController.y().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)));
   }
 
   /**
