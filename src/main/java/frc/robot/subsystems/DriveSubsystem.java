@@ -24,11 +24,14 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTagPoseEstimate;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -57,6 +60,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   // PhotonVision Cameras
   private PhotonCamera camera1;
   private PhotonCamera camera2;
+
+  // Camera offsets from the center of te robot
+  private Transform3d camera1Offset;
+  private Transform3d camera2Offset;
 
   private PhotonPoseEstimator camera1PoseEstimator;
   private PhotonPoseEstimator camera2PoseEstimator;
@@ -234,22 +241,30 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Back left camera
     camera1 = new PhotonCamera("Camera1");
 
+    camera1Offset = new Transform3d(
+        new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)),
+        new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135)));
+
     // Back right camera
     camera2 = new PhotonCamera("Camera6");
+
+    camera2Offset = new Transform3d(
+        new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)),
+        new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135)));
 
     camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera1,
-        new Transform3d(
-            new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)),
-            new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135))));
+        camera1Offset);
+
+    camera1PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera2,
-        new Transform3d(
-            new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)),
-            new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135))));
+        camera2Offset);
+
+    camera2PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
   }
 
@@ -321,46 +336,25 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
     Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
 
-    if (!DriverStation.isAutonomous()) {
-      // TODO test rejecting bad pose estimates
-      if (pose1.isPresent()) {
+    // TODO test rejecting bad pose estimates
+    if (pose1.isPresent()) {
 
-        // if (Math.abs(pose1.get().estimatedPose.toPose2d().getX() - getCurrentPose2d().getX()) < poseRejectionThreshold
-        //     || Math.abs(
-        //         pose1.get().estimatedPose.toPose2d().getY() - getCurrentPose2d().getY()) < poseRejectionThreshold) {
-
-          addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-              pose1.get().timestampSeconds);
-
-        //}
-
-      }
-
-      if (pose2.isPresent()) {
-
-        // if (Math.abs(pose2.get().estimatedPose.toPose2d().getX() - getCurrentPose2d().getX()) < poseRejectionThreshold
-        //     || Math.abs(
-        //         pose2.get().estimatedPose.toPose2d().getY() - getCurrentPose2d().getY()) < poseRejectionThreshold) {
-
-          addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-              pose2.get().timestampSeconds);
-
-       // }
-      }
+      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+          pose1.get().timestampSeconds);
 
     }
 
-    // TODO remove for competition
 
-    SmartDashboard.putNumber("X before swerve request", m_odometry.getEstimatedPosition().relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset)).getX());
-    SmartDashboard.putNumber("Y before swerve request", m_odometry.getEstimatedPosition().relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset)).getY());
-    SmartDashboard.putNumber("Rotation before swerve request", m_odometry.getEstimatedPosition().relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset)).getRotation().getDegrees());
+    if (pose2.isPresent()) {
 
-    SmartDashboard.putNumber("X after swerve request", getState().Pose.getX());
-    SmartDashboard.putNumber("X after swerve request", getState().Pose.getY());
-    SmartDashboard.putNumber("X after swerve request", getState().Pose.getRotation().getDegrees());
+      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+          pose2.get().timestampSeconds);
+    }
 
-    SmartDashboard.putBoolean("Is odometry valid", this.odometryIsValid());
+
+    SmartDashboard.putNumber("Pose Estimator X", getCurrentPose2d().getX());
+    SmartDashboard.putNumber("Pose Estimator Y", getCurrentPose2d().getY());
+    SmartDashboard.putNumber("Pose Estimator Rotation", getCurrentPose2d().getRotation().getDegrees());
 
   }
 

@@ -194,7 +194,7 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
 
     //TODO remove testing buttons
-    driverController.a().whileTrue(speakerAlignVisionCommand);
+    driverController.a().whileTrue(ampAlignVisionCommand);
 
     driverController.b().onTrue(new InstantCommand(() -> shooterAngleSubsystem.setAngle(23))
       .alongWith(new InstantCommand(() -> shooterSubsystem.setTopShooterMotorVelocity(4500 - 100)))
