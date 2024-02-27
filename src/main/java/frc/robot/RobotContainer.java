@@ -51,6 +51,7 @@ import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.commands.SpeakerAlignVisionCommand;
+import frc.robot.commands.SpeakerDistanceCommand;
 import frc.robot.commands.VisionTestCommand;
 //import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -88,6 +89,7 @@ public class RobotContainer {
   private final VisionTestCommand visionTestCommand;
   private final AmpAlignVisionCommand ampAlignVisionCommand;
   private final SpeakerAlignVisionCommand speakerAlignVisionCommand;
+  private final SpeakerDistanceCommand speakerDistanceCommand;
 
   //private final AutoTestCommand autoTest;
   BlueTwoPieceCommand blueTwoPiece;
@@ -125,6 +127,7 @@ public class RobotContainer {
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
     ampAlignVisionCommand = new AmpAlignVisionCommand(driveSubsystem);
     speakerAlignVisionCommand = new SpeakerAlignVisionCommand(driveSubsystem);
+    speakerDistanceCommand = new SpeakerDistanceCommand(driveSubsystem);
 
     visionTestCommand = new VisionTestCommand(driveSubsystem);
 
@@ -194,7 +197,8 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
 
     //TODO remove testing buttons
-    driverController.a().whileTrue(ampAlignVisionCommand);
+    driverController.a().whileTrue(speakerAlignVisionCommand
+      .alongWith(speakerDistanceCommand));
 
     driverController.b().onTrue(new InstantCommand(() -> shooterAngleSubsystem.setAngle(23))
       .alongWith(new InstantCommand(() -> shooterSubsystem.setTopShooterMotorVelocity(4500 - 100)))

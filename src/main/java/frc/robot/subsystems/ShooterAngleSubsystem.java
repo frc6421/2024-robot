@@ -31,6 +31,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     public static final int GEAR_RATIO = 180;
     public static final double DEGREES_PER_MOTOR_ROTATION = (360.0 / AngleConstants.GEAR_RATIO);
 
+    public static final double[] PIVOT_ANGLE = {47, 41, 38, 35, 33, 29.5, 28, 26.5, 25.5, 24.5, 23};
+
   }
   //Creating the object for the motor and encoder
   private CANSparkMax angleMotor;

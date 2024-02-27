@@ -32,8 +32,11 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final double BOTTOM_KI = 0;
       public static final double BOTTOM_KD = 0;
 
-      public static final double SHOOTER_SUB_RPM = 3000;
+      public static final double SHOOTER_IDLE_RPM = 500;
+
+      public static final double[] SHOOTER_RPM = {2500, 2500, 2500, 3000, 3000, 3000, 3500, 3500, 4000, 4250, 4500};
     }
+
     //Creating the objects for the motors and their encoders, respectively
     private TalonFX topShooterMotor;
     private TalonFX bottomShooterMotor;

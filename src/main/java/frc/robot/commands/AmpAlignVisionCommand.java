@@ -23,7 +23,7 @@ import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class AmpAlignVisionCommand extends Command {
-  DriveSubsystem driveSubsystem;
+  private final DriveSubsystem driveSubsystem;
 
   // TODO update max velocity and acceleration
   // In m/s

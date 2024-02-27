@@ -23,7 +23,7 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class SpeakerAlignVisionCommand extends Command {
 
-  DriveSubsystem driveSubsystem;
+  private final DriveSubsystem driveSubsystem;
 
   // In rad/sec
   private static final double maxAngularVelocity = 2 * Math.PI;
