@@ -12,40 +12,73 @@
     "windows": {
       "/SmartDashboard/Field": {
         "1 Preload": {
-          "style": "Line"
+          "style": "Track"
         },
         "2 Preload": {
           "style": "Line"
         },
+        "Drive to 4 Trajectory": {
+          "style": "Track"
+        },
+        "Drive to 5 Trajectory": {
+          "style": "Track"
+        },
         "Drive to first Trajectory": {
+          "arrows": false,
           "style": "Line"
         },
         "Drive to score 1 Trajectory": {
-          "style": "Line"
+          "arrows": false,
+          "style": "Box/Image"
         },
         "Drive to score 2 Trajectory": {
-          "style": "Line"
+          "style": "Box/Image"
         },
         "Drive to score 3 Trajectory": {
+          "style": "Track"
+        },
+        "Drive to score 4 Trajectory": {
+          "style": "Track"
+        },
+        "Drive to score 5 Trajectory": {
+          "style": "Track"
+        },
+        "Drive to score first Trajectory": {
+          "arrows": false,
           "style": "Line"
         },
         "Drive to score one Trajectory": {
+          "style": "Track"
+        },
+        "Drive to score second Trajectory": {
+          "arrows": false,
           "style": "Line"
+        },
+        "Drive to score third Trajectory": {
+          "arrows": false,
+          "style": "Box/Image"
         },
         "Drive to score two Trajectory": {
-          "style": "Line"
+          "style": "Box/Image"
         },
         "Drive to second Trajectory": {
+          "arrows": false,
           "style": "Line"
         },
         "Drive to third Trajectory": {
+          "arrows": false,
           "style": "Line"
+        },
+        "Robot": {
+          "length": 0.9398000240325928,
+          "width": 0.8889999985694885
         },
         "bottom": 1476,
         "height": 8.210550308227539,
         "left": 150,
         "right": 2961,
         "top": 79,
+        "units": "inches",
         "width": 16.541748046875,
         "window": {
           "visible": true

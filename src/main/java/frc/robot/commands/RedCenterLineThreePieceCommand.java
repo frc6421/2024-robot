@@ -59,79 +59,65 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 0.5,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 0.5,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
-
-    TrajectoryConfig forwardFlipConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
-        .setKinematics(driveSubsystem.kinematics)
-        .setEndVelocity(2);
-    
-    TrajectoryConfig reverseFlipConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
-        .setKinematics(driveSubsystem.kinematics)
-        .setReversed(true)
-        .setStartVelocity(2);
         
 
     // robot leaves start zone and moves to pick up note at podium
     Trajectory scorePreloadTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_STARTING_POSITION, new Rotation2d(Units.degreesToRadians(180))), 
-        new Pose2d(TrajectoryConstants.RED_CENTER_OF_STAGE, new Rotation2d(Units.degreesToRadians(90)))), forwardFlipConfig);
-
-    Trajectory driveToScorePreloadTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_STARTING_POSITION, new Rotation2d(Units.degreesToRadians(0))), 
         new Pose2d(TrajectoryConstants.RED_CENTER_OF_STAGE, new Rotation2d(Units.degreesToRadians(-90))),
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(180)))), reverseFlipConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(186.89)))), reverseConfig);
 
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(186.89))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(205))),
         new Pose2d(TrajectoryConstants.NOTE5_RED, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveBackToScoreOneTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE5_RED, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(205))),
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(186.89)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(186.89))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE6_RED, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveBackToScoreTwoTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE6_RED, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(186.89)))), reverseConfig);
 
     
 
 
-//    //Simulation
-//      field = new Field2d();
+   //Simulation
+    //  field = new Field2d();
 
-//      if (RobotBase.isSimulation()) {
-//         SmartDashboard.putData(field);
+    //  if (RobotBase.isSimulation()) {
+    //     SmartDashboard.putData(field);
 
-//         field.setRobotPose(scorePreloadTrajectory.getInitialPose());
+    //     field.setRobotPose(scorePreloadTrajectory.getInitialPose());
 
-//         field.getObject("1 Preload").setTrajectory(scorePreloadTrajectory);
-//         field.getObject("2 Preload").setTrajectory(driveToScorePreloadTrajectory);
+    //     field.getObject("1 Preload").setTrajectory(scorePreloadTrajectory);
 
 
-//          field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-//          field.getObject("Drive to score one Trajectory").setTrajectory(driveBackToScoreOneTrajectory);
-//          field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-//          field.getObject("Drive to score two Trajectory").setTrajectory(driveBackToScoreTwoTrajectory);
-//       }
+    //      field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //      field.getObject("Drive to score one Trajectory").setTrajectory(driveBackToScoreOneTrajectory);
+    //      field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //      field.getObject("Drive to score two Trajectory").setTrajectory(driveBackToScoreTwoTrajectory);
+    //   }
+
+    // System.out.println("TIME: " + (scorePreloadTrajectory.getTotalTimeSeconds() + driveToFirstNoteTrajectory.getTotalTimeSeconds() + driveBackToScoreOneTrajectory.getTotalTimeSeconds() + driveToSecondNoteTrajectory.getTotalTimeSeconds() + driveBackToScoreTwoTrajectory.getTotalTimeSeconds()));
+
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
@@ -147,14 +133,6 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
 
     SwerveControllerCommand scorePreloadCommand = new SwerveControllerCommand(
         scorePreloadTrajectory,
-        driveSubsystem::getPose2d,
-        driveSubsystem.kinematics,
-        holonomicDriveController,
-        driveSubsystem::autoSetModuleStates,
-        driveSubsystem);
-
-    SwerveControllerCommand driveToScorePreloadCommand = new SwerveControllerCommand(
-        driveToScorePreloadTrajectory,
         driveSubsystem::getPose2d,
         driveSubsystem.kinematics,
         holonomicDriveController,
@@ -198,11 +176,10 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(scorePreloadTrajectory.getInitialPose())), 
       scorePreloadCommand, 
-      driveToScorePreloadCommand,
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.15),
+      new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
       // score pre-loaded piece 
@@ -212,7 +189,7 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.15),
+      new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
       // stop intake and score second piece
@@ -222,7 +199,7 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
       new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.15),
+      new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
     );

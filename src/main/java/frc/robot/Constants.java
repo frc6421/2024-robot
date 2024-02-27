@@ -45,14 +45,10 @@ public final class Constants {
   
 public static class TrajectoryConstants {
 
-  public static final double CENTER_OF_ROBOT_LENGTH = Units.inchesToMeters(18.625);
+  public static final double CENTER_OF_ROBOT_LENGTH = Units.inchesToMeters(18.375);
   public static final double CENTER_OF_ROBOT_WIDTH = Units.inchesToMeters(17.5);
 
   public static final Translation2d ORIGIN = new Translation2d(0, 0);
-
-  public static final Translation2d BLUE_PODIUM = new Translation2d(Units.inchesToMeters(114), Units.inchesToMeters(161.5));
-  public static final Translation2d FRONT_OF_BLUE_PODIUM = new Translation2d(Units.inchesToMeters(94), Units.inchesToMeters(161.5));
-
 
   public static final Translation2d TEST_START = new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0)); 
   public static final Translation2d TEST_END = new Translation2d(Units.inchesToMeters(72), Units.inchesToMeters(0));
@@ -60,42 +56,52 @@ public static class TrajectoryConstants {
   public static final Translation2d BLUE_SUSSEX_SCORE = new Translation2d(Units.inchesToMeters(128), Units.inchesToMeters(218.5));
   public static final Translation2d RED_SUSSEX_SCORE = new Translation2d(Units.inchesToMeters(523), Units.inchesToMeters(218.5));
 
-
   public static final Translation2d NOTE1 = new Translation2d(Units.inchesToMeters(114)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
   public static final Translation2d NOTE2 = new Translation2d(Units.inchesToMeters(114)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
   public static final Translation2d NOTE3 = new Translation2d(Units.inchesToMeters(114)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(275.5));
 
-  public static final Translation2d NOTE4_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(30.5));
-  public static final Translation2d NOTE5_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(95.5));
-  public static final Translation2d NOTE6_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
-  public static final Translation2d NOTE7_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(227.5));
-  public static final Translation2d NOTE8_BLUE = new Translation2d(Units.inchesToMeters(325)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(293.5));
+  public static final Translation2d NOTE4_BLUE = new Translation2d(Units.inchesToMeters(324)-(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(30.5));
+  public static final Translation2d NOTE5_BLUE = new Translation2d(Units.inchesToMeters(324)-(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(95.5));
+  public static final Translation2d NOTE6_BLUE = new Translation2d(Units.inchesToMeters(324)-(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE7_BLUE = new Translation2d(Units.inchesToMeters(324)-(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(227.5));
+  public static final Translation2d NOTE8_BLUE = new Translation2d(Units.inchesToMeters(324)-(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(293.5));
 
-  public static final Translation2d NOTE4_RED = new Translation2d(Units.inchesToMeters(325)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(30.5));
-  public static final Translation2d NOTE5_RED = new Translation2d(Units.inchesToMeters(325)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(95.5));
-  public static final Translation2d NOTE6_RED = new Translation2d(Units.inchesToMeters(325)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(161.5));
-  public static final Translation2d NOTE7_RED = new Translation2d(Units.inchesToMeters(325)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(227.5));
-  public static final Translation2d NOTE8_RED = new Translation2d(Units.inchesToMeters(325)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(293.5));
+  public static final Translation2d NOTE4_RED = new Translation2d(Units.inchesToMeters(324)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(30.5));
+  public static final Translation2d NOTE5_RED = new Translation2d(Units.inchesToMeters(324)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(95.5));
+  public static final Translation2d NOTE6_RED = new Translation2d(Units.inchesToMeters(324)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE7_RED = new Translation2d(Units.inchesToMeters(324)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(227.5));
+  public static final Translation2d NOTE8_RED = new Translation2d(Units.inchesToMeters(324)+(CENTER_OF_ROBOT_LENGTH/2), Units.inchesToMeters(293.5));
 
-  public static final Translation2d NOTE9 = new Translation2d(Units.inchesToMeters(537)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
-  public static final Translation2d NOTE10 = new Translation2d(Units.inchesToMeters(537)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
-  public static final Translation2d NOTE11 = new Translation2d(Units.inchesToMeters(537)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(275.5));
+  public static final Translation2d NOTE9 = new Translation2d(Units.inchesToMeters(534)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(161.5));
+  public static final Translation2d NOTE10 = new Translation2d(Units.inchesToMeters(534)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
+  public static final Translation2d NOTE11 = new Translation2d(Units.inchesToMeters(534)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(275.5));
 
   public static final Translation2d FRONT_CENTER_BLUE_SUBWOOFER = new Translation2d(Units.inchesToMeters(36)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
-  public static final Translation2d FRONT_CENTER_RED_SUBWOOFER = new Translation2d(Units.inchesToMeters(618)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
+  public static final Translation2d FRONT_CENTER_RED_SUBWOOFER = new Translation2d(Units.inchesToMeters(612)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(218.5));
 
-  public static final Translation2d BLUE_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(154), Units.inchesToMeters(218.5));
+  public static final Translation2d BLUE_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(153), Units.inchesToMeters(200));
   public static final Translation2d BLUE_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(0)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(80));
-  public static final Translation2d BLUE_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(189), Units.inchesToMeters(161.5));
-  public static final Translation2d BLUE_EDGE_OF_STAGE = new Translation2d(Units.inchesToMeters(219), Units.inchesToMeters(161.5));
+  public static final Translation2d BLUE_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(190), Units.inchesToMeters(161.5));
+  public static final Translation2d BLUE_EDGE_OF_STAGE = new Translation2d(Units.inchesToMeters(220), Units.inchesToMeters(161.5));
 
-  public static final Translation2d RED_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(494), Units.inchesToMeters(218.5));
-  public static final Translation2d RED_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(651)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(80));
-  public static final Translation2d RED_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(462), Units.inchesToMeters(161.5));
-  public static final Translation2d RED_EDGE_OF_STAGE = new Translation2d(Units.inchesToMeters(432), Units.inchesToMeters(161.5));
+  public static final Translation2d RED_CENTER_LINE_SHOOTING_POSITION = new Translation2d(Units.inchesToMeters(495), Units.inchesToMeters(200));
+  public static final Translation2d RED_CENTER_LINE_STARTING_POSITION = new Translation2d(Units.inchesToMeters(648)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(80));
+  public static final Translation2d RED_CENTER_OF_STAGE = new Translation2d(Units.inchesToMeters(460), Units.inchesToMeters(161.5));
+  public static final Translation2d RED_EDGE_OF_STAGE = new Translation2d(Units.inchesToMeters(430), Units.inchesToMeters(161.5));
 
-  public static final Translation2d RED_FIVE_PIECE_WAYPOINT = new Translation2d(Units.inchesToMeters(365), Units.inchesToMeters(293.5));
+  //public static final Translation2d RED_FIVE_PIECE_SCORE = new Translation2d(Units.inchesToMeters(470), Units.inchesToMeters(260));
+  public static final Translation2d NOTE9_SCORE_POINT = new Translation2d(Units.inchesToMeters(567), Units.inchesToMeters(200));
+  public static final Translation2d RED_DONT_HIT_WALL = new Translation2d(Units.inchesToMeters(430), Units.inchesToMeters(300));
 
+  //public static final Translation2d BLUE_FIVE_PIECE_SCORE = new Translation2d(Units.inchesToMeters(178), Units.inchesToMeters(260));
+  public static final Translation2d NOTE1_SCORE_POINT = new Translation2d(Units.inchesToMeters(81), Units.inchesToMeters(200));
+  public static final Translation2d BLUE_DONT_HIT_WALL = new Translation2d(Units.inchesToMeters(218), Units.inchesToMeters(300));
+
+  public static final Translation2d BLUE_FOUR_PIECE_START = new Translation2d(Units.inchesToMeters(30), Units.inchesToMeters(266));
+  public static final Translation2d RED_FOUR_PIECE_START = new Translation2d(Units.inchesToMeters(618), Units.inchesToMeters(266));
+
+  public static final Translation2d RED_CENTER_SCORE = new Translation2d(Units.inchesToMeters(503), Units.inchesToMeters(260));
+  public static final Translation2d BLUE_CENTER_SCORE = new Translation2d(Units.inchesToMeters(145), Units.inchesToMeters(260));
 
   }
 

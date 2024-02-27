@@ -60,13 +60,13 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 3.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 4)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 3.0,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 3.0)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
 
@@ -77,7 +77,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.RED_SUSSEX_SCORE, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     // Simulation
     // field = new Field2d();
@@ -130,7 +130,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
       new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
       driveToScoreCommand,
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),

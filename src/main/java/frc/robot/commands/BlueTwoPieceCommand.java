@@ -75,7 +75,7 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE2, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.BLUE_SUSSEX_SCORE, new Rotation2d(0))), forwardConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER, new Rotation2d(0))), forwardConfig);
 
     // Simulation
     // field = new Field2d();
@@ -128,7 +128,7 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
       new ParallelDeadlineGroup(new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), driveToFirstNoteCommand),
       driveToScoreCommand,
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
       new ShooterRevUpCommand(shooterSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),

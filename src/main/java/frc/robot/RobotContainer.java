@@ -6,8 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoTestCommand;
+import frc.robot.commands.BlueCenterLineFourPieceCommand;
 import frc.robot.commands.BlueCenterLineThreePieceCommand;
-import frc.robot.commands.BlueFivePieceCommand;
+import frc.robot.commands.BlueSixPieceCommand;
 import frc.robot.commands.BlueFourPieceCommand;
 import frc.robot.commands.BlueTwoPieceCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -30,8 +31,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.commands.RedCenterLineFourPieceCommand;
 import frc.robot.commands.RedCenterLineThreePieceCommand;
-import frc.robot.commands.RedFivePieceCommand;
+import frc.robot.commands.RedSixPieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
@@ -76,8 +78,11 @@ public class RobotContainer {
   RedFourPieceCommand redFourPiece;
   BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
   RedCenterLineThreePieceCommand redCenterLineThreePiece;
-  BlueFivePieceCommand blueFivePiece;
-  RedFivePieceCommand redFivePiece;
+  BlueSixPieceCommand blueSixPiece;
+  RedSixPieceCommand redSixPiece;
+  BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
+  RedCenterLineFourPieceCommand redCenterLineFourPiece;
+
   
   public static RobotStates state;
 
@@ -109,8 +114,10 @@ public class RobotContainer {
     redFourPiece = new RedFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redCenterLineThreePiece = new RedCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    blueFivePiece = new BlueFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    redFivePiece = new RedFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    blueSixPiece = new BlueSixPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    redSixPiece = new RedSixPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    blueCenterLineFourPiece = new BlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    redCenterLineFourPiece = new RedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
 
     state = RobotStates.DRIVE;
@@ -119,12 +126,15 @@ public class RobotContainer {
 
     autoChooser.setDefaultOption("Blue 2 Piece", blueTwoPiece);
     autoChooser.addOption("Red 2 Piece", redTwoPiece);
-    autoChooser.addOption("Blue 4 Piece", blueFourPiece);
-    autoChooser.addOption("Red 4 Piece", redFourPiece);
+    autoChooser.addOption("Blue Wing 4 Piece", blueFourPiece);
+    autoChooser.addOption("Red Wing 4 Piece", redFourPiece);
     autoChooser.addOption("Blue Center Line 3 Piece", blueCenterLineThreePiece);
     autoChooser.addOption("Red Center Line 3 Piece", redCenterLineThreePiece);
-    autoChooser.addOption("Blue 5 Piece", blueFivePiece);
-    autoChooser.addOption("Red 5 Piece", redFivePiece);
+    autoChooser.addOption("Blue 6 Piece", blueSixPiece);
+    autoChooser.addOption("Red 6 Piece", redSixPiece);
+    autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
+    autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
+
 
 
 
