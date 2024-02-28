@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.photonvision.PhotonUtils;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.revrobotics.SparkMaxRelativeEncoder;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -90,42 +91,30 @@ public class SpeakerAlignVisionCommand extends Command {
     currentPose = driveSubsystem.getCurrentPose2d();
     currentAngle = currentPose.getRotation().getRadians();
 
-    calculatedAngle = Math.atan((targetPose.getX() - currentPose.getX()) / (targetPose.getY() - currentPose.getY()));
+    if(allianceColor.get().equals(Alliance.Blue) && currentPose.getY() > targetPose.getY()) {
+      calculatedAngle = -Math.atan((currentPose.getX() - targetPose.getX()) / (currentPose.getY() - targetPose.getY()));
+    }
+    
+
+
     //calculatedAngle = PhotonUtils.getYawToPose(currentPose, targetPose).getRadians();
     //calculatedAngle = targetPose.relativeTo(currentPose).getRotation().getRadians();
 
-    targetAngle = currentAngle - calculatedAngle;
+    targetAngle = calculatedAngle;
+    //targetAngle = currentAngle - calculatedAngle;
 
+    SmartDashboard.putNumber("currentAngle", currentPose.getRotation().getDegrees());
     SmartDashboard.putNumber("angleToTarget", Units.radiansToDegrees(calculatedAngle));
-
-    // if (allianceColor.isPresent()) {
-    //   if (allianceColor.get().equals(Alliance.Red)) {
-    //     if(currentAngle > 0) {
-    //       double flippedAngle = 180 - currentAngle;
-
-    //       if(calculatedAngle > 0) {
-
-
-
-    //       }
-          
-
-    //     } else if(currentAngle < 0) {
-    //       double flipAngle = 180 + currentAngle;
-    //     }
-    //   } else if (allianceColor.get().equals(Alliance.Blue)) {
-    //     angleToRotate = calculatedAngle - currentAngle;
-    //   }
-    // } else {
-    //   targetAngle = currentAngle;
-    // }
 
     rotationController.setGoal(targetAngle);
 
-    SmartDashboard.putNumber("goal", rotationController.getGoal().position);
+    SmartDashboard.putNumber("goal", Units.radiansToDegrees(rotationController.getGoal().position));
 
-    // driveSubsystem.setControl(
-    // driveRequest.withRotationalRate(rotationController.calculate(currentAngle)));
+    driveSubsystem.setControl(
+    driveRequest
+    .withVelocityX(0)
+    .withVelocityY(0)
+    .withRotationalRate(rotationController.calculate(currentAngle)));
   }
 
   // Called once the command ends or is interrupted.

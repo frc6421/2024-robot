@@ -114,10 +114,21 @@ public class AmpAlignVisionCommand extends Command {
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
-    driveSubsystem.setControl(driveRequest
+    if(!rotationController.atGoal()) {
+
+      driveSubsystem.setControl(driveRequest
+        .withVelocityX(0)
+        .withVelocityY(0)
+        .withRotationalRate(rotationController.calculate(currentPose.getRotation().getRadians())));
+
+    } else {
+
+      driveSubsystem.setControl(driveRequest
         .withVelocityX(xController.calculate(currentPose.getX()))
         .withVelocityY(yController.calculate(currentPose.getY()))
-        .withRotationalRate(rotationController.calculate(currentPose.getRotation().getRadians())));
+        .withRotationalRate(0));
+
+    }
 
   }
 
