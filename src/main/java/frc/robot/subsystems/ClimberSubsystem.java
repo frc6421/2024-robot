@@ -30,7 +30,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public static final double CLIMBER_KD = 0.0;
     public static final double CLIMBER_KG = -0.6;
 
-    public static final double CLIMBER_CLIMB_IN_POS = 304;
+    public static final double CLIMBER_CLIMB_IN_POS = 75;
 
     // Soft Limits
     public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0; 
