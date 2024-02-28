@@ -20,7 +20,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public static final double INTAKE_IN_SPEED = 0.85 * 12;
 
-    //TODO verify on actual robot
     public static final double INTAKE_OUT_SPEED = -0.85 * 12;
   }
 
@@ -62,5 +61,4 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  //TODO Sendable
 }

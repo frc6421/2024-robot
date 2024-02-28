@@ -20,16 +20,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-
 import frc.robot.subsystems.LEDSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimberConstants;
 import frc.robot.commands.ArmCommand;
-import frc.robot.commands.ClimberTuning;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
@@ -61,6 +57,7 @@ public class RobotContainer {
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
   private final ClimberSubsystem climberSubsystem;
+  private final LEDSubsystem ledSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -68,10 +65,7 @@ public class RobotContainer {
   //private final ClimberTuning climberTuning;
 
   public static RobotStates state;
-
-  private final LEDSubsystem ledSubsystem;
     
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -160,19 +154,22 @@ public class RobotContainer {
     operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
 
     operatorController.rightTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE)));
-
-    operatorController.rightBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS)));
-    operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
     
-    //operatorController.x().onTrue(new InstantCommand(() -> climberSubsystem.setClimbVoltage(0)));
-    
-    // TODO climber button
     // CLIMB STATE \\
-    //operatorController.x().onTrue(new InstantCommand(() -> climberSubsystem.setClimbVoltage(0))); // used for tuning
-    //operatorController.a().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(40)));
+
+    // Oopsie button
+    operatorController.back().onTrue(new InstantCommand(() -> state = RobotStates.DRIVE));
+    operatorController.back().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS)));
+
+    // Climb out
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> state = RobotStates.CLIMB));
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS)));
+
+    // Climb in
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_EXTENDED_CLIMB)));
 
     // TRAP STATE \\ 
-
   }
 
   /**
