@@ -24,15 +24,13 @@
           "style": "Track"
         },
         "Drive to first Trajectory": {
-          "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to score 1 Trajectory": {
-          "arrows": false,
-          "style": "Box/Image"
+          "style": "Track"
         },
         "Drive to score 2 Trajectory": {
-          "style": "Box/Image"
+          "style": "Track"
         },
         "Drive to score 3 Trajectory": {
           "style": "Track"
@@ -51,23 +49,19 @@
           "style": "Track"
         },
         "Drive to score second Trajectory": {
-          "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to score third Trajectory": {
-          "arrows": false,
-          "style": "Box/Image"
+          "style": "Track"
         },
         "Drive to score two Trajectory": {
-          "style": "Box/Image"
+          "style": "Track"
         },
         "Drive to second Trajectory": {
-          "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to third Trajectory": {
-          "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Robot": {
           "length": 0.9398000240325928,
