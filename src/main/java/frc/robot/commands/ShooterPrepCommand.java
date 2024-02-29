@@ -89,6 +89,10 @@ public class ShooterPrepCommand extends Command {
         targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
 
       }
+    } else {
+
+      targetPose = driveSubsystem.getCurrentPose2d();
+
     }
 
     currentPose = driveSubsystem.getCurrentPose2d();

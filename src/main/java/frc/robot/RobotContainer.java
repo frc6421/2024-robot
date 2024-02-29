@@ -165,7 +165,7 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Competition").add("Auto Chooser", autoChooser);
     //Shuffleboard.getTab("Competition").add("Robot State", state);
-    Shuffleboard.getTab("Competition").add("Robot State", robotState.toString());
+    Shuffleboard.getTab("Competition").add("Robot State", robotState.name());
   }
 
   /**
@@ -211,6 +211,7 @@ public class RobotContainer {
           new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION))
+        .andThen(new WaitCommand(0.3))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))

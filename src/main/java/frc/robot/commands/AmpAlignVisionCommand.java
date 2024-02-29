@@ -99,8 +99,8 @@ public class AmpAlignVisionCommand extends Command {
       targetPose = driveSubsystem.getCurrentPose2d();
     }
 
-    xController.setGoal(targetPose.getX());
-    yController.setGoal(targetPose.getY() - TrajectoryConstants.CENTER_OF_ROBOT_LENGTH);
+    xController.setGoal(targetPose.getX()); // About 0.55 (don't actually use this number)
+    yController.setGoal(targetPose.getY() - TrajectoryConstants.CENTER_OF_ROBOT_LENGTH); // 7.03
     rotationController.setGoal(targetPose.getRotation().getRadians());
 
   }

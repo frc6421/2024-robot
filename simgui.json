@@ -7,7 +7,8 @@
       "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
       "/Shuffleboard/Shooter Tuning/TuneShooter": "Command",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/ShooterAngleSubsystem": "Subsystem"
     },
     "windows": {
       "/SmartDashboard/Field": {

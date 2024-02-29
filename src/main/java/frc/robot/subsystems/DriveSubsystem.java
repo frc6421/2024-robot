@@ -22,6 +22,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -206,6 +207,8 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     kinematics = m_kinematics;
 
+    m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(0.9, 0.9, 1.0));
+
     autoDriveRequest = new ApplyModuleStates();
 
     // ParentDevice.optimizeBusUtilizationForAll(
@@ -331,16 +334,21 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // TODO test rejecting bad pose estimates
     if (pose1.isPresent()) {
 
-      addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+      if(camera1.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
+        addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
           pose1.get().timestampSeconds);
-
+      }
+      
     }
 
 
     if (pose2.isPresent()) {
 
-      addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+      if(camera2.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
+        addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
           pose2.get().timestampSeconds);
+      }
+      
     }
 
     //TODO remove for competition

@@ -180,8 +180,9 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+    new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),

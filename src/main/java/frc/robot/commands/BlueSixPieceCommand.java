@@ -17,7 +17,9 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -42,7 +44,7 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
-  //private Field2d field;
+  // private Field2d field;
 
   /** Creates a new BlueTwoPieceCommand. */
   public BlueSixPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
@@ -80,10 +82,10 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE2, new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(36.16)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(26.57)))), forwardConfig);
 
      Trajectory driveToFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(36.16))),
+        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(26.57))),
         new Pose2d(TrajectoryConstants.BLUE_DONT_HIT_WALL, new Rotation2d(Units.degreesToRadians(0))),
         new Pose2d(TrajectoryConstants.NOTE8_BLUE, new Rotation2d(Units.degreesToRadians(0)))), forwardConfig);
 
@@ -199,8 +201,9 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
       // shoot preload
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -209,8 +212,9 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -219,8 +223,9 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToSecondNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -229,8 +234,9 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToThirdNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -239,8 +245,9 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFourthNoteCommand, driveToScoreFourthNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -249,8 +256,9 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFifthNoteCommand, driveToScoreFifthNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.2),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),

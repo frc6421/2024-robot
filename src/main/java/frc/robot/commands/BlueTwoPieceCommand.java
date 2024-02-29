@@ -71,7 +71,7 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE2, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER, new Rotation2d(0))), forwardConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER, new Rotation2d(0))), reverseConfig);
 
     // Simulation
     // field = new Field2d();
@@ -116,16 +116,18 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
       new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
       driveToScoreCommand,
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
+    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+    //   new ShooterRevUpCommand(shooterSubsystem),
+      new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
       new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),

@@ -74,7 +74,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE10, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
 
     // Simulation
     //field = new Field2d();
