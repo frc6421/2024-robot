@@ -12,6 +12,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
 public class IntakeTransitionCommand extends Command {
@@ -54,6 +55,7 @@ public class IntakeTransitionCommand extends Command {
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM)
     {
+      LEDSubsystem.setColor(LEDColors.GREEN);
       transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 1.5);
     }
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && 
@@ -61,15 +63,16 @@ public class IntakeTransitionCommand extends Command {
     {
       intakeSubsystem.setIntakeVoltage(0);
       transitionSubsystem.setTransitionVoltage(0);
+      LEDSubsystem.setColor(LEDColors.HOT_PINK);
       counter++;
     }
     if(transitionSubsystem.timeOfFlightIn.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM && 
        transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
     {
-
       transitionSubsystem.setTransitionVoltage((-1.0 * TransitionConstants.TRANSITION_SPEED) / 4);
       counter = 0;
       possibleOverShoot = true;
+      LEDSubsystem.setColor(LEDColors.HOT_PINK);
     }
     
   }

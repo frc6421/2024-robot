@@ -57,41 +57,6 @@ public class TransitionSubsystem extends SubsystemBase {
     transitionEncoder.setPositionConversionFactor(TransitionConstants.TRANSITION_GEAR_RATIO);
   }
 
-  /** Sets the belts to a given output
-   *  value (-1.0 - 1.0)
-   * @param value Used to set the output of the belts
-  */
-  public void setTransitionMotorOutput(double value) {
-    transitionMotor.set(value);
-  }
-
-
-  /**
-   * Stops the transition motor
-   * 
-   */
-  public void stopTransitionMotor() {
-    transitionMotor.stopMotor();
-  }
-
-  /** get the output of the transition motor, -1.0 to 1.0
-   * @return output
-   */
-  public double getTransitionMotorOutput() {
-   return transitionMotor.get();
-  }
-
-  /** Takes in the values of timeOfFlightIn
-   *  @return true/false (true = in the transition, false = not in the transitions)
-   */
-  public boolean isNoteDetected() {
-    if (timeOfFlightIn.getRange() < TransitionConstants.DETECTION_DISTANCE_MM) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
   /**Returns the double value of the TOF In sensor
    * Unit - MM
    * @return double
@@ -115,13 +80,6 @@ public class TransitionSubsystem extends SubsystemBase {
     transitionMotor.setVoltage(voltage);
   }
 
-  /** Gets the current position of the encoder
-   * Unit - Rotations
-   * @return Position in rotations
-   */
-  public double getPosition() {
-    return transitionEncoder.getPosition();
-  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

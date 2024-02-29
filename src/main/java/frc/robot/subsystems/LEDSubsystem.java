@@ -12,21 +12,22 @@ import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 public class LEDSubsystem extends SubsystemBase {
 
   public static class LEDConstants {
-    //TODO: Tune this value for the number of LED's on the Robot
-    public static int NUMBER_OF_LEDS = 1;
+
+    public static int NUMBER_OF_LEDS = 100;
 
     public static enum LEDColors{
       OFF,
-      BLUE,
       HOT_PINK,
-      //RAINBOW
+      PURPLE,
+      YELLOW,
+      GREEN
     }
 
   }
 
-  public AddressableLED led;
+  private static AddressableLED led;
 
-  public AddressableLEDBuffer ledBuffer;
+  private static AddressableLEDBuffer ledBuffer;
 
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem() 
@@ -42,28 +43,45 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
   /**
    * Setting the LED strips to a color, in GRB!!!!
    * @param color the color to set them to
    */
-  public void setColor(LEDColors color) {
+  public static void setColor(LEDColors color) {
       switch(color){
-        case BLUE:
-          ledBuffer.setRGB(0,0,0,255);
-          break;
 
         case HOT_PINK:
-          ledBuffer.setRGB(0,0,255,70);
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,0,255,70);
+          }
+          break;
+        
+        case GREEN:
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,255,0,0);
+          }
+          break;
+        
+        case PURPLE:
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,0,70,180);
+          }
+          break;
+        
+        case YELLOW:
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,75,255,0);
+          }
           break;
 
         case OFF:
-          ledBuffer.setRGB(0,0,0,0);
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,0,0,0);
+          }
           break;
       }
     led.setData(ledBuffer);
   }
-
 }
 
