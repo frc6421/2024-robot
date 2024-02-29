@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -31,8 +32,11 @@ public class ShooterSubsystem extends SubsystemBase {
       public static final double BOTTOM_KI = 0;
       public static final double BOTTOM_KD = 0;
 
-      public static final double SHOOTER_SUB_RPM = 3000;
+      public static final double SHOOTER_IDLE_RPM = 500;
+
+      public static final double[] SHOOTER_RPM = {2500, 2500, 2500, 3000, 3000, 3000, 3500, 3500, 4000, 4250, 4500};
     }
+
     //Creating the objects for the motors and their encoders, respectively
     private TalonFX topShooterMotor;
     private TalonFX bottomShooterMotor;
@@ -57,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //For setting the velocity
     shooterMotorVelocity = new VelocityVoltage(0);
 
-    //Setting the motors to their certain configs
+    //Resetting motors to factory defaults
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
 
@@ -89,12 +93,10 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     bottomShooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    //Optimize CAN utilization
-    ParentDevice.optimizeBusUtilizationForAll(topShooterMotor, bottomShooterMotor);
-
     //Applying the changes to the motors
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
+
   }
 
 
@@ -106,6 +108,22 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorVelocity.withVelocity(velocity / 60);
     topShooterMotor.setControl(shooterMotorVelocity);
     bottomShooterMotor.setControl(shooterMotorVelocity);
+  }
+
+  /**
+   * 
+   * @param velocity
+   */
+  public void setTopShooterMotorVelocity(double velocity) {
+    topShooterMotor.setControl(shooterMotorVelocity.withVelocity(velocity / 60));
+  }
+
+  /**
+   * 
+   * @param velocity
+   */
+  public void setBottomShooterMotorVelocity(double velocity) {
+    bottomShooterMotor.setControl(shooterMotorVelocity.withVelocity(velocity / 60));
   }
 
   /**
@@ -123,7 +141,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Motor velocity, in RPM
    */
   public double getTopMotorVelocity(){
-    return 60 * topShooterMotor.getVelocity().refresh().getValue();
+    return 60 * topShooterMotor.getVelocity().getValue();
   }
 
 
@@ -132,12 +150,14 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Motor velocity, in RPM
    */
   public double getBottomMotorVelocity(){
-    return 60 * bottomShooterMotor.getVelocity().refresh().getValue();
+    return 60 * bottomShooterMotor.getVelocity().getValue();
   }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
+    SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
   }
 }

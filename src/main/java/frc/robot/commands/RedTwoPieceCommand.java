@@ -80,7 +80,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     // Simulation
-    // field = new Field2d();
+    field = new Field2d();
 
     // if (RobotBase.isSimulation()) {
     //    SmartDashboard.putData(field);

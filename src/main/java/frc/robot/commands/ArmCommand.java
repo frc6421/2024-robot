@@ -16,7 +16,7 @@ public class ArmCommand extends Command{
   Timer timer = new Timer();
 
   private final TrapezoidProfile.Constraints armConstraints = 
-    new TrapezoidProfile.Constraints(3000, 2500);
+    new TrapezoidProfile.Constraints(2400, 1200);
 
   private TrapezoidProfile.State armGoal = new TrapezoidProfile.State();
   
@@ -24,51 +24,48 @@ public class ArmCommand extends Command{
 
   TrapezoidProfile armProfile;
 
-  private double finalPosition;
+  private double goPos;
 
   /** Creates a new armCommand. */
-  public ArmCommand(TransitionArmSubsystem armSubsystem) {
+  public ArmCommand(TransitionArmSubsystem armSubsystem, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(armSubsystem);
 
     arm = armSubsystem;
+
+    goPos = position;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() 
   {
-    // timer.reset();
+    timer.reset();
 
-    // armGoal = new TrapezoidProfile.State(0, 0); // TODO position needed
+    armGoal = new TrapezoidProfile.State(goPos, 0);
 
-    // armProfile = new TrapezoidProfile(armConstraints);
+    armProfile = new TrapezoidProfile(armConstraints);
 
-    // timer.start();
-
-    arm.setArmMotorPosition(90);
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
-    //arm.setArmMotorPosition(armSetpoint.position);
+    armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
+    arm.setArmMotorPosition(armSetpoint.position);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    //arm.setArmMotorPosition(armSetpoint.position);
-    finalPosition = arm.getArmMotorPositionDeg();
+    arm.setArmMotorPosition(armSetpoint.position);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return (timer.get() > armProfile.totalTime());
-    return (finalPosition >= 90 - 5 && finalPosition <= 90 + 5);
-    //return false;
+    return (timer.get() > armProfile.totalTime());
   }
 }

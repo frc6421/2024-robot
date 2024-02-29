@@ -10,6 +10,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -47,8 +48,10 @@ public class SpeakerDistanceCommand extends Command {
 
     currentPose = driveSubsystem.getCurrentPose2d();
 
-    distanceToSpeaker = Math.sqrt(Math.pow((currentPose.getX() - targetPose.getX()), 2) 
-      + Math.pow((currentPose.getY() - targetPose.getY()), 2));
+    distanceToSpeaker = Math.hypot((currentPose.getX() - targetPose.getX()), 
+        (currentPose.getY() - targetPose.getY()));
+
+    SmartDashboard.putNumber("Distance to Speaker", distanceToSpeaker);
 
   }
 

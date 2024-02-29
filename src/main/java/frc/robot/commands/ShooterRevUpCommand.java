@@ -4,7 +4,15 @@
 
 package frc.robot.commands;
 
+import java.util.Optional;
+
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterConstants;
@@ -27,16 +35,19 @@ public class ShooterRevUpCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() 
-  {
-    shooterSubsystem.setShooterMotorVelocity(ShooterConstants.SHOOTER_SUB_RPM);
+  public void initialize() {
+    // set shooter to slower idle speed
+    shooterSubsystem.setTopShooterMotorVelocity(ShooterConstants.SHOOTER_IDLE_RPM);
+    shooterSubsystem.setBottomShooterMotorVelocity(ShooterConstants.SHOOTER_IDLE_RPM);
+
     time.reset();
     time.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -47,7 +58,8 @@ public class ShooterRevUpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((shooterSubsystem.getBottomMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM - 50 && 
-    shooterSubsystem.getTopMotorVelocity() >= ShooterConstants.SHOOTER_SUB_RPM - 50) || time.get() >= 0.4);
+    //TODO determine if we need a timer condition
+    return ((shooterSubsystem.getBottomMotorVelocity() >= ShooterConstants.SHOOTER_IDLE_RPM - 50 && 
+    shooterSubsystem.getTopMotorVelocity() >= ShooterConstants.SHOOTER_IDLE_RPM - 50));
   }
 }

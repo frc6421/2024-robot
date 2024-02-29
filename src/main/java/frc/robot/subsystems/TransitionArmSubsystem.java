@@ -21,7 +21,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
-    public static final double ARMMOTORRIGHT_KP = 0.016; // TODO needs to be tuned
+    public static final double ARMMOTORRIGHT_KP = 0.016;
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
     public static final double ARMMOTORRIGHT_KS = 0.342;
@@ -40,6 +40,10 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0);
 
     public static final double ARM_GEAR_RATIO_CONVERSION = 360.0 / TransitionArmConstants.ARM_GEAR_RATIO; // degrees
+
+    public static final double ARM_EXTENDED_CLIMB = 95;
+
+    public static final double ARM_AMP_POSITION = 87.5;
   }
 
   // fields
@@ -52,7 +56,6 @@ public class TransitionArmSubsystem extends SubsystemBase{
   private final RelativeEncoder armRightEncoder;
   private final RelativeEncoder armLeftEncoder;
 
-  // TODO add try catch?
   /** Creates a new transitionArm. */
   public TransitionArmSubsystem() {
 

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AmpAlignVisionCommand;
 import frc.robot.commands.AutoTestCommand;
 import frc.robot.commands.BlueCenterLineFourPieceCommand;
 import frc.robot.commands.BlueCenterLineThreePieceCommand;
@@ -16,9 +17,19 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+import com.ctre.phoenix.unmanaged.Unmanaged;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -27,9 +38,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.subsystems.LEDSubsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.subsystems.ClimberSubsystem.ClimberConstants;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.RedCenterLineFourPieceCommand;
 import frc.robot.commands.RedCenterLineThreePieceCommand;
@@ -37,8 +58,10 @@ import frc.robot.commands.RedSixPieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
-import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.SpeakerAlignVisionCommand;
+import frc.robot.commands.SpeakerDistanceCommand;
+import frc.robot.commands.VisionTestCommand;
 //import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -65,11 +88,19 @@ public class RobotContainer {
   private final ShooterSubsystem shooterSubsystem;
   private final ShooterAngleSubsystem shooterAngleSubsystem;
   private final TransitionArmSubsystem armSubsystem;
-  //private final CANdleSubsystem candleSubsystem;
+  private final LEDSubsystem ledSubsystem;
+  private final ClimberSubsystem climberSubsystem;
+  private final LEDSubsystem ledSubsystem;
 
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
+  //private final ClimberTuning climberTuning;
+
+  private final VisionTestCommand visionTestCommand;
+  private final AmpAlignVisionCommand ampAlignVisionCommand;
+  private final SpeakerAlignVisionCommand speakerAlignVisionCommand;
+  private final SpeakerDistanceCommand speakerDistanceCommand;
 
   //private final AutoTestCommand autoTest;
   BlueTwoPieceCommand blueTwoPiece;
@@ -91,19 +122,34 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    // Comment this line out to use TunerX, uncomment to improve CAN utilization
+    Unmanaged.setPhoenixDiagnosticsStartTime(-1);
+
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
+
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     driveSubsystem = new DriveSubsystem();
     intakeSubsystem = new IntakeSubsystem();
     transitionSubsystem = new TransitionSubsystem();
     armSubsystem = new TransitionArmSubsystem();
-    shooterSubsystem = new ShooterSubsystem();
-    shooterAngleSubsystem = new ShooterAngleSubsystem();
-    //candleSubsystem = new CANdleSubsystem();
+    climberSubsystem = new ClimberSubsystem();
+    ledSubsystem = new LEDSubsystem();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
+    shooterSubsystem = new ShooterSubsystem();
+    shooterAngleSubsystem = new ShooterAngleSubsystem();
+    ledSubsystem = new LEDSubsystem();
+
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
+    ampAlignVisionCommand = new AmpAlignVisionCommand(driveSubsystem);
+    speakerAlignVisionCommand = new SpeakerAlignVisionCommand(driveSubsystem);
+    speakerDistanceCommand = new SpeakerDistanceCommand(driveSubsystem);
+
+    visionTestCommand = new VisionTestCommand(driveSubsystem);
+
+    //climberTuning = new ClimberTuning(climberSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
@@ -143,6 +189,7 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Competition").add("Auto Chooser", autoChooser);
     //Shuffleboard.getTab("Competition").add("Robot State", state);
+    Shuffleboard.getTab("Competition").add("Robot State", state.toString());
   }
 
   /**
@@ -159,7 +206,7 @@ public class RobotContainer {
   private void configureBindings() {
 
     // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper)
-    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker
+    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple, 
 
     // INTAKE STATE \\
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
@@ -173,24 +220,21 @@ public class RobotContainer {
     driverController.leftTrigger().onFalse(new InstantCommand(() -> state = RobotStates.DRIVE));
 
     // Scores
-    // TODO Profile for transition arm
     driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
       .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
+      .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
       .andThen(new WaitCommand(0.5))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(0)))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
-      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))))));
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
+      .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
 
     // Arm out for AMP
-
-    
     operatorController.a().onTrue(new InstantCommand(() -> state = RobotStates.AMP)
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
       .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90))))));
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION)))));
     
     // SHOOT STATE \\
 
@@ -203,10 +247,24 @@ public class RobotContainer {
     operatorController.y().whileTrue(new InstantCommand(() -> state = RobotStates.SHOOT)
       .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))
       .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))));
+
+    operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
+
+    operatorController.rightTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE)));
     
-    // TODO climber button
     // CLIMB STATE \\
-    //operatorController.x().onTrue();
+
+    // Oopsie button
+    operatorController.back().onTrue(new InstantCommand(() -> state = RobotStates.DRIVE));
+    operatorController.back().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS)));
+
+    // Climb out
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> state = RobotStates.CLIMB));
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS)));
+
+    // Climb in
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_EXTENDED_CLIMB)));
 
     // TRAP STATE \\ 
   }
@@ -229,3 +287,4 @@ public class RobotContainer {
     shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
   }
 }
+
