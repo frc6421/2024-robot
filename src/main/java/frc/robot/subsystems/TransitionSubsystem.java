@@ -21,6 +21,7 @@ public class TransitionSubsystem extends SubsystemBase {
     private static final double TRANSITION_GEAR_RATIO = 1.6;
 
     public static final double TRANSITION_SPEED = 0.3 * 12;
+    public static final double AMP_TRANSITION_SPEED = 0.5 * 12;
 
     // Its about 400-380 when nothing is detected
     public static final double DETECTION_DISTANCE_MM = 350;
@@ -72,12 +73,19 @@ public class TransitionSubsystem extends SubsystemBase {
     return timeOfFlightOut.getRange();
   }
 
-  /**Sets the given velocity to the transitionMotor
-   * @param double velocity
+  /**Sets the given voltage to the transitionMotor
+   * @param double voltage
    */
   public void setTransitionVoltage(double voltage)
   {
     transitionMotor.setVoltage(voltage);
+  }
+
+  /**
+   * Stops the transition motors
+   */
+  public void stopTransition() {
+    transitionMotor.stopMotor();
   }
 
   @Override

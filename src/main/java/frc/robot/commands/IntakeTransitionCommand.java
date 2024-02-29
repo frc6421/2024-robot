@@ -37,13 +37,11 @@ public class IntakeTransitionCommand extends Command {
   @Override
   public void initialize() {
 
-    RobotContainer.state = RobotStates.INTAKE;
+    RobotContainer.robotState = RobotStates.INTAKE;
 
     possibleOverShoot = false;
 
     counter = 0;
-
-    //CANdleSubsystem.setLEDColor(0, 0, 0);
 
     transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED);
     intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_IN_SPEED);
@@ -83,10 +81,8 @@ public class IntakeTransitionCommand extends Command {
     
     intakeSubsystem.setIntakeVoltage(0);
     transitionSubsystem.setTransitionVoltage(0);
-    //CANdleSubsystem.setPattern(0, 0, 4);
-    //CANdleSubsystem.setLEDColor(255, 0, 255);
 
-    RobotContainer.state = RobotStates.DRIVE;
+    RobotContainer.robotState = RobotStates.DRIVE;
   }
 
   // Returns true when the command should end.

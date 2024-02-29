@@ -25,7 +25,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
     //Limits
     public static final float MAXIMIMUM_SOFT_LIMIT_DEGREES = 49;
-    public static final float MINNIMUM_SOFT_LIMIT_DEGREES = -25;
+    public static final float MINIMUM_SOFT_LIMIT_DEGREES = -25;
 
     //Encoder conversions
     public static final int GEAR_RATIO = 180;
@@ -69,7 +69,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     angleEncoder.setPositionConversionFactor(AngleConstants.DEGREES_PER_MOTOR_ROTATION);
 
     //Reseting the encoder to 0
-    angleEncoder.setPosition(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
+    angleEncoder.setPosition(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
 
     //How much of the output range one wants to use
     positionMinOutput = -1;
@@ -88,7 +88,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
     //Setting and enabling the soft limits of the motors
     angleMotor.setSoftLimit(SoftLimitDirection.kForward, AngleConstants.MAXIMIMUM_SOFT_LIMIT_DEGREES);
-    angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES);
+    angleMotor.setSoftLimit(SoftLimitDirection.kReverse, AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
     angleMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     angleMotorPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);

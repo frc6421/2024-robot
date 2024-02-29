@@ -12,7 +12,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -28,7 +27,7 @@ public class ShooterPrepCommand extends Command {
 
   // In meters, represents distances spaced in 1 ft intervals
   // Starting at 3 ft from subwoofer to front of bumper
-  private double[] distanceArray = {
+  private static double[] distanceArray = {
       0.9144 + TrajectoryConstants.CENTER_OF_ROBOT_LENGTH,
       1.2192 + TrajectoryConstants.CENTER_OF_ROBOT_LENGTH,
       1.5240 + TrajectoryConstants.CENTER_OF_ROBOT_LENGTH,
@@ -48,8 +47,11 @@ public class ShooterPrepCommand extends Command {
   private Pose2d currentPose;
 
   private double bottomShooterRPM;
-  private double topShooterRPM;
+  private double topShooterOffset = -100;
   private double shooterPivotAngle;
+
+  private static final double shooterAllowableError = 100;
+  private static final double angleAllowableError = 0.1;
 
   private Timer time;
 
@@ -62,7 +64,7 @@ public class ShooterPrepCommand extends Command {
     time = new Timer();
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveSubsystem, shooterSubsystem);
+    addRequirements(driveSubsystem, shooterSubsystem, angleSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -73,16 +75,19 @@ public class ShooterPrepCommand extends Command {
     shooterSubsystem.setTopShooterMotorVelocity(ShooterConstants.SHOOTER_IDLE_RPM);
     shooterSubsystem.setBottomShooterMotorVelocity(ShooterConstants.SHOOTER_IDLE_RPM);
 
-    time.reset();
-    time.start();
+    time.restart();
 
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
     if (allianceColor.isPresent()) {
       if (allianceColor.get().equals(Alliance.Red)) {
+
         targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(4).get().toPose2d();
+
       } else if (allianceColor.get().equals(Alliance.Blue)) {
+
         targetPose = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getTagPose(7).get().toPose2d();
+
       }
     }
 
@@ -91,51 +96,38 @@ public class ShooterPrepCommand extends Command {
     distanceToSpeaker = Math.hypot((currentPose.getX() - targetPose.getX()),
         (currentPose.getY() - targetPose.getY()));
 
-    for (int index = 0; index < distanceArray.length; index++) {
+    if (distanceToSpeaker > distanceArray[10]) {
 
-      if (distanceToSpeaker >= distanceArray[index] && distanceToSpeaker < distanceArray[index + 1]) {
+      bottomShooterRPM = ShooterConstants.SHOOTER_RPM[10];
 
-        bottomShooterRPM = ShooterConstants.SHOOTER_RPM[index];
-        topShooterRPM = ShooterConstants.SHOOTER_RPM[index] - 100;
+      shooterPivotAngle = AngleConstants.PIVOT_ANGLE[10];
 
-        double percentDifference = (distanceArray[index + 1] - distanceToSpeaker) / Units.feetToMeters(1);
-        double angleAdjust = percentDifference * (AngleConstants.PIVOT_ANGLE[index] - AngleConstants.PIVOT_ANGLE[index + 1]);
+    } else {
 
-        shooterPivotAngle = AngleConstants.PIVOT_ANGLE[index + 1] + angleAdjust;
+      for (int index = 0; index < distanceArray.length; index++) {
 
-        shooterSubsystem.setBottomShooterMotorVelocity(bottomShooterRPM);
-        shooterSubsystem.setTopShooterMotorVelocity(topShooterRPM);
+        if (distanceToSpeaker < distanceArray[index]) {
 
-        angleSubsystem.setAngle(shooterPivotAngle);
+          bottomShooterRPM = ShooterConstants.SHOOTER_RPM[index];
 
-      } else if (distanceToSpeaker < distanceArray[0]) {
+          double percentDifference = (distanceArray[index + 1] - distanceToSpeaker) / Units.feetToMeters(1);
+          double angleAdjust = percentDifference
+              * (AngleConstants.PIVOT_ANGLE[index] - AngleConstants.PIVOT_ANGLE[index + 1]);
 
-        bottomShooterRPM = ShooterConstants.SHOOTER_RPM[0];
-        topShooterRPM = ShooterConstants.SHOOTER_RPM[0] - 100;
+          shooterPivotAngle = AngleConstants.PIVOT_ANGLE[index + 1] + angleAdjust;
 
-        shooterPivotAngle = AngleConstants.PIVOT_ANGLE[0];
+          break;
 
-        shooterSubsystem.setBottomShooterMotorVelocity(bottomShooterRPM);
-        shooterSubsystem.setTopShooterMotorVelocity(topShooterRPM);
-
-        angleSubsystem.setAngle(shooterPivotAngle);
-
-      } else if (distanceToSpeaker > distanceArray[10]) {
-
-        bottomShooterRPM = ShooterConstants.SHOOTER_RPM[10];
-        topShooterRPM = ShooterConstants.SHOOTER_RPM[10] - 100;
-
-        shooterPivotAngle = AngleConstants.PIVOT_ANGLE[10];
-
-        shooterSubsystem.setBottomShooterMotorVelocity(bottomShooterRPM);
-        shooterSubsystem.setTopShooterMotorVelocity(topShooterRPM);
-
-        angleSubsystem.setAngle(shooterPivotAngle);
+        }
 
       }
 
     }
 
+    shooterSubsystem.setBottomShooterMotorVelocity(bottomShooterRPM);
+    shooterSubsystem.setTopShooterMotorVelocity(bottomShooterRPM + topShooterOffset);
+
+    angleSubsystem.setAngle(shooterPivotAngle);
 
   }
 
@@ -154,8 +146,9 @@ public class ShooterPrepCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shooterSubsystem.getBottomMotorVelocity() > (bottomShooterRPM - 100))
-        && (shooterSubsystem.getTopMotorVelocity() > (topShooterRPM - 100))
-        && (Math.abs(angleSubsystem.getAngleEncoderPosition() - shooterPivotAngle) < 0.1);
+    return (shooterSubsystem.getBottomMotorVelocity() > (bottomShooterRPM - shooterAllowableError))
+        && (shooterSubsystem.getTopMotorVelocity() > (bottomShooterRPM + topShooterOffset - shooterAllowableError))
+        && (Math.abs(angleSubsystem.getAngleEncoderPosition() - shooterPivotAngle) < angleAllowableError)
+        || time.hasElapsed(0.5);
   }
 }

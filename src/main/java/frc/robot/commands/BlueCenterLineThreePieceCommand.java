@@ -6,22 +6,17 @@ package frc.robot.commands;
 
 import java.util.List;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -34,7 +29,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -47,7 +41,8 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
-   private Field2d field;
+  //private Field2d field;
+
   /** Creates a new BlueTwoPieceCommand. */
   public BlueCenterLineThreePieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
 
@@ -174,9 +169,9 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
         scorePreloadCommand, 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
         new ShooterRevUpCommand(shooterSubsystem),
-        new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
-        new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
         // score pre-loaded piece 
         new ParallelDeadlineGroup( 
@@ -184,9 +179,9 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
         new ShooterRevUpCommand(shooterSubsystem),
-        new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
-        new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
         // stop intake and score second piece
         new ParallelDeadlineGroup( 
@@ -194,9 +189,9 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
         new ShooterRevUpCommand(shooterSubsystem),
-        new InstantCommand(() -> transitionSubsystem.setTransitionMotorOutput(TransitionConstants.TRANSITION_SPEED)),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
-        new InstantCommand(() -> transitionSubsystem.stopTransitionMotor()),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
     );
   }

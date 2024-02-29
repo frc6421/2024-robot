@@ -6,10 +6,7 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
-import org.photonvision.PhotonUtils;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.revrobotics.SparkMaxRelativeEncoder;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
