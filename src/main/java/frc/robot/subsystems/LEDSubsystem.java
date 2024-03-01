@@ -18,6 +18,7 @@ public class LEDSubsystem extends SubsystemBase {
     public static enum LEDColors{
       OFF,
       HOT_PINK,
+      BLUE,
       PURPLE,
       YELLOW,
       GREEN
@@ -63,6 +64,12 @@ public class LEDSubsystem extends SubsystemBase {
           }
           break;
         
+        case BLUE:
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,0,0,255);
+          }
+          break;
+
         case PURPLE:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setRGB(i,0,70,180);
