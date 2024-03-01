@@ -30,6 +30,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -55,13 +56,13 @@ public class BlueCenterLineFourPieceCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem ,shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 1.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 1,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 1.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 1,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
 
@@ -163,9 +164,8 @@ public class BlueCenterLineFourPieceCommand extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
         // shoot preload
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -174,9 +174,8 @@ public class BlueCenterLineFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(26)),
+        new ShooterRevUpCommand(shooterSubsystem, 3750),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -185,9 +184,8 @@ public class BlueCenterLineFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(23)),
+        new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -196,9 +194,8 @@ public class BlueCenterLineFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(23)),
+        new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),

@@ -17,6 +17,7 @@ import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeConstants;
 import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
+import frc.robot.subsystems.ShooterSubsystem.ShooterConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
@@ -25,6 +26,7 @@ import java.util.Map;
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -49,6 +51,7 @@ import frc.robot.commands.RedSixPieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.ShooterPrepCommand;
+import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.SpeakerAlignVisionCommand;
 import frc.robot.commands.SpeakerAlignVisionCommandV2;
@@ -66,9 +69,11 @@ public class RobotContainer {
   // Controllers \\
   private final CommandXboxController driverController; 
   private final CommandXboxController operatorController;
+  private final CommandXboxController testingcontroller;
 
   private static final int driverControllerPort = 0;
   private static final int operatorControllerPort = 1;
+  private static final int testingcontrollerPort = 2;
 
   // Subsystems \\
   private final DriveSubsystem driveSubsystem;
@@ -97,7 +102,6 @@ public class RobotContainer {
   RedSixPieceCommand redSixPiece;
   BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
   RedCenterLineFourPieceCommand redCenterLineFourPiece;
-
   
   public static RobotStates robotState;
 
@@ -111,6 +115,7 @@ public class RobotContainer {
 
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
+    testingcontroller = new CommandXboxController(testingcontrollerPort);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -157,15 +162,12 @@ public class RobotContainer {
     autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
     autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
 
-
-
-
     // Configure the trigger bindings
     configureBindings();
 
     Shuffleboard.getTab("Competition").add("Auto Chooser", autoChooser);
     //Shuffleboard.getTab("Competition").add("Robot State", state);
-    Shuffleboard.getTab("Competition").add("Robot State", robotState.name());
+    Shuffleboard.getTab("Competition").addString("Robot State", () -> robotState.name());
   }
 
   /**
@@ -206,9 +208,8 @@ public class RobotContainer {
     //   .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
     //   .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
 
-    driverController.rightBumper().whileTrue(new SelectCommand<>(Map.ofEntries(
-      Map.entry(RobotStates.AMP, new ParallelCommandGroup(ampAlignVisionCommand, 
-          new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
+    driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
+      Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION))
         .andThen(new WaitCommand(0.3))
@@ -220,9 +221,21 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
-      Map.entry(RobotStates.SHOOT, speakerAlignVisionCommand
-        .andThen(new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake())))
-        .andThen(new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem))
+      Map.entry(RobotStates.SUB_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.PIVOT_ANGLE[0])))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new WaitCommand(0.4))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
+        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
+      Map.entry(RobotStates.SUB_PLUS_ROBOT_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.PIVOT_ANGLE[2])))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[2]))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
@@ -238,12 +251,10 @@ public class RobotContainer {
     // SHOOT STATE \\
 
     // Sub
-    operatorController.b().whileTrue(new InstantCommand(() -> robotState = RobotStates.SHOOT));
+    operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT));
     
-    // Podium
-    // operatorController.y().whileTrue(new InstantCommand(() -> robotState = RobotStates.SHOOT)
-    //   .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))
-    //   .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))));
+    // Subwoofer + robot length (2 ft back)
+    operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_PLUS_ROBOT_SHOOT));
 
     operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
 
@@ -253,17 +264,47 @@ public class RobotContainer {
 
     // Oopsie button
     operatorController.back().onTrue(new InstantCommand(() -> robotState = RobotStates.DRIVE));
-    operatorController.back().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS)));
+    operatorController.back().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS))
+      .andThen(new WaitCommand(1))
+      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))));
 
     // Climb out
     operatorController.rightBumper().onTrue(new InstantCommand(() -> robotState = RobotStates.CLIMB));
-    operatorController.rightBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS)));
+    operatorController.rightBumper().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION)
+      .andThen(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS))));
 
     // Climb in
     operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_EXTENDED_CLIMB)));
 
     // TRAP STATE \\ 
+
+    // Testing Controller
+    testingcontroller.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
+      .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
+      .andThen(new WaitCommand(0.5))
+      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
+      .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
+      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES))
+      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
+      .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))));
+
+    testingcontroller.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
+
+    testingcontroller.leftBumper().toggleOnTrue(intakeTransitionCommand);
+
+    testingcontroller.leftTrigger().onTrue(new InstantCommand(() -> robotState = RobotStates.BARF));
+    testingcontroller.leftTrigger().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
+    testingcontroller.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
+    testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
+    testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
+
+
+    testingcontroller.y().whileTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT)
+      .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))));
+
+
   }
 
   /**

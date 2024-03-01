@@ -12,13 +12,18 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterConstants;
 public class ShooterRevUpCommand extends Command {
 
   private final ShooterSubsystem shooterSubsystem;
+  private double shooterVelocity;
+
+  double topShooterOffset = -100;
+  double velocityErrorRange = 100;
 
   private Timer time;
 
   /** Creates a new ShooterRevUp. */
-  public ShooterRevUpCommand(ShooterSubsystem shooterSubsystem) {
+  public ShooterRevUpCommand(ShooterSubsystem shooterSubsystem, double targetRPM) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterSubsystem = shooterSubsystem;
+    shooterVelocity = targetRPM;
 
     addRequirements(shooterSubsystem);
 
@@ -29,8 +34,8 @@ public class ShooterRevUpCommand extends Command {
   @Override
   public void initialize() {
     // set shooter to slower idle speed
-    shooterSubsystem.setTopShooterMotorVelocity(ShooterConstants.SHOOTER_IDLE_RPM);
-    shooterSubsystem.setBottomShooterMotorVelocity(ShooterConstants.SHOOTER_IDLE_RPM);
+    shooterSubsystem.setTopShooterMotorVelocity(shooterVelocity);
+    shooterSubsystem.setBottomShooterMotorVelocity(shooterVelocity);
 
     time.reset();
     time.start();
@@ -50,8 +55,8 @@ public class ShooterRevUpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //TODO determine if we need a timer condition
-    return ((shooterSubsystem.getBottomMotorVelocity() >= ShooterConstants.SHOOTER_IDLE_RPM - 50 && 
-    shooterSubsystem.getTopMotorVelocity() >= ShooterConstants.SHOOTER_IDLE_RPM - 50));
+    return ((shooterSubsystem.getBottomMotorVelocity() >= shooterVelocity - velocityErrorRange && 
+    shooterSubsystem.getTopMotorVelocity() >= shooterVelocity + topShooterOffset - velocityErrorRange))
+    || time.hasElapsed(0.5);
   }
 }

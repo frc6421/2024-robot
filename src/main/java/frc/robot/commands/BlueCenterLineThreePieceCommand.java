@@ -54,13 +54,13 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 0.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 0.5,
-        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND,
+        AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 1)
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
 
@@ -167,9 +167,8 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(scorePreloadTrajectory.getInitialPose())), 
         scorePreloadCommand, 
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(22.5)),
+        new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -178,9 +177,8 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveBackToScoreOneCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(22.5)),
+        new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -189,9 +187,8 @@ public class BlueCenterLineThreePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveBackToScoreTwoCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        // new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
-        // new ShooterRevUpCommand(shooterSubsystem),
-        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(22.5)),
+        new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),

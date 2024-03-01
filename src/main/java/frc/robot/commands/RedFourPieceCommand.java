@@ -55,12 +55,12 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
     addRequirements(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
     TrajectoryConfig forwardConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 1,
         AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics);
     
     TrajectoryConfig reverseConfig = new TrajectoryConfig(
-        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
+        AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 1,
         AutoConstants.AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED - 2)
         .setKinematics(driveSubsystem.kinematics)
         .setReversed(true);
@@ -168,45 +168,44 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      // shoot preload
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
-      new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.2),
-      new InstantCommand(() -> transitionSubsystem.stopTransition()),
-      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      // go to and shoot first note
-      new ParallelDeadlineGroup( 
-        new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
-        new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-    //   new ShooterRevUpCommand(shooterSubsystem),
-    new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
-      new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.2),
-      new InstantCommand(() -> transitionSubsystem.stopTransition()),
-      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      // go to and shoot second note
-      new ParallelDeadlineGroup( 
-        new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
-        new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
-      new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.2),
-      new InstantCommand(() -> transitionSubsystem.stopTransition()),
-      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      // go to and shoot third note
-      new ParallelDeadlineGroup( 
-        new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
-        new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
-      new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.2),
-      new InstantCommand(() -> transitionSubsystem.stopTransition()),
-      new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
+        new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
+        // shoot preload
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.2),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+        // go to and shoot first note
+        new ParallelDeadlineGroup( 
+          new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
+          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(38)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.2),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+        // go to and shoot second note
+        new ParallelDeadlineGroup( 
+          new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
+          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(38)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.2),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+        // go to and shoot third note
+        new ParallelDeadlineGroup( 
+          new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
+          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(38)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.2),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
     );
   }
 }

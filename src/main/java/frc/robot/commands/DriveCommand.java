@@ -67,7 +67,7 @@ public class DriveCommand extends Command {
   public void execute() {
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
-    if(allianceColor.get().equals(Alliance.Red)) {
+    if(allianceColor.isPresent() && allianceColor.get().equals(Alliance.Red)) {
       invert = -1;
     }
 

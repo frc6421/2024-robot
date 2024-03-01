@@ -53,15 +53,15 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public ApplyModuleStates autoDriveRequest;
 
   // PhotonVision Cameras
-  private PhotonCamera camera1;
-  private PhotonCamera camera2;
+  // private PhotonCamera camera1;
+  // private PhotonCamera camera2;
 
-  // Camera offsets from the center of te robot
-  private Transform3d camera1Offset;
-  private Transform3d camera2Offset;
+  // Camera offsets from the center of the robot
+  // private Transform3d camera1Offset;
+  // private Transform3d camera2Offset;
 
-  private PhotonPoseEstimator camera1PoseEstimator;
-  private PhotonPoseEstimator camera2PoseEstimator;
+  // private PhotonPoseEstimator camera1PoseEstimator;
+  // private PhotonPoseEstimator camera2PoseEstimator;
 
 
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
@@ -207,8 +207,6 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     kinematics = m_kinematics;
 
-    m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(0.9, 0.9, 1.0));
-
     autoDriveRequest = new ApplyModuleStates();
 
     // ParentDevice.optimizeBusUtilizationForAll(
@@ -233,33 +231,33 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     PhotonCamera.setVersionCheckEnabled(false);
 
-    // Back left camera
-    camera1 = new PhotonCamera("Camera1");
+    // // Back left camera
+    // camera1 = new PhotonCamera("Camera1");
 
-    camera1Offset = new Transform3d(
-        new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)),
-        new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135)));
+    // camera1Offset = new Transform3d(
+    //     new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)),
+    //     new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135)));
 
-    // Back right camera
-    camera2 = new PhotonCamera("Camera6");
+    // // Back right camera
+    // camera2 = new PhotonCamera("Camera6");
 
-    camera2Offset = new Transform3d(
-        new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)),
-        new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135)));
+    // camera2Offset = new Transform3d(
+    //     new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)),
+    //     new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135)));
 
-    camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        camera1,
-        camera1Offset);
+    // camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    //     camera1,
+    //     camera1Offset);
 
-    camera1PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    // camera1PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-    camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        camera2,
-        camera2Offset);
+    // camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    //     camera2,
+    //     camera2Offset);
 
-    camera2PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    // camera2PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
   }
 
@@ -328,39 +326,39 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   @Override
   public void periodic() {
 
-    Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
-    Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
+    // Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
+    // Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
 
-    // TODO test rejecting bad pose estimates
-    if (pose1.isPresent()) {
+    // // TODO test rejecting bad pose estimates
+    // if (pose1.isPresent()) {
 
-      if(camera1.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
-        addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-          pose1.get().timestampSeconds);
-      }
+    //   if(camera1.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
+    //     addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
+    //       pose1.get().timestampSeconds);
+    //   }
       
-    }
+    // }
 
 
-    if (pose2.isPresent()) {
+    // if (pose2.isPresent()) {
 
-      if(camera2.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
-        addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-          pose2.get().timestampSeconds);
-      }
+    //   if(camera2.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
+    //     addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
+    //       pose2.get().timestampSeconds);
+    //   }
       
-    }
+    // }
 
-    //TODO remove for competition
-    SmartDashboard.putNumber("Pose Estimator X", getCurrentPose2d().getX());
-    SmartDashboard.putNumber("Pose Estimator Y", getCurrentPose2d().getY());
-    SmartDashboard.putNumber("Pose Estimator Rotation", getCurrentPose2d().getRotation().getDegrees());
+    // //TODO remove for competition
+    // SmartDashboard.putNumber("Pose Estimator X", getCurrentPose2d().getX());
+    // SmartDashboard.putNumber("Pose Estimator Y", getCurrentPose2d().getY());
+    // SmartDashboard.putNumber("Pose Estimator Rotation", getCurrentPose2d().getRotation().getDegrees());
 
   }
 
-  private Optional<EstimatedRobotPose> updatePhotonPoseEstimator(PhotonPoseEstimator poseEstimator) {
-    return poseEstimator.update();
-  }
+  // private Optional<EstimatedRobotPose> updatePhotonPoseEstimator(PhotonPoseEstimator poseEstimator) {
+  //   return poseEstimator.update();
+  // }
 
   /**
    * Gets the estimated pose

@@ -118,22 +118,24 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
-      new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.25),
-      new InstantCommand(() -> transitionSubsystem.stopTransition()),
-      new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-      new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
-      driveToScoreCommand,
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-      new ShooterRevUpCommand(shooterSubsystem),
-      new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-      new WaitCommand(0.25),
-      new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
-      new InstantCommand(() -> transitionSubsystem.stopTransition()),
-      new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
+        new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.25),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+        new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
+        driveToScoreCommand,
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
+        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.25),
+        new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor())
     );
   }
 }

@@ -108,7 +108,8 @@ public static class TrajectoryConstants {
     public static enum RobotStates{
         DRIVE,
         INTAKE,
-        SHOOT,
+        SUB_SHOOT,
+        SUB_PLUS_ROBOT_SHOOT,
         AMP,
         TRAP,
         CLIMB,

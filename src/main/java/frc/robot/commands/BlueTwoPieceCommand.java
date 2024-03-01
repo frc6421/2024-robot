@@ -116,8 +116,8 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
-    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-    //   new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
+      new ShooterRevUpCommand(shooterSubsystem, 2500),
       new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
@@ -125,8 +125,8 @@ public class BlueTwoPieceCommand extends SequentialCommandGroup {
       new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
       new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
       driveToScoreCommand,
-    //   new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
-    //   new ShooterRevUpCommand(shooterSubsystem),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
+      new ShooterRevUpCommand(shooterSubsystem, 2500),
       new ShooterPrepCommand(driveSubsystem, shooterSubsystem, shooterAngleSubsystem),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.25),
