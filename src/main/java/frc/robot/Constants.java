@@ -91,11 +91,11 @@ public static class TrajectoryConstants {
 
   //public static final Translation2d RED_FIVE_PIECE_SCORE = new Translation2d(Units.inchesToMeters(470), Units.inchesToMeters(260));
   public static final Translation2d NOTE9_SCORE_POINT = new Translation2d(Units.inchesToMeters(567), Units.inchesToMeters(200));
-  public static final Translation2d RED_DONT_HIT_WALL = new Translation2d(Units.inchesToMeters(430), Units.inchesToMeters(300));
+  public static final Translation2d RED_DONT_HIT_WALL = new Translation2d(Units.inchesToMeters(495), Units.inchesToMeters(300));
 
   //public static final Translation2d BLUE_FIVE_PIECE_SCORE = new Translation2d(Units.inchesToMeters(178), Units.inchesToMeters(260));
   public static final Translation2d NOTE1_SCORE_POINT = new Translation2d(Units.inchesToMeters(81), Units.inchesToMeters(200));
-  public static final Translation2d BLUE_DONT_HIT_WALL = new Translation2d(Units.inchesToMeters(218), Units.inchesToMeters(300));
+  public static final Translation2d BLUE_DONT_HIT_WALL = new Translation2d(Units.inchesToMeters(153), Units.inchesToMeters(300));
 
   public static final Translation2d BLUE_FOUR_PIECE_START = new Translation2d(Units.inchesToMeters(30), Units.inchesToMeters(266));
   public static final Translation2d RED_FOUR_PIECE_START = new Translation2d(Units.inchesToMeters(618), Units.inchesToMeters(266));

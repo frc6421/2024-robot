@@ -17,7 +17,9 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -43,7 +45,7 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
 
-  //private Field2d field;
+  private Field2d field;
 
   /** Creates a new BlueTwoPieceCommand. */
   public RedCenterLineFourPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
@@ -71,8 +73,12 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.RED_FOUR_PIECE_START, new Rotation2d(Units.degreesToRadians(120))),
         new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(143.84)))), forwardConfig);
 
-    Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+    Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(143.84))),
+        new Pose2d(TrajectoryConstants.RED_FOUR_PIECE_START, new Rotation2d(Units.degreesToRadians(120)))), reverseConfig);
+
+    Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.RED_FOUR_PIECE_START, new Rotation2d(Units.degreesToRadians(120))),
         new Pose2d(TrajectoryConstants.RED_DONT_HIT_WALL, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE8_RED, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
@@ -98,6 +104,7 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
     //     field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
     //     field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //     field.getObject("Drive to score first trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
     //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
     //     field.getObject("Drive to score second Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
     //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
@@ -122,6 +129,14 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
 
     SwerveControllerCommand driveToFirstNoteCommand = new SwerveControllerCommand(
         driveToFirstNoteTrajectory,
+        driveSubsystem::getPose2d,
+        driveSubsystem.kinematics,
+        holonomicDriveController,
+        driveSubsystem::autoSetModuleStates,
+        driveSubsystem);
+
+    SwerveControllerCommand driveToScoreFirstNoteCommand = new SwerveControllerCommand(
+        driveToScoreFirstNoteTrajectory,
         driveSubsystem::getPose2d,
         driveSubsystem.kinematics,
         holonomicDriveController,
@@ -166,18 +181,18 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
         // shoot preload
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
-        new ShooterRevUpCommand(shooterSubsystem, 2500),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+        new ShooterRevUpCommand(shooterSubsystem, 3000),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
         // go to and shoot first note
         new ParallelDeadlineGroup( 
-          new SequentialCommandGroup(driveToFirstNoteCommand), 
+          new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(26)),
-        new ShooterRevUpCommand(shooterSubsystem, 3750),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(45)),
+        new ShooterRevUpCommand(shooterSubsystem, 3000),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -186,7 +201,7 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(23)),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(22.5)),
         new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
@@ -196,7 +211,7 @@ public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(23)),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(22.5)),
         new ShooterRevUpCommand(shooterSubsystem, 4500),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
