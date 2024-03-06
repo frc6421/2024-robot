@@ -88,8 +88,8 @@ public class IntakeTransitionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (counter >= 30) 
-    || ((transitionSubsystem.timeOfFlightIn.getRange() > TransitionConstants.DETECTION_DISTANCE_MM && 
-         transitionSubsystem.timeOfFlightOut.getRange() > TransitionConstants.DETECTION_DISTANCE_MM) && possibleOverShoot);
+    return //(counter >= 36) ||
+    ((transitionSubsystem.timeOfFlightIn.getRange() > TransitionConstants.DETECTION_DISTANCE_MM && 
+      transitionSubsystem.timeOfFlightOut.getRange() > TransitionConstants.DETECTION_DISTANCE_MM) && possibleOverShoot);
   }
 }
