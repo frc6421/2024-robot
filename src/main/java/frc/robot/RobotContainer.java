@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.AmpAlignVisionCommand;
 import frc.robot.commands.BlueCenterLineFourPieceCommand;
 import frc.robot.commands.BlueCenterLineThreePieceCommand;
 import frc.robot.commands.BlueSixPieceCommand;
@@ -51,11 +50,8 @@ import frc.robot.commands.RedCenterLineThreePieceCommand;
 import frc.robot.commands.RedSixPieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
-import frc.robot.commands.ShooterPrepCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.Constants.RobotStates;
-import frc.robot.commands.SpeakerAlignVisionCommand;
-import frc.robot.commands.SpeakerAlignVisionCommandV2;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -89,9 +85,6 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
-
-  private final AmpAlignVisionCommand ampAlignVisionCommand;
-  private final SpeakerAlignVisionCommandV2 speakerAlignVisionCommand;
 
   BlueTwoPieceCommand blueTwoPiece;
   RedTwoPieceCommand redTwoPiece;
@@ -133,8 +126,6 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-    ampAlignVisionCommand = new AmpAlignVisionCommand(driveSubsystem);
-    speakerAlignVisionCommand = new SpeakerAlignVisionCommandV2(driveSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
