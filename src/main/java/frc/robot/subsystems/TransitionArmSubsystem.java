@@ -35,7 +35,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 50;
 
-    public static final float ARM_FORAWRD_SOFT_LIMIT = 100;
+    public static final float ARM_FORAWRD_SOFT_LIMIT = 113;
     public static final float ARM_REVERSE_SOFT_LIMIT = -7;
     public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0);
 
