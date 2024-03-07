@@ -19,6 +19,7 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
   public static class AutoConstants {
 
     public static final double THETA_P = 5; // TODO update values
@@ -105,14 +106,29 @@ public static class TrajectoryConstants {
 
   }
 
-    public static enum RobotStates{
-        DRIVE,
-        INTAKE,
-        SUB_SHOOT,
-        SUB_PLUS_ROBOT_SHOOT,
-        AMP,
-        TRAP,
-        CLIMB,
-        BARF
-    }
+  public static class VisionConstants {
+
+    public static final double AMP_PITCH_ANGLE = 0.0;
+    public static final double AMP_YAW_ANGLE = 0.0;
+
+    public static final double SPEAKER_YAW_ANGLE = 0.0;
+
+    public static final double[] SPEAKER_PITCH_ARRAY = {0.0, 0.0};
+    public static final double[] SPEAKER_YAW_ARRAY = {0.0, 0.0};
+    public static final double[] SHOOTER_PIVOT_ARRAY = {0.0, 0.0};
+    public static final double[] SHOOTER_RPM = {0.0, 0.0};
+
+  }
+
+  public static enum RobotStates{
+    DRIVE,
+    INTAKE,
+    SUB_SHOOT,
+    SUB_PLUS_ROBOT_SHOOT,
+    AMP,
+    SPEAKER,
+    TRAP,
+    CLIMB,
+    BARF
+  }
 }
