@@ -146,10 +146,12 @@ public class DriveCommand extends Command {
           }
 
 
+          // Check distance from the target using camera pitch
           for(int i = 0; i < VisionConstants.SPEAKER_PITCH_ARRAY.length; i++) {
 
             if(Cameras.getPitch(Cameras.speakerCamera, targetTagID) >= VisionConstants.SPEAKER_PITCH_ARRAY[i]) {
 
+              // Set rotation to turn to center on the speaker
               rotationController.setSetpoint(VisionConstants.SPEAKER_YAW_ARRAY[i]);
 
               break;
@@ -158,7 +160,7 @@ public class DriveCommand extends Command {
 
           }
 
-            rotationalSpeed = rotationController.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
+          rotationalSpeed = rotationController.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
 
           break;
 
