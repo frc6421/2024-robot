@@ -180,7 +180,7 @@ public class RobotContainer {
   private void configureBindings() {
 
     // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper)
-    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple, 
+    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple
 
     // INTAKE STATE \\
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
@@ -274,6 +274,7 @@ public class RobotContainer {
     operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_EXTENDED_CLIMB)));
 
     // TRAP STATE \\ 
+
 
     // Testing Controller
     testingcontroller.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))

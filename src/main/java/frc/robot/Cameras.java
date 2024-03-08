@@ -5,7 +5,6 @@
 package frc.robot;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.util.Units;
 
@@ -15,7 +14,7 @@ public class Cameras {
     //TODO update camera names
     public static PhotonCamera ampCamera = new PhotonCamera("Camera6");
     public static PhotonCamera speakerCamera = new PhotonCamera("Camera1");
-    public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
+    //public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
 
 
     public static boolean isTarget(PhotonCamera camera) {
