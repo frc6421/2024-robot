@@ -72,23 +72,23 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE2, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(24), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(24), 0)), new Rotation2d(Units.degreesToRadians(0))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0))),
         new Pose2d(TrajectoryConstants.NOTE1, new Rotation2d(0))), forwardConfig);
 
     Trajectory driveToScoreSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE1, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(24), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
 
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(24), 0)), new Rotation2d(0)),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(0)),
         new Pose2d(TrajectoryConstants.NOTE3, new Rotation2d(0))), forwardConfig);
 
     Trajectory driveToScoreThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE3, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(24), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
 
 
      //Simulation

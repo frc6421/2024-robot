@@ -44,7 +44,7 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
-  // private Field2d field;
+   private Field2d field;
 
   /** Creates a new BlueTwoPieceCommand. */
   public RedSixPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
@@ -70,23 +70,27 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
     // robot leaves start zone and moves to pick up note at podium
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(5), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(7), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(5), 0)), new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.NOTE9_SCORE_POINT, new Rotation2d(Units.degreesToRadians(202.35)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(7), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE9_SCORE_POINT, new Rotation2d(Units.degreesToRadians(202.35))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(9), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
+    Trajectory driveToPrepThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(9), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE11.plus(new Translation2d(Units.inchesToMeters(18), Units.inchesToMeters(-12))), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
+
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(9), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE11.plus(new Translation2d(Units.inchesToMeters(18), Units.inchesToMeters(-12))), new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(12), 0)), new Rotation2d(Units.degreesToRadians(143.84)))), forwardConfig);
 
      Trajectory driveToFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(12), 0)), new Rotation2d(Units.degreesToRadians(143.84))),
-        new Pose2d(TrajectoryConstants.RED_DONT_HIT_WALL, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_DONT_HIT_WALL.minus(new Translation2d(Units.inchesToMeters(55), 0)), new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE8_RED, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
@@ -114,6 +118,7 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
     //     field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
     //     field.getObject("Drive to score 1 Trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
     //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //     field.getObject("Drive to prep third Trajectory").setTrajectory(driveToPrepThirdNoteTrajectory);
     //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
     //     field.getObject("Drive to 4 Trajectory").setTrajectory(driveToFourthNoteTrajectory);
     //     field.getObject("Drive to score 4 Trajectory").setTrajectory(driveToScoreFourthNoteTrajectory);
@@ -151,6 +156,14 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
 
     SwerveControllerCommand driveToSecondNoteCommand = new SwerveControllerCommand(
         driveToSecondNoteTrajectory,
+        driveSubsystem::getPose2d,
+        driveSubsystem.kinematics,
+        holonomicDriveController,
+        driveSubsystem::autoSetModuleStates,
+        driveSubsystem);
+
+    SwerveControllerCommand driveToPrepThirdNoteCommand = new SwerveControllerCommand(
+        driveToPrepThirdNoteTrajectory,
         driveSubsystem::getPose2d,
         driveSubsystem.kinematics,
         holonomicDriveController,
@@ -229,7 +242,7 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
         // go to and shoot third note
         new ParallelDeadlineGroup( 
-          new SequentialCommandGroup(driveToThirdNoteCommand), 
+          new SequentialCommandGroup(driveToPrepThirdNoteCommand, driveToThirdNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(26)),
         new ShooterRevUpCommand(shooterSubsystem, 3750),

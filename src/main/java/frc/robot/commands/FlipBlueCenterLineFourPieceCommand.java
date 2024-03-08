@@ -88,19 +88,19 @@ public class FlipBlueCenterLineFourPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.BLUE_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(15.97)))), reverseConfig);
 
      //Simulation
-     field = new Field2d();
+    //  field = new Field2d();
 
-     if (RobotBase.isSimulation()) {
-        SmartDashboard.putData(field);
+    //  if (RobotBase.isSimulation()) {
+    //     SmartDashboard.putData(field);
 
-        field.setRobotPose(driveToSecondNoteTrajectory.getInitialPose());
+    //     field.setRobotPose(driveToSecondNoteTrajectory.getInitialPose());
       
-        field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-        field.getObject("Drive to score second Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
-        field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
-        field.getObject("Drive to score third Trajectory").setTrajectory(driveToScoreThirdNoteTrajectory);
+    //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //     field.getObject("Drive to score second Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
+    //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
+    //     field.getObject("Drive to score third Trajectory").setTrajectory(driveToScoreThirdNoteTrajectory);
 
-      }
+    //   }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,

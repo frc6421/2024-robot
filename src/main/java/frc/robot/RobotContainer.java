@@ -44,6 +44,7 @@ import frc.robot.subsystems.ClimberSubsystem.ClimberConstants;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FlipBlueCenterLineFourPieceCommand;
+import frc.robot.commands.FlipRedCenterLineFourPieceCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.RedCenterLineFourPieceCommand;
@@ -104,6 +105,7 @@ public class RobotContainer {
   BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
   RedCenterLineFourPieceCommand redCenterLineFourPiece;
   FlipBlueCenterLineFourPieceCommand flipBlueCenterLineFourPiece;
+  FlipRedCenterLineFourPieceCommand flipRedCenterLineFourPiece;
 
   
   public static RobotStates robotState;
@@ -149,6 +151,7 @@ public class RobotContainer {
     blueCenterLineFourPiece = new BlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redCenterLineFourPiece = new RedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     flipBlueCenterLineFourPiece = new FlipBlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    flipRedCenterLineFourPiece = new FlipRedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
 
     robotState = RobotStates.DRIVE;
@@ -166,6 +169,7 @@ public class RobotContainer {
     autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
     autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
     autoChooser.addOption("Flip Blue Center Line 4 Piece", flipBlueCenterLineFourPiece);
+    autoChooser.addOption("Flip Red Center Line 4 Piece", flipRedCenterLineFourPiece);
 
     // Configure the trigger bindings
     configureBindings();
