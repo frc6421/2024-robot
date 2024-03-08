@@ -53,6 +53,7 @@ import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.ShooterPrepCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.ShooterTuningCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.SpeakerAlignVisionCommand;
 import frc.robot.commands.SpeakerAlignVisionCommandV2;
@@ -92,6 +93,8 @@ public class RobotContainer {
 
   private final AmpAlignVisionCommand ampAlignVisionCommand;
   private final SpeakerAlignVisionCommandV2 speakerAlignVisionCommand;
+
+  private final ShooterTuningCommand shooterTuningCommand;
 
   BlueTwoPieceCommand blueTwoPiece;
   RedTwoPieceCommand redTwoPiece;
@@ -149,7 +152,8 @@ public class RobotContainer {
     blueCenterLineFourPiece = new BlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redCenterLineFourPiece = new RedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     flipBlueCenterLineFourPiece = new FlipBlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-
+    
+    shooterTuningCommand = new ShooterTuningCommand(shooterAngleSubsystem, shooterSubsystem);
 
     robotState = RobotStates.DRIVE;
 
@@ -309,7 +313,10 @@ public class RobotContainer {
     testingcontroller.y().whileTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT)
       .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))));
 
-
+    testingcontroller.x().toggleOnTrue(shooterTuningCommand);
+    testingcontroller.b().onTrue((new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new WaitCommand(0.6))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));
   }
 
   /**

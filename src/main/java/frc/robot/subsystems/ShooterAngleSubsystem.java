@@ -118,12 +118,12 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Current Angle", getAngleEncoderPosition());
   }
 
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      // TODO Auto-generated method stub
-      super.initSendable(builder);
+  // @Override
+  // public void initSendable(SendableBuilder builder) {
+  //     // TODO Auto-generated method stub
+  //     super.initSendable(builder);
 
-      builder.addDoubleProperty("Get Pivot Angle", this::getAngleEncoderPosition, null);
-      builder.addDoubleProperty("Set Pivot Angle", null, this::setAngle);
-  }
+  //     builder.addDoubleProperty("Get Pivot Angle", this::getAngleEncoderPosition, null);
+  //     builder.addDoubleProperty("Set Pivot Angle", null, this::setAngle);
+  // }
 }
