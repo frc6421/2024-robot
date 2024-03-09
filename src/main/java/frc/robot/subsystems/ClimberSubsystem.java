@@ -37,7 +37,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 4513;
 
     // Current Limits
-    public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
+    public static final int CLIMBER_STATOR_CURRENT_LIMIT = 100;
   }
 
   //Create new Motors/Controllers
@@ -149,5 +149,15 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public double getClimberRightMotorPosition() {
     return rightClimberEncoder.getPosition();
+  }
+
+  public void setP(double p) {
+    leftClimberPIDController.setP(p, 0);
+    rightClimberPIDController.setP(p, 0);
+  }
+
+  public void setVoltage(double voltage) {
+    leftClimberMotor.setVoltage(voltage);
+    rightClimberMotor.setVoltage(voltage);
   }
 }

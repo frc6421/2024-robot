@@ -10,6 +10,7 @@ import frc.robot.commands.BlueCenterLineThreePieceCommand;
 import frc.robot.commands.BlueSixPieceCommand;
 import frc.robot.commands.BlueFourPieceCommand;
 import frc.robot.commands.BlueTwoPieceCommand;
+import frc.robot.commands.ClimberTuningCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -89,6 +90,7 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
+  private final ClimberTuningCommand climberTuningCommand;
 
   private final AmpAlignVisionCommand ampAlignVisionCommand;
   private final SpeakerAlignVisionCommandV2 speakerAlignVisionCommand;
@@ -135,6 +137,7 @@ public class RobotContainer {
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
     ampAlignVisionCommand = new AmpAlignVisionCommand(driveSubsystem);
     speakerAlignVisionCommand = new SpeakerAlignVisionCommandV2(driveSubsystem);
+    climberTuningCommand = new ClimberTuningCommand(climberSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
