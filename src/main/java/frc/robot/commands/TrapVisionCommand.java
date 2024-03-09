@@ -134,10 +134,10 @@ public class TrapVisionCommand extends Command {
     }
 
     // Set setpoint to center the robot on the amp in the x direction (robot relative)
-    xController.setGoal(VisionConstants.TRAP_YAW_ANGLE);
+    xController.setGoal(VisionConstants.TRAP_PITCH_ANGLE);
 
     // Set setpoint to drive the robot to a set distance from the trap tag (robot relative)
-    yController.setGoal(VisionConstants.TRAP_PITCH_ANGLE);
+    yController.setGoal(VisionConstants.TRAP_YAW_ANGLE);
 
     // Set setpoint to turn the robot to the correct angle (radians)
     if (crescendoField.getTagPose(targetTagID).isPresent()) {
