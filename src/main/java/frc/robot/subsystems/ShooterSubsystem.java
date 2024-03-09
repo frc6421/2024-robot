@@ -21,13 +21,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
       public static final double TOP_KS = 0.34;
       public static final double TOP_KV = 0.130;
-      public static final double TOP_KP = 0;
+      public static final double TOP_KP = 0.45;
       public static final double TOP_KI = 0;
       public static final double TOP_KD = 0;
 
-      public static final double BOTTOM_KS = 0.34;
+      public static final double BOTTOM_KS = 0.4;
       public static final double BOTTOM_KV = 0.130;
-      public static final double BOTTOM_KP = 0;
+      public static final double BOTTOM_KP = 0.45;
       public static final double BOTTOM_KI = 0;
       public static final double BOTTOM_KD = 0;
 

@@ -23,8 +23,10 @@ public class TransitionSubsystem extends SubsystemBase {
     public static final double TRANSITION_SPEED = 0.3 * 12;
     public static final double AMP_TRANSITION_SPEED = 0.5 * 12;
 
+    public static final double TRANSITION_CENTER_SPEED = -0.65;
+
     // Its about 400-380 when nothing is detected
-    public static final double DETECTION_DISTANCE_MM = 350;
+    public static final double DETECTION_DISTANCE_MM = 350; // 350
   }
 
   private final CANSparkFlex transitionMotor;
