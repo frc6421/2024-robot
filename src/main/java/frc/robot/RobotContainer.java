@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -88,7 +89,7 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
-  private final AmpVisionCommand ampTrapVisionCommand;
+  //private final AmpVisionCommand ampVisionCommand;
   private final SpeakerVisionCommand speakerVisionCommand;
   private final TrapVisionCommand trapVisionCommand;
 
@@ -132,7 +133,7 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-    ampTrapVisionCommand = new AmpVisionCommand(driveSubsystem);
+    //ampVisionCommand = new AmpVisionCommand(driveSubsystem);
     speakerVisionCommand = new SpeakerVisionCommand(driveSubsystem);
     trapVisionCommand = new TrapVisionCommand(driveSubsystem);
 
@@ -188,11 +189,15 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper)
+    // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper), vision align (Y)
     // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple
 
     // Vision Align \\
-    driverController.a().whileTrue(ampTrapVisionCommand);
+    driverController.y().toggleOnTrue(new SelectCommand<RobotStates>(Map.ofEntries(
+      Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
+      Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
+      Map.entry(RobotStates.TRAP, new TrapVisionCommand(driveSubsystem))),
+    () -> robotState));
 
     // INTAKE STATE \\
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);
@@ -231,9 +236,9 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.SUB_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.PIVOT_ANGLE[0])))
-        .andThen(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]))
-        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
-        .andThen(new WaitCommand(0.4))
+        .andThen(new ParallelDeadlineGroup(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]), new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))))
+        .andThen(new ParallelDeadlineGroup(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)), new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))))
+        .andThen(new ParallelDeadlineGroup(new WaitCommand(0.4), new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
@@ -259,7 +264,8 @@ public class RobotContainer {
     // SHOOT STATE \\
 
     // Sub
-    operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT));
+    // operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT));
+    operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SPEAKER));
     
     // Subwoofer + robot length (2 ft back)
     operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_PLUS_ROBOT_SHOOT));

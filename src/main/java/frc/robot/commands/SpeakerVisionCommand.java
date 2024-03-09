@@ -12,7 +12,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -31,28 +33,30 @@ public class SpeakerVisionCommand extends Command {
 
   // In meters
   private double maxAngularSpeed = 2 * Math.PI;
-  private double maxAngularAcceleration = 2 * Math.PI;
-
-  private TrapezoidProfile.Constraints angularConstraints = new Constraints(maxAngularSpeed, maxAngularAcceleration);
 
   // In camera degrees
   // TODO tune PID
-  private ProfiledPIDController rotationController;
+  private PIDController rotationController;
 
-  private double rotationP = 1.0;
+  private double rotationP = 0.1;
 
   // In camera degrees
   // TODO tune
-  private double allowableRotationError = 0.5;
+  private double allowableRotationError = 0.25;
 
   private double rotationSpeed = 0.0;
 
+  private MedianFilter filter = new MedianFilter(10);
+
   private final SwerveRequest.FieldCentric visionDriveRequest;
+  private final SwerveRequest.SwerveDriveBrake brakeRequest;
 
   private Optional<DriverStation.Alliance> allianceColor;
 
   private final AprilTagFieldLayout crescendoField = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   private int targetTagID = 0;
+
+  private boolean exitCommand = false;
 
   /** Creates a new SpeakerVisionCommand. */
   public SpeakerVisionCommand(DriveSubsystem drive) {
@@ -62,7 +66,9 @@ public class SpeakerVisionCommand extends Command {
         .withDriveRequestType(DriveRequestType.Velocity)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-    rotationController = new ProfiledPIDController(rotationP, 0.0, 0.0, angularConstraints);
+    brakeRequest = new SwerveRequest.SwerveDriveBrake();
+
+    rotationController = new PIDController(rotationP, 0.0, 0.0);
 
     rotationController.setTolerance(allowableRotationError);
 
@@ -73,6 +79,13 @@ public class SpeakerVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    exitCommand = false;
+
+    filter.reset();
+
+    rotationController.reset();
+
+    allianceColor = DriverStation.getAlliance();
 
     if (allianceColor.isPresent()) {
 
@@ -80,32 +93,35 @@ public class SpeakerVisionCommand extends Command {
 
     } else {
 
-      end(true);
+      exitCommand = true;
 
     }
 
-    if (Cameras.isTarget(Cameras.speakerCamera)) {
+    // if (Cameras.isTarget(Cameras.speakerCamera)) {
 
-      // Check distance from the target using camera pitch
-      for (int i = 0; i < VisionConstants.SPEAKER_PITCH_ARRAY.length; i++) {
+    // // Check distance from the target using camera pitch
+    // for (int i = 0; i < VisionConstants.SPEAKER_PITCH_ARRAY.length; i++) {
 
-        if (Cameras.getPitch(Cameras.speakerCamera, targetTagID) >= VisionConstants.SPEAKER_PITCH_ARRAY[i]
-            && (Cameras.getPitch(Cameras.speakerCamera, targetTagID) != 180.0)) {
+    // if (Cameras.getPitch(Cameras.speakerCamera, targetTagID) >=
+    // VisionConstants.SPEAKER_PITCH_ARRAY[i]
+    // && (Cameras.getPitch(Cameras.speakerCamera, targetTagID) != 180.0)) {
 
-          // Set rotation to turn to center on the speaker
-          rotationController.setGoal(VisionConstants.SPEAKER_YAW_ARRAY[i]);
+    // // Set rotation to turn to center on the speaker
+    // rotationController.setSetpoint(VisionConstants.SPEAKER_YAW_ARRAY[i]);
 
-          break;
+    // break;
 
-        }
+    // }
 
-      }
+    // }
 
-    } else {
+    // } else {
 
-      end(true);
+    // exitCommand = true;
 
-    }
+    // }
+
+    rotationController.setSetpoint(VisionConstants.SPEAKER_YAW_ANGLE);
 
   }
 
@@ -115,27 +131,19 @@ public class SpeakerVisionCommand extends Command {
 
     double currentRotation = Cameras.getYaw(Cameras.speakerCamera, targetTagID);
 
-    if (RobotContainer.robotState.equals(RobotStates.SPEAKER)) {
+    // Ends command if no AprilTag is detected in the camera frame
+    // Camera methods return 180.0 if the target tag ID is not detected
+    if (currentRotation == 180.0) {
 
-      // Ends command if no AprilTag is detected in the camera frame
-      // Camera methods return 180.0 if the target tag ID is not detected
-      if (currentRotation == 180.0) {
-
-        end(true);
-
-      } else {
-
-        rotationSpeed = rotationController.calculate(currentRotation);
-
-      }
+      exitCommand = true;
 
     } else {
 
-      end(true);
+      rotationSpeed = rotationController.calculate(currentRotation);
 
     }
 
-    SmartDashboard.putNumber("Target Rotation (Yaw)", rotationController.getSetpoint().position);
+    SmartDashboard.putNumber("Target Rotation (Yaw)", rotationController.getSetpoint());
 
     SmartDashboard.putNumber("Current Rotation (Yaw)", currentRotation);
 
@@ -144,7 +152,6 @@ public class SpeakerVisionCommand extends Command {
             .withVelocityY(0)
             .withRotationalRate(rotationSpeed));
 
-    
   }
 
   // Called once the command ends or is interrupted.
@@ -169,6 +176,6 @@ public class SpeakerVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return rotationController.atGoal();
+    return rotationController.atSetpoint() || exitCommand;
   }
 }

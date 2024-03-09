@@ -116,10 +116,12 @@ public static class TrajectoryConstants {
     public static final double AMP_YAW_ANGLE = -1.96;
 
     /** In degrees */
-    public static final double[] SPEAKER_PITCH_ARRAY = {0.0, 0.0};
+    public static final double[] SPEAKER_PITCH_ARRAY = {0.0};
 
     /** In degrees */
-    public static final double[] SPEAKER_YAW_ARRAY = {0.0, 0.0};
+    public static final double[] SPEAKER_YAW_ARRAY = {0.0};
+
+    public static final double SPEAKER_YAW_ANGLE = -1.32;
 
     /** In degrees */
     public static final double[] SHOOTER_PIVOT_ARRAY = {0.0, 0.0};
