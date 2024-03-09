@@ -12,6 +12,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
@@ -129,7 +130,7 @@ public class SpeakerVisionCommand extends Command {
   @Override
   public void execute() {
 
-    double currentRotation = Cameras.getYaw(Cameras.speakerCamera, targetTagID);
+    double currentRotation = filter.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
 
     // Ends command if no AprilTag is detected in the camera frame
     // Camera methods return 180.0 if the target tag ID is not detected
@@ -139,7 +140,7 @@ public class SpeakerVisionCommand extends Command {
 
     } else {
 
-      rotationSpeed = rotationController.calculate(currentRotation);
+      rotationSpeed = MathUtil.clamp(rotationController.calculate(currentRotation), -maxAngularSpeed, maxAngularSpeed);
 
     }
 
@@ -158,7 +159,7 @@ public class SpeakerVisionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    if (interrupted) {
+    if (exitCommand) {
 
       System.out.println("*****SpeakerVisionCommand Interrupted*****");
       System.out.println("Alliance Present: " + allianceColor.isPresent());

@@ -13,7 +13,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -31,33 +33,28 @@ public class TrapVisionCommand extends Command {
   private DriveSubsystem driveSubsystem;
 
   // In meters
-  private double maxSpeed = 3;
-  private double maxAcceleration = 3;
+  private double maxSpeed = 2;
 
   // In radians
   private double maxAngularVelocity = 2 * Math.PI;
-  private double maxAngularAcceleration = 2 * Math.PI;
-
-  private TrapezoidProfile.Constraints linearConstraints = new Constraints(maxSpeed, maxAcceleration);
-  private TrapezoidProfile.Constraints angularConstraints = new Constraints(maxAngularVelocity, maxAngularAcceleration);
 
   // In camera degrees
   // TODO tune PID
-  private ProfiledPIDController xController;
-  private ProfiledPIDController yController;
-  private ProfiledPIDController rotationController;
+  private PIDController xController;
+  private PIDController yController;
+  private PIDController rotationController;
 
-  private double xP = 2.31;
-  private double yP = 2.31;
-  private double rotationP = 1.0;
+  private double xP = 0.1;
+  private double yP = 0.1;
+  private double rotationP = 5.0;
 
   // TODO tune these error ranges
   // In camera degrees
-  private double allowableXError = 0.5;
-  private double allowableYError = 0.5;
+  private double allowableXError = 0.25;
+  private double allowableYError = 0.25;
 
-  // In gyro degrees
-  private double allowableRotationError = 2;
+  // In gyro radians
+  private double allowableRotationError = 0.035;
 
   private double xSpeed = 0.0;
   private double ySpeed = 0.0;
@@ -65,10 +62,15 @@ public class TrapVisionCommand extends Command {
 
   private final SwerveRequest.RobotCentric visionDriveRequest;
 
+  private MedianFilter xFilter = new MedianFilter(10);
+  private MedianFilter yFilter = new MedianFilter(10);
+
   private Optional<DriverStation.Alliance> allianceColor;
 
   private final AprilTagFieldLayout crescendoField = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   private int targetTagID = 0;
+
+  private boolean exitCommand = false;
 
   /** Creates a new TrapVisionCommand. */
   public TrapVisionCommand(DriveSubsystem drive) {
@@ -78,9 +80,9 @@ public class TrapVisionCommand extends Command {
         .withDriveRequestType(DriveRequestType.Velocity)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-    xController = new ProfiledPIDController(xP, 0.0, 0.0, linearConstraints);
-    yController = new ProfiledPIDController(yP, 0.0, 0.0, linearConstraints);
-    rotationController = new ProfiledPIDController(rotationP, 0.0, 0.0, angularConstraints);
+    xController = new PIDController(xP, 0.0, 0.0);
+    yController = new PIDController(yP, 0.0, 0.0);
+    rotationController = new PIDController(rotationP, 0.0, 0.0);
 
     xController.setTolerance(allowableXError);
     yController.setTolerance(allowableYError);
@@ -93,33 +95,42 @@ public class TrapVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    exitCommand = false;
+
+    xFilter.reset();
+    yFilter.reset();
+
+    xController.reset();
+    yController.reset();
+    rotationController.reset();
+
     allianceColor = DriverStation.getAlliance();
 
     if (allianceColor.isPresent()) {
 
-      for(int i = 0; i < Cameras.getListOfTargets(Cameras.ampCamera).length; i++) {
+      for (int i = 0; i < Cameras.getListOfTargets(Cameras.ampCamera).length; i++) {
 
-        if(Cameras.getTagIDFromList(Cameras.ampCamera, i) == 11) {
+        if (Cameras.getTagIDFromList(Cameras.ampCamera, i) == 11) {
           // Red left stage
           targetTagID = 11;
 
-        } else if(Cameras.getTagIDFromList(Cameras.ampCamera, i) == 12) {
+        } else if (Cameras.getTagIDFromList(Cameras.ampCamera, i) == 12) {
           // Red right stage
           targetTagID = 12;
 
-        } else if(Cameras.getTagIDFromList(Cameras.ampCamera, i) == 13) {
+        } else if (Cameras.getTagIDFromList(Cameras.ampCamera, i) == 13) {
           // Red center stage
           targetTagID = 13;
 
-        } else if(Cameras.getTagIDFromList(Cameras.ampCamera, i) == 14) {
+        } else if (Cameras.getTagIDFromList(Cameras.ampCamera, i) == 14) {
           // Blue center stage
           targetTagID = 14;
 
-        } else if(Cameras.getTagIDFromList(Cameras.ampCamera, i) == 15) {
+        } else if (Cameras.getTagIDFromList(Cameras.ampCamera, i) == 15) {
           // Blue left stage
           targetTagID = 15;
 
-        } else if(Cameras.getTagIDFromList(Cameras.ampCamera, i) == 16) {
+        } else if (Cameras.getTagIDFromList(Cameras.ampCamera, i) == 16) {
           // Blue right stage
           targetTagID = 16;
 
@@ -129,24 +140,26 @@ public class TrapVisionCommand extends Command {
 
     } else {
 
-      end(true);
+      exitCommand = true;
 
     }
 
-    // Set setpoint to center the robot on the amp in the x direction (robot relative)
-    xController.setGoal(VisionConstants.TRAP_PITCH_ANGLE);
+    // Set setpoint to center the robot on the amp in the x direction (robot
+    // relative)
+    xController.setSetpoint(VisionConstants.TRAP_PITCH_ANGLE);
 
-    // Set setpoint to drive the robot to a set distance from the trap tag (robot relative)
-    yController.setGoal(VisionConstants.TRAP_YAW_ANGLE);
+    // Set setpoint to drive the robot to a set distance from the trap tag (robot
+    // relative)
+    yController.setSetpoint(VisionConstants.TRAP_YAW_ANGLE);
 
     // Set setpoint to turn the robot to the correct angle (radians)
     if (crescendoField.getTagPose(targetTagID).isPresent()) {
 
-      rotationController.setGoal(crescendoField.getTagPose(targetTagID).get().getRotation().toRotation2d().getRadians());
+      rotationController.setSetpoint(crescendoField.getTagPose(targetTagID).get().getRotation().toRotation2d().getRadians());
 
     } else {
 
-      end(true);
+      exitCommand = true;
 
     }
 
@@ -156,35 +169,45 @@ public class TrapVisionCommand extends Command {
   @Override
   public void execute() {
 
-    double currentX = Cameras.getYaw(Cameras.ampCamera, targetTagID);
-    double currentY = Cameras.getPitch(Cameras.ampCamera, targetTagID);
+    double currentX = xFilter.calculate(Cameras.getYaw(Cameras.ampCamera, targetTagID));
+    double currentY = yFilter.calculate(Cameras.getPitch(Cameras.ampCamera, targetTagID));
     double currentRotation = driveSubsystem.getPigeon2().getRotation2d().getRadians();
 
-    if (RobotContainer.robotState.equals(RobotStates.TRAP)) {
+    // Ends command if no AprilTag is detected in the camera frame
+    // Camera methods return 180.0 if the target tag ID is not detected
+    if (currentX == 180.0 || currentY == 180.0) {
 
-      // Ends command if no AprilTag is detected in the camera frame
-      // Camera methods return 180.0 if the target tag ID is not detected
-      if (currentX == 180.0 || currentY == 180.0) {
+      exitCommand = true;
 
-        end(true);
+    } else {
+
+      if(xController.atSetpoint()) {
+         
+        xSpeed = 0.0;
 
       } else {
 
         xSpeed = xController.calculate(currentX);
-        ySpeed = yController.calculate(currentY);
-        rotationalSpeed = rotationController.calculate(currentRotation);
 
       }
+      
+      if(yController.atSetpoint()) {
 
-    } else {
+        ySpeed = 0.0;
 
-      end(true);
+      } else {
+
+        ySpeed = yController.calculate(currentY);
+
+      }
+      
+      rotationalSpeed = rotationController.calculate(currentRotation);
 
     }
 
-    SmartDashboard.putNumber("Target X (Yaw)", xController.getGoal().position);
-    SmartDashboard.putNumber("Target Y (Pitch)", yController.getGoal().position);
-    SmartDashboard.putNumber("Target Rotation (Radians)", rotationController.getGoal().position);
+    SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
+    SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
+    SmartDashboard.putNumber("Target Rotation (Radians)", rotationController.getSetpoint());
 
     SmartDashboard.putNumber("Current X (Yaw)", currentX);
     SmartDashboard.putNumber("Current Y (Pitch)", currentY);
@@ -201,7 +224,7 @@ public class TrapVisionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    if (interrupted) {
+    if (exitCommand) {
 
       System.out.println("*****TrapVisionCommand Interrupted*****");
       System.out.println("Alliance Present: " + allianceColor.isPresent());
@@ -219,6 +242,6 @@ public class TrapVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atGoal() && yController.atGoal() && rotationController.atGoal();
+    return (xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint()) || exitCommand;
   }
 }

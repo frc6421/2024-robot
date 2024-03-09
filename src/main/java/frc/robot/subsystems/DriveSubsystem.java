@@ -111,8 +111,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final double DRIVE_FRICTION_VOLTAGE = 0.25;
 
     private static final SwerveDrivetrainConstants drivetrainConstants = new SwerveDrivetrainConstants()
-        //.withPigeon2Id(PIGEON_CAN_ID);
-        .withPigeon2Id(30);
+        .withPigeon2Id(PIGEON_CAN_ID);
 
     private static final SwerveModuleConstantsFactory constantCreator = new SwerveModuleConstantsFactory()
         .withDriveMotorGearRatio(DRIVE_GEAR_RATIO)
@@ -137,9 +136,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int FRONT_LEFT_STEER_MOTOR_CAN_ID = 13;
     private static final int FRONT_LEFT_CANCODER_CAN_ID = 13;
     // Competition
-    //private static final double FRONT_LEFT_ENCODER_OFFSET = -0.28809;
+    private static final double FRONT_LEFT_ENCODER_OFFSET = -0.28809;
     // Kitbot
-    private static final double FRONT_LEFT_ENCODER_OFFSET = -0.20947;
+    //private static final double FRONT_LEFT_ENCODER_OFFSET = -0.20947;
 
     private static final double FRONT_LEFT_X_POS_INCHES = 8.125;
     private static final double FRONT_LEFT_Y_POS_INCHES = 22.75 / 2;
@@ -149,9 +148,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int FRONT_RIGHT_STEER_MOTOR_CAN_ID = 11;
     private static final int FRONT_RIGHT_CANCODER_CAN_ID = 11;
     // Competition
-    //private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.26978;
+    private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.26978;
     // Kitbot
-    private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.40479;
+    //private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.40479;
 
     private static final double FRONT_RIGHT_X_POS_INCHES = 8.125;
     private static final double FRONT_RIGHT_Y_POS_INCHES = -22.75 / 2;
@@ -161,9 +160,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int BACK_LEFT_STEER_MOTOR_CAN_ID = 17;
     private static final int BACK_LEFT_CANCODER_CAN_ID = 17;
     // Competition
-    //private static final double BACK_LEFT_ENCODER_OFFSET = -0.37476;
+    private static final double BACK_LEFT_ENCODER_OFFSET = -0.37476;
     // Kitbot
-    private static final double BACK_LEFT_ENCODER_OFFSET = 0.19946;
+    //private static final double BACK_LEFT_ENCODER_OFFSET = 0.19946;
 
     private static final double BACK_LEFT_X_POS_INCHES = -12.625;
     private static final double BACK_LEFT_Y_POS_INCHES = 22.75 / 2;
@@ -173,9 +172,9 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int BACK_RIGHT_STEER_MOTOR_CAN_ID = 15;
     private static final int BACK_RIGHT_CANCODER_CAN_ID = 15;
     // Competition
-    //private static final double BACK_RIGHT_ENCODER_OFFSET = 0.02148;
+    private static final double BACK_RIGHT_ENCODER_OFFSET = 0.02148;
     // Kitbot
-    private static final double BACK_RIGHT_ENCODER_OFFSET = 0.31958;
+    //private static final double BACK_RIGHT_ENCODER_OFFSET = 0.31958;
 
     private static final double BACK_RIGHT_X_POS_INCHES = -12.625;
     private static final double BACK_RIGHT_Y_POS_INCHES = -22.75 / 2;
