@@ -108,14 +108,12 @@ public static class TrajectoryConstants {
 
   public static class VisionConstants {
 
+    //TODO change these to degrees recorded in notebook
     /** In radians */
     public static final double AMP_PITCH_ANGLE = -0.089;
 
     /** In radians */
     public static final double AMP_YAW_ANGLE = -0.034;
-
-    /** In radians */
-    public static final double SPEAKER_YAW_ANGLE = 0.0;
 
     /** In radians */
     public static final double[] SPEAKER_PITCH_ARRAY = {0.0, 0.0};
@@ -128,6 +126,12 @@ public static class TrajectoryConstants {
 
     /** In RPM */
     public static final double[] SHOOTER_RPM = {0.0, 0.0};
+
+    /** In degrees */
+    public static final double TRAP_PITCH_ANGLE = 0.0;
+
+    /** In degrees */
+    public static final double TRAP_YAW_ANGLE = 0.0;
 
   }
 

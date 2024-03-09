@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimberConstants;
+import frc.robot.commands.AmpVisionCommand;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FlipBlueCenterLineFourPieceCommand;
@@ -51,6 +52,8 @@ import frc.robot.commands.RedSixPieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.SpeakerVisionCommand;
+import frc.robot.commands.TrapVisionCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -85,18 +88,21 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
+  private final AmpVisionCommand ampTrapVisionCommand;
+  private final SpeakerVisionCommand speakerVisionCommand;
+  private final TrapVisionCommand trapVisionCommand;
 
-  BlueTwoPieceCommand blueTwoPiece;
-  RedTwoPieceCommand redTwoPiece;
-  BlueFourPieceCommand blueFourPiece;
-  RedFourPieceCommand redFourPiece;
-  BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
-  RedCenterLineThreePieceCommand redCenterLineThreePiece;
-  BlueSixPieceCommand blueSixPiece;
-  RedSixPieceCommand redSixPiece;
-  BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
-  RedCenterLineFourPieceCommand redCenterLineFourPiece;
-  FlipBlueCenterLineFourPieceCommand flipBlueCenterLineFourPiece;
+  private final BlueTwoPieceCommand blueTwoPiece;
+  private final RedTwoPieceCommand redTwoPiece;
+  private final BlueFourPieceCommand blueFourPiece;
+  private final RedFourPieceCommand redFourPiece;
+  private final BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
+  private final RedCenterLineThreePieceCommand redCenterLineThreePiece;
+  private final BlueSixPieceCommand blueSixPiece;
+  private final RedSixPieceCommand redSixPiece;
+  private final BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
+  private final RedCenterLineFourPieceCommand redCenterLineFourPiece;
+  private final FlipBlueCenterLineFourPieceCommand flipBlueCenterLineFourPiece;
 
   
   public static RobotStates robotState;
@@ -126,8 +132,9 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-
-    driveSubsystem.setDefaultCommand(driveCommand);
+    ampTrapVisionCommand = new AmpVisionCommand(driveSubsystem);
+    speakerVisionCommand = new SpeakerVisionCommand(driveSubsystem);
+    trapVisionCommand = new TrapVisionCommand(driveSubsystem);
 
     blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
@@ -141,6 +148,8 @@ public class RobotContainer {
     redCenterLineFourPiece = new RedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     flipBlueCenterLineFourPiece = new FlipBlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
+
+    driveSubsystem.setDefaultCommand(driveCommand);
 
     robotState = RobotStates.DRIVE;
 
@@ -181,6 +190,9 @@ public class RobotContainer {
 
     // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper)
     // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple
+
+    // Vision Align \\
+    driverController.a().whileTrue(ampTrapVisionCommand);
 
     // INTAKE STATE \\
     driverController.leftBumper().toggleOnTrue(intakeTransitionCommand);

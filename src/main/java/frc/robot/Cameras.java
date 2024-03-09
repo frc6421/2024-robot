@@ -22,11 +22,34 @@ public class Cameras {
     }
 
     /**
+     * Returns an array with all targets currently detected by the camera
+     * 
+     * @param camera camera to use
+     * @return Object[] list of all targets
+     */
+    public static Object[] getListOfTargets(PhotonCamera camera) {
+        return camera.getLatestResult().getTargets().toArray();
+    }
+
+    /**
+     * Used with a for loop to check if a desired tag ID is included in the list of targets
+     * 
+     * @param camera camera to use
+     * @param i array index to check
+     * @return tagID at that array index
+     */
+    public static int getTagIDFromList(PhotonCamera camera, int i) {
+
+        return camera.getLatestResult().getTargets().get(i).getFiducialId();
+
+    }
+
+    /**
      * Returns yaw angle of the target in the camera space
      * 
      * @param camera camera to use
      * @param targetTagID desired AprilTag
-     * @return yaw angle of target in radians
+     * @return yaw angle of target in degrees
      */
     public static double getYaw(PhotonCamera camera, int targetTagID) {
 
@@ -40,7 +63,7 @@ public class Cameras {
 
                 if(targets.get(i).getFiducialId() == targetTagID) {
 
-                    return Units.degreesToRadians(targets.get(i).getYaw());
+                    return targets.get(i).getYaw();
 
                 }
 
@@ -48,11 +71,11 @@ public class Cameras {
 
         } else {
 
-            return 0.0;
+            return 180.0;
 
         }
 
-        return 0.0;
+        return 180.0;
        
     }
 
@@ -61,7 +84,7 @@ public class Cameras {
      * 
      * @param camera camera to use
      * @param targetTagID desired AprilTag
-     * @return pitch angle of target in radians
+     * @return pitch angle of target in degrees
      */
     public static double getPitch(PhotonCamera camera, int targetTagID) {
         
@@ -75,7 +98,7 @@ public class Cameras {
 
                 if(targets.get(i).getFiducialId() == targetTagID) {
 
-                    return Units.degreesToRadians(targets.get(i).getPitch());
+                    return targets.get(i).getPitch();
 
                 }
 
@@ -83,11 +106,11 @@ public class Cameras {
 
         } else {
 
-            return 0.0;
+            return 180.0;
 
         }
 
-        return 0.0;
+        return 180.0;
 
     }
 
@@ -152,11 +175,11 @@ public class Cameras {
 
         } else {
 
-            return 0.0;
+            return 1.0;
 
         }
 
-        return 0.0;
+        return 1.0;
 
     }
 
