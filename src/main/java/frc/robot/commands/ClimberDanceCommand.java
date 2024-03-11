@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
@@ -15,9 +14,9 @@ import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 public class ClimberDanceCommand extends Command {
   /** Creates a new ClimberDance. */
   private final ClimberSubsystem climberSubsystem;
-  private final DriveSubsystem driveSubsystem;
   private final TransitionArmSubsystem transitionArmSubsystem;
   private final TransitionSubsystem transitionSubsystem;
+
   private static enum ClimberStates {
     NOT_CLIMBING, // State when the robot is not climbing/trapping
     PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
@@ -33,11 +32,10 @@ public class ClimberDanceCommand extends Command {
   private final static double CLIMBER_HIGH_ROTATIONS = 0.0;
 
   private ClimberStates climberStates;
-  public ClimberDanceCommand(ClimberSubsystem climberSubsystem, DriveSubsystem driveSubsystem, TransitionArmSubsystem transitionArmSubsystem, TransitionSubsystem transitionSubsystem) {
-    addRequirements(climberSubsystem, driveSubsystem, transitionArmSubsystem, transitionSubsystem);
+  public ClimberDanceCommand(ClimberSubsystem climberSubsystem, TransitionArmSubsystem transitionArmSubsystem, TransitionSubsystem transitionSubsystem) {
+    addRequirements(climberSubsystem, transitionArmSubsystem, transitionSubsystem);
 
     this.climberSubsystem = climberSubsystem;
-    this.driveSubsystem = driveSubsystem;
     this.transitionArmSubsystem = transitionArmSubsystem;
     this.transitionSubsystem = transitionSubsystem;
     climberStates = ClimberStates.PREPARE_CLIMB;
