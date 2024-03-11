@@ -110,10 +110,10 @@ public static class TrajectoryConstants {
 
     //TODO change these to degrees recorded in notebook
     /** In degrees */
-    public static final double AMP_PITCH_ANGLE = -5.13;
+    public static final double AMP_PITCH_ANGLE = 19;
 
     /** In degrees */
-    public static final double AMP_YAW_ANGLE = -1.96;
+    public static final double AMP_YAW_ANGLE = -3.70;
 
     /** In degrees */
     public static final double[] SPEAKER_PITCH_ARRAY = {0.0};
