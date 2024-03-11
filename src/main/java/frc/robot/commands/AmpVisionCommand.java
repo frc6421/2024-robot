@@ -127,7 +127,7 @@ public class AmpVisionCommand extends Command {
     // drive request)
     if (crescendoField.getTagPose(targetTagID).isPresent()) {
 
-      // TODO check invert
+      // TODO check invert with running auto first on red/in general on blue
       targetRotation = crescendoField.getTagPose(targetTagID).get().getRotation().toRotation2d();
 
     } else {
