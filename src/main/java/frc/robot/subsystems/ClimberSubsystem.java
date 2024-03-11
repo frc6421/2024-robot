@@ -32,9 +32,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public static final double CLIMBER_CLIMB_IN_POS = 75;
 
+    // Climber just under hooks: 2781
+    // Climber new soft limit: 4396
     // Soft Limits
     public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0; 
-    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 4513;
+    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 4396;
 
     // Current Limits
     public static final int CLIMBER_STATOR_CURRENT_LIMIT = 100;
@@ -83,8 +85,8 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     
     // Idle modes
-    leftClimberMotor.setIdleMode(IdleMode.kBrake);
-    rightClimberMotor.setIdleMode(IdleMode.kBrake);
+    leftClimberMotor.setIdleMode(IdleMode.kCoast);
+    rightClimberMotor.setIdleMode(IdleMode.kCoast);
 
     // Inversion(s)
     leftClimberMotor.setInverted(false);
