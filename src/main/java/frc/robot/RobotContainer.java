@@ -339,5 +339,28 @@ public class RobotContainer {
     shooterSubsystem.stopShooterMotor();
     shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
   }
+
+  /**
+   * Turns LEDs blue when an AprilTag is detected while in amp, speaker, or trap state
+   */
+  public void setVisionLEDs() {
+    if(robotState.equals(RobotStates.AMP) && Cameras.isTarget(Cameras.ampCamera)) {
+
+      LEDSubsystem.setColor(LEDColors.BLUE);
+
+    }
+
+    if(robotState.equals(RobotStates.SPEAKER) && Cameras.isTarget(Cameras.speakerCamera)) {
+
+      LEDSubsystem.setColor(LEDColors.BLUE);
+
+    }
+
+    if(robotState.equals(RobotStates.TRAP) && Cameras.isTarget(Cameras.ampCamera)) {
+
+      LEDSubsystem.setColor(LEDColors.BLUE);
+
+    }
+  }
 }
 
