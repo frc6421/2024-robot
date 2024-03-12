@@ -25,7 +25,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // PID
     public static final double CLIMBER_KS = -0.4;
-    public static final double CLIMBER_KP = 0.05;
+    public static final double CLIMBER_KP = 0.02;
     public static final double CLIMBER_KI = 0.0;
     public static final double CLIMBER_KD = 0.0;
     public static final double CLIMBER_KG = -0.6;
@@ -85,8 +85,8 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     
     // Idle modes
-    leftClimberMotor.setIdleMode(IdleMode.kCoast);
-    rightClimberMotor.setIdleMode(IdleMode.kCoast);
+    leftClimberMotor.setIdleMode(IdleMode.kBrake);
+    rightClimberMotor.setIdleMode(IdleMode.kBrake);
 
     // Inversion(s)
     leftClimberMotor.setInverted(false);
@@ -118,7 +118,18 @@ public class ClimberSubsystem extends SubsystemBase {
     // Zeros the motors
     leftClimberEncoder.setPosition(0);
     rightClimberEncoder.setPosition(0);
+
+
   }
+
+  // /** 
+  //  * Sets the climber arms to a set position
+  //  * @param position Used to set the position of the motors
+  //  */
+  // public void setClimberMotorPositionNonGrav(double position) {
+  //   leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KS, ArbFFUnits.kVoltage);
+  //   rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, ClimberConstants.CLIMBER_KS, ArbFFUnits.kVoltage);
+  // }
 
   /** 
    * Sets the climber arms to a set position
@@ -127,6 +138,25 @@ public class ClimberSubsystem extends SubsystemBase {
   public void setClimberMotorPosition(double position) {
     leftClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberLeftMotorPosition() * 360), ArbFFUnits.kVoltage);
     rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberRightMotorPosition() * 360), ArbFFUnits.kVoltage);
+  }
+
+  public void setClimberMotorPosition(double leftPosition, double rightPosition) {
+    leftClimberPIDController.setReference(leftPosition, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberLeftMotorPosition() * 360), ArbFFUnits.kVoltage);
+    rightClimberPIDController.setReference(rightPosition, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberRightMotorPosition() * 360), ArbFFUnits.kVoltage);
+  }
+
+  public void setClimberMotorPrevPosition()
+  {
+    double leftPos = getClimberLeftMotorPosition();
+    double rightPos = getClimberRightMotorPosition();
+
+    setClimberMotorPosition(leftPos, rightPos);
+  }
+
+  public void stopClimbMotors()
+  {
+    leftClimberMotor.stopMotor();
+    rightClimberMotor.stopMotor();
   }
 
   /** 

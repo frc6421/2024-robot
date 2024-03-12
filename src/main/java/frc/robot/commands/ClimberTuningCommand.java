@@ -77,16 +77,18 @@ public class ClimberTuningCommand extends Command {
     builder.addDoubleProperty("kP", () -> kP, this::setKP);
     builder.addDoubleProperty("voltage", () -> voltage, this::setVoltage);
     builder.addDoubleProperty("Set Position", () -> pos, this::setPos);
-    builder.addDoubleProperty("Current Position", () -> climberSubsystem.getClimberMotorPosition(), null);
+    builder.addDoubleProperty("Current Average Position", () -> climberSubsystem.getClimberMotorPosition(), null);
+    builder.addDoubleProperty("Current Right Position", () -> climberSubsystem.getClimberRightMotorPosition(), null);
+    builder.addDoubleProperty("Current Left Position", () -> climberSubsystem.getClimberLeftMotorPosition(), null);
   }
 
   public void setKP(double p)
   {
     kP = p;
   }
-  public void setVoltage(double voltage)
+  public void setVoltage(double vol)
   {
-    this.voltage = voltage;
+    voltage = vol;
   }
   public void setPos(double pos)
   {

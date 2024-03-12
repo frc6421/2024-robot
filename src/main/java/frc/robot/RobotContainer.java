@@ -288,31 +288,12 @@ public class RobotContainer {
     // TRAP STATE \\ 
 
     // Testing Controller
-    testingcontroller.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
-      .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
-      .andThen(new WaitCommand(0.5))
-      .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
-      .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
-      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES))
-      .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
-      .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))));
-
-    testingcontroller.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
-
-    testingcontroller.leftBumper().toggleOnTrue(intakeTransitionCommand);
-
-    testingcontroller.leftTrigger().onTrue(new InstantCommand(() -> robotState = RobotStates.BARF));
-    testingcontroller.leftTrigger().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
-    testingcontroller.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
-    testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
-    testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
-    testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
-
-
-    testingcontroller.y().whileTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT)
-      .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))));
-
-
+    testingcontroller.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90, 1)));
+    testingcontroller.x().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(112, 
+    1)));
+    testingcontroller.rightBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(-7)));
+    testingcontroller.b().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(4396)));
+    testingcontroller.y().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(0)));
   }
 
   /**
