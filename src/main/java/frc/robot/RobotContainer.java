@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.AmpAlignVisionCommand;
 import frc.robot.commands.BlueCenterLineFourPieceCommand;
 import frc.robot.commands.BlueCenterLineThreePieceCommand;
+import frc.robot.commands.BlueFivePieceCommand;
 import frc.robot.commands.BlueSixPieceCommand;
 import frc.robot.commands.BlueFourPieceCommand;
 import frc.robot.commands.BlueTwoPieceCommand;
@@ -49,6 +50,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.RedCenterLineFourPieceCommand;
 import frc.robot.commands.RedCenterLineThreePieceCommand;
+import frc.robot.commands.RedFivePieceCommand;
 import frc.robot.commands.RedSixPieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
@@ -100,12 +102,13 @@ public class RobotContainer {
   RedFourPieceCommand redFourPiece;
   BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
   RedCenterLineThreePieceCommand redCenterLineThreePiece;
-  BlueSixPieceCommand blueSixPiece;
-  RedSixPieceCommand redSixPiece;
   BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
   RedCenterLineFourPieceCommand redCenterLineFourPiece;
   FlipBlueCenterLineFourPieceCommand flipBlueCenterLineFourPiece;
   FlipRedCenterLineFourPieceCommand flipRedCenterLineFourPiece;
+  BlueFivePieceCommand blueFivePiece;
+  RedFivePieceCommand redFivePiece;
+
 
   
   public static RobotStates robotState;
@@ -146,12 +149,12 @@ public class RobotContainer {
     redFourPiece = new RedFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     blueCenterLineThreePiece = new BlueCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redCenterLineThreePiece = new RedCenterLineThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    blueSixPiece = new BlueSixPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    redSixPiece = new RedSixPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     blueCenterLineFourPiece = new BlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redCenterLineFourPiece = new RedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     flipBlueCenterLineFourPiece = new FlipBlueCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     flipRedCenterLineFourPiece = new FlipRedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    blueFivePiece = new BlueFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    redFivePiece = new RedFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
 
     robotState = RobotStates.DRIVE;
@@ -162,14 +165,14 @@ public class RobotContainer {
     autoChooser.addOption("Red 2 Piece", redTwoPiece);
     autoChooser.addOption("Blue Wing 4 Piece", blueFourPiece);
     autoChooser.addOption("Red Wing 4 Piece", redFourPiece);
-    autoChooser.addOption("Blue Center Line 3 Piece", blueCenterLineThreePiece);
-    autoChooser.addOption("Red Center Line 3 Piece", redCenterLineThreePiece);
-    autoChooser.addOption("Blue 6 Piece", blueSixPiece);
-    autoChooser.addOption("Red 6 Piece", redSixPiece);
+    autoChooser.addOption("Blue Center Line Stage 3 Piece", blueCenterLineThreePiece);
+    autoChooser.addOption("Red Center Line Stage 3 Piece", redCenterLineThreePiece);
     autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
     autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
-    autoChooser.addOption("Flip Blue Center Line 4 Piece", flipBlueCenterLineFourPiece);
-    autoChooser.addOption("Flip Red Center Line 4 Piece", flipRedCenterLineFourPiece);
+    autoChooser.addOption("Blue Center Line Side 3 Piece", flipBlueCenterLineFourPiece);
+    autoChooser.addOption("Red Center Line Side 3 Piece", flipRedCenterLineFourPiece);
+    autoChooser.addOption("Blue 5 Piece", blueFivePiece);
+    autoChooser.addOption("Red 5 Piece", redFivePiece);
 
     // Configure the trigger bindings
     configureBindings();
@@ -318,6 +321,8 @@ public class RobotContainer {
   public void resetShooter() {
     shooterSubsystem.stopShooterMotor();
     shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
+    transitionSubsystem.stopTransition();
+    intakeSubsystem.stopIntake();
   }
 }
 

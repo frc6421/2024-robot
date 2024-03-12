@@ -39,6 +39,7 @@ public class IntakeTransitionCommand extends Command {
   @Override
   public void initialize() {
 
+    LEDSubsystem.setColor(LEDColors.YELLOW);
     // timer.reset();
     // timer.start();
 
