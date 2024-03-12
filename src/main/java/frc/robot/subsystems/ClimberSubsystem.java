@@ -156,13 +156,6 @@ public class ClimberSubsystem extends SubsystemBase {
     rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, slot, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberRightMotorPosition() * 360), ArbFFUnits.kVoltage);
   }
 
-
-  public void stopClimbMotors()
-  {
-    leftClimberMotor.stopMotor();
-    rightClimberMotor.stopMotor();
-  }
-
   /** 
    * Returns a value in rotations of the climber motor(s)
    * @return  position as a double (the average position of both motors)
@@ -185,23 +178,5 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public double getClimberRightMotorPosition() {
     return rightClimberEncoder.getPosition();
-  }
-  public double getLeftClimberSpeed()
-  {
-    return leftClimberMotor.get();
-  }
-
-  public double getRightClimberSpeed()
-  {
-    return rightClimberMotor.get();
-  }
-  public void setP(double p) {
-    leftClimberPIDController.setP(p, 0);
-    rightClimberPIDController.setP(p, 0);
-  }
-
-  public void setVoltage(double voltage) {
-    leftClimberMotor.setVoltage(voltage);
-    rightClimberMotor.setVoltage(voltage);
   }
 }
