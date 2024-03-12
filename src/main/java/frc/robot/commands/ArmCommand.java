@@ -26,10 +26,14 @@ public class ArmCommand extends Command{
 
   private double goPos;
 
+  private int slot;
+
   /** Creates a new armCommand. */
-  public ArmCommand(TransitionArmSubsystem armSubsystem, double position) {
+  public ArmCommand(TransitionArmSubsystem armSubsystem, double position, int slot) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(armSubsystem);
+
+    this.slot = slot;
 
     arm = armSubsystem;
 
@@ -53,14 +57,14 @@ public class ArmCommand extends Command{
   @Override
   public void execute() {
     armSetpoint = armProfile.calculate(timer.get(), new TrapezoidProfile.State(arm.getArmMotorPositionDeg(), 0), armGoal);
-    arm.setArmMotorPosition(armSetpoint.position);
+    arm.setArmMotorPosition(armSetpoint.position, slot);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    arm.setArmMotorPosition(armSetpoint.position);
+    arm.setArmMotorPosition(armSetpoint.position, slot);
   }
 
   // Returns true when the command should end.

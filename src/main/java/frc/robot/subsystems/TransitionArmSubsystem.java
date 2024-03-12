@@ -21,6 +21,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final int ARMMOTORRIGHT_CAN_ID = 22;
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
+    public static final double ARMMOTORRIGHT_CLIMB_KP = 0.064;
+
     public static final double ARMMOTORRIGHT_KP = 0.016;
     public static final double ARMMOTORRIGHT_KI = 0.0;
     public static final double ARMMOTORRIGHT_KD = 0.0;
@@ -33,7 +35,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final double ARMMOTORLEFT_KS = ARMMOTORRIGHT_KS;
     public static final double ARMMOTORLEFT_KG = ARMMOTORRIGHT_KG;
 
-    public static final int ARM_STATOR_CURRENT_LIMIT = 50;
+    public static final int ARM_STATOR_CURRENT_LIMIT = 100;
 
     public static final float ARM_FORAWRD_SOFT_LIMIT = 100;
     public static final float ARM_REVERSE_SOFT_LIMIT = -7;
@@ -79,14 +81,24 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armLeftPIDController = armMotorLeft.getPIDController();
 
       // Set right PID values
-      armRightPIDController.setP(TransitionArmConstants.ARMMOTORRIGHT_KP);
-      armRightPIDController.setI(TransitionArmConstants.ARMMOTORRIGHT_KI);
-      armRightPIDController.setD(TransitionArmConstants.ARMMOTORRIGHT_KD);
+      armRightPIDController.setP(TransitionArmConstants.ARMMOTORRIGHT_KP, 0);
+      armRightPIDController.setI(TransitionArmConstants.ARMMOTORRIGHT_KI, 0);
+      armRightPIDController.setD(TransitionArmConstants.ARMMOTORRIGHT_KD, 0);
 
       // Set left PID values
-      armLeftPIDController.setP(TransitionArmConstants.ARMMOTORLEFT_KP);
-      armLeftPIDController.setI(TransitionArmConstants.ARMMOTORLEFT_KP);
-      armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP);
+      armLeftPIDController.setP(TransitionArmConstants.ARMMOTORLEFT_KP, 0);
+      armLeftPIDController.setI(TransitionArmConstants.ARMMOTORLEFT_KP, 0);
+      armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP, 0);
+
+      // Set slot 1 right PID values
+      armRightPIDController.setP(TransitionArmConstants.ARMMOTORRIGHT_KP, 1);
+      armRightPIDController.setI(TransitionArmConstants.ARMMOTORRIGHT_KI, 1);
+      armRightPIDController.setD(TransitionArmConstants.ARMMOTORRIGHT_KD, 1);
+
+      // Set slot 1 left PID values
+      armLeftPIDController.setP(TransitionArmConstants.ARMMOTORLEFT_KP, 1);
+      armLeftPIDController.setI(TransitionArmConstants.ARMMOTORLEFT_KP, 1);
+      armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP, 1);
 
       // Inversions
       armMotorRight.setInverted(false);
@@ -133,6 +145,17 @@ public class TransitionArmSubsystem extends SubsystemBase{
   {
     armRightPIDController.setReference(position, ControlType.kPosition, 0, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
     armLeftPIDController.setReference(position, ControlType.kPosition, 0, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+  }
+
+  /**
+   * Sets the arm motors to the position inputed
+   * @param position the position to set the motors to
+   * @param slot the PID slot to use
+   */
+  public void setArmMotorPosition(double position, int slot)
+  {
+    armRightPIDController.setReference(position, ControlType.kPosition, slot, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    armLeftPIDController.setReference(position, ControlType.kPosition, slot, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
   }
 
   /**
