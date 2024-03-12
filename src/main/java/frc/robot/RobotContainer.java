@@ -219,7 +219,7 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0))
         .andThen(new WaitCommand(0.3))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
@@ -227,7 +227,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.SUB_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.PIVOT_ANGLE[0])))
@@ -238,7 +238,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.SUB_PLUS_ROBOT_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(46)))
@@ -249,7 +249,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))),
       () -> robotState));
 
@@ -278,7 +278,7 @@ public class RobotContainer {
 
     // Climb out
     operatorController.rightBumper().onTrue(new InstantCommand(() -> robotState = RobotStates.CLIMB));
-    operatorController.rightBumper().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION)
+    operatorController.rightBumper().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0)
       .andThen(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS))));
 
     // Climb in
@@ -288,12 +288,14 @@ public class RobotContainer {
     // TRAP STATE \\ 
 
     // Testing Controller
-    testingcontroller.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90, 1)));
-    testingcontroller.x().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(112, 
-    1)));
-    testingcontroller.rightBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(-7)));
+    testingcontroller.start().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.RED)));
+    testingcontroller.back().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)));
+    testingcontroller.a().onTrue(new ArmCommand(armSubsystem, 90, 0));
+    testingcontroller.x().onTrue(new ArmCommand(armSubsystem, 112, 1));
+    testingcontroller.rightBumper().onTrue(new ArmCommand(armSubsystem, -7, 0));
     testingcontroller.b().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(4396)));
-    testingcontroller.y().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(0)));
+    testingcontroller.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(0)));
+    testingcontroller.y().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(0, 1)));
   }
 
   /**

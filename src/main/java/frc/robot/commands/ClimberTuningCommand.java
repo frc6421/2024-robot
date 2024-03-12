@@ -80,6 +80,8 @@ public class ClimberTuningCommand extends Command {
     builder.addDoubleProperty("Current Average Position", () -> climberSubsystem.getClimberMotorPosition(), null);
     builder.addDoubleProperty("Current Right Position", () -> climberSubsystem.getClimberRightMotorPosition(), null);
     builder.addDoubleProperty("Current Left Position", () -> climberSubsystem.getClimberLeftMotorPosition(), null);
+    builder.addDoubleProperty("Current Right speed", () -> climberSubsystem.getRightClimberSpeed(), null);
+    builder.addDoubleProperty("Current Left speed", () -> climberSubsystem.getLeftClimberSpeed(), null);
   }
 
   public void setKP(double p)
