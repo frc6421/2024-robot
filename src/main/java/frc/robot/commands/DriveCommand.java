@@ -29,8 +29,7 @@ public class DriveCommand extends Command {
 
   private final CommandXboxController driverController;
 
-
-  private final SwerveRequest.FieldCentric driveRequest; 
+  private final SwerveRequest.FieldCentric driveRequest;
 
   private final SlewRateLimiter xDriveSlew;
   private final SlewRateLimiter yDriveSlew;
@@ -42,7 +41,6 @@ public class DriveCommand extends Command {
 
     driveSubsystem = drive;
     driverController = controller;
-   
 
     driveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(maxSpeed * percentDeadband).withRotationalDeadband(maxAngularRate * percentDeadband) // Add a 10% deadband
@@ -67,20 +65,17 @@ public class DriveCommand extends Command {
   public void execute() {
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
-    if(allianceColor.isPresent() && allianceColor.get().equals(Alliance.Red)) {
-      invert = -1;
-    }
+    invert = (allianceColor.isPresent() && allianceColor.get().equals(Alliance.Red)) ? -1 : 1;
 
-    double xSpeed;
-    double ySpeed;
-
-    xSpeed = xDriveSlew.calculate(-driverController.getLeftY() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
-    ySpeed = yDriveSlew.calculate(-driverController.getLeftX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
+    double xSpeed = xDriveSlew.calculate(-driverController.getLeftY() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
+    double ySpeed = yDriveSlew.calculate(-driverController.getLeftX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
+    double rotationalSpeed = -driverController.getRightX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC;
 
     driveSubsystem.setControl(
         driveRequest.withVelocityX(xSpeed * invert)
-        .withVelocityY(ySpeed * invert)
-        .withRotationalRate(-driverController.getRightX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC));
+            .withVelocityY(ySpeed * invert)
+            .withRotationalRate(rotationalSpeed));
+
   }
 
   // Called once the command ends or is interrupted.
