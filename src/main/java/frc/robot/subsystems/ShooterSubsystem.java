@@ -4,8 +4,16 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Cameras;
+import frc.robot.Constants.VisionConstants;
+
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -33,7 +41,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
       public static final double SHOOTER_IDLE_RPM = 500;
 
-      public static final double[] SHOOTER_RPM = {3000, 3000, 3000, 3000, 3000, 3000, 3500, 3500, 4000, 4250, 4500};
     }
 
     //Creating the objects for the motors and their encoders, respectively
@@ -44,6 +51,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFXConfiguration bottomShooterConfig;
 
     private VelocityVoltage shooterMotorVelocity;
+
+    public double targetShooterRPM;
+
+    private int targetTagID = 0;
     
 
   /** Creates a new ShooterSubsystem. */
@@ -158,5 +169,38 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
     SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
+
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+
+    if (allianceColor.isPresent()) {
+
+      targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
+
+    }
+
+    if (Cameras.isTarget(Cameras.speakerCamera)) {
+
+      // Check distance from the target using camera pitch
+      for (int i = 0; i < VisionConstants.SPEAKER_PITCH_ARRAY.length; i++) {
+
+        if(Cameras.getPitch(Cameras.speakerCamera, targetTagID) >= VisionConstants.SPEAKER_PITCH_ARRAY[i]) {
+
+          targetShooterRPM = VisionConstants.SHOOTER_RPM_ARRAY[i];
+
+          break;
+
+        }
+
+      }
+
+    }
+
+    SmartDashboard.putNumber("Target RPM", targetShooterRPM);
+
   }
+
+  public double getTargetShooterRPM() {
+    return targetShooterRPM;
+  }
+  
 }

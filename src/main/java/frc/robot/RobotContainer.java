@@ -227,7 +227,7 @@ public class RobotContainer {
 
     driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
-          new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+          new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION))
         .andThen(new WaitCommand(0.3))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED)))
@@ -235,43 +235,23 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
-        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
-      Map.entry(RobotStates.SUB_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
-        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.PIVOT_ANGLE[0])))
-        .andThen(new ParallelDeadlineGroup(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]), new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))))
-        .andThen(new ParallelDeadlineGroup(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)), new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))))
-        .andThen(new ParallelDeadlineGroup(new WaitCommand(0.4), new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
-        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
-        .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
-        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
-        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
-      Map.entry(RobotStates.SUB_PLUS_ROBOT_SHOOT, new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake()))
-        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(21.25)))
-        .andThen(new ShooterRevUpCommand(shooterSubsystem, 4700))
-        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(.8 * 12)))
-        .andThen(new WaitCommand(0.8))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
-        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
-        .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
-        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
-        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
-      Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
+      Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.targetShooterPivotAngle))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, () -> shooterSubsystem.getTargetShooterRPM()))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
         .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
-        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))),
       () -> robotState));
 
-    driverController.a().whileTrue(new ShooterRevUpCommand(shooterSubsystem, 4500));
-    driverController.a().whileFalse(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()));
+    driverController.a().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)));
+    driverController.a().onFalse(new InstantCommand(() -> transitionSubsystem.stopTransition()));
 
     // Set amp state
     operatorController.a().onTrue(new InstantCommand(() -> robotState = RobotStates.AMP));
@@ -315,7 +295,7 @@ public class RobotContainer {
       .andThen(new WaitCommand(0.5))
       .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
       .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
-      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES))
+      .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES))
       .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
       .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))));
 
@@ -329,10 +309,6 @@ public class RobotContainer {
     testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
     testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
     testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
-
-
-    testingcontroller.y().whileTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT)
-      .andThen(new ParallelCommandGroup(new ShooterRevUpCommand(shooterSubsystem, ShooterConstants.SHOOTER_RPM[0]), new InstantCommand(() -> shooterAngleSubsystem.setAngle(30)))));
 
     testingcontroller.x().toggleOnTrue(shooterTuningCommand);
     testingcontroller.b().onTrue((new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
@@ -355,7 +331,7 @@ public class RobotContainer {
    */
   public void resetShooter() {
     shooterSubsystem.stopShooterMotor();
-    shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
+    shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
   }
 
   /**
@@ -366,18 +342,17 @@ public class RobotContainer {
 
       LEDSubsystem.setColor(LEDColors.BLUE);
 
-    }
-
-    if(robotState.equals(RobotStates.SPEAKER) && Cameras.isTarget(Cameras.speakerCamera)) {
+    } else if(robotState.equals(RobotStates.SPEAKER) && Cameras.isTarget(Cameras.speakerCamera)) {
 
       LEDSubsystem.setColor(LEDColors.BLUE);
 
-    }
-
-    if(robotState.equals(RobotStates.TRAP) && Cameras.isTarget(Cameras.ampCamera)) {
+    } else if(robotState.equals(RobotStates.TRAP) && Cameras.isTarget(Cameras.ampCamera)) {
 
       LEDSubsystem.setColor(LEDColors.BLUE);
 
+    } else {
+
+      LEDSubsystem.setColor(LEDColors.OFF);
     }
   }
 }

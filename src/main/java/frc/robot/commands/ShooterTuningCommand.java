@@ -30,7 +30,7 @@ public class ShooterTuningCommand extends Command {
   @Override
   public void initialize() {
     shooterSubsystem.setShooterMotorVelocity(velocity);
-    shooterAngleSubsystem.setAngle(angle);
+    shooterAngleSubsystem.setAngle(() -> angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,7 +41,7 @@ public class ShooterTuningCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.stopShooterMotor();
-    shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
+    shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES);
   }
 
   // Returns true when the command should end.
