@@ -177,7 +177,7 @@ public class BlueCenterLineFourPieceCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
+        new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
         // shoot preload
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(50)),
         new ShooterRevUpCommand(shooterSubsystem, 4500),
