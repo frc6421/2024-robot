@@ -50,6 +50,7 @@ public class ClimberDanceCommand extends Command {
   private final static double CLIMBER_MID_ROTATIONS = 0.0;
   private final static double CLIMBER_HIGH_ROTATIONS = 0.0;
 
+  private int counter;
 
   private ClimberStates climberStates;
   public ClimberDanceCommand(ClimberSubsystem climberSubsystem, TransitionArmSubsystem transitionArmSubsystem, TransitionSubsystem transitionSubsystem) {
@@ -96,12 +97,15 @@ public class ClimberDanceCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    counter = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    counter++;
+
     switch(climberStates) {
       case PREPARE_CLIMB:
         transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_MID_ANGLE);
@@ -139,6 +143,6 @@ public class ClimberDanceCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return counter >= 1;
   }
 }
