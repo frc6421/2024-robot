@@ -3,9 +3,12 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem",
+      "/Shuffleboard/Climber Tuning/ClimberTuningCommand": "Command",
+      "/Shuffleboard/Climber Tuning/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
+      "/Shuffleboard/Shooter Tuning/ShooterTuningCommand": "Command",
       "/Shuffleboard/Shooter Tuning/TuneShooter": "Command",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/ShooterAngleSubsystem": "Subsystem"
@@ -99,6 +102,12 @@
     "transitory": {
       "Shuffleboard": {
         ".metadata": {
+          "open": true
+        },
+        "Shooter Tuning": {
+          "ShooterTuningCommand": {
+            "open": true
+          },
           "open": true
         },
         "open": true

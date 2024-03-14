@@ -52,17 +52,6 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public SwerveDriveKinematics kinematics;
   public ApplyModuleStates autoDriveRequest;
 
-  // PhotonVision Cameras
-  // private PhotonCamera camera1;
-  // private PhotonCamera camera2;
-
-  // Camera offsets from the center of the robot
-  // private Transform3d camera1Offset;
-  // private Transform3d camera2Offset;
-
-  // private PhotonPoseEstimator camera1PoseEstimator;
-  // private PhotonPoseEstimator camera2PoseEstimator;
-
 
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
 
@@ -146,7 +135,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int FRONT_LEFT_DRIVE_MOTOR_CAN_ID = 12;
     private static final int FRONT_LEFT_STEER_MOTOR_CAN_ID = 13;
     private static final int FRONT_LEFT_CANCODER_CAN_ID = 13;
+    // Competition
     private static final double FRONT_LEFT_ENCODER_OFFSET = -0.28809;
+    // Kitbot
+    //private static final double FRONT_LEFT_ENCODER_OFFSET = -0.20947;
 
     private static final double FRONT_LEFT_X_POS_INCHES = 8.125;
     private static final double FRONT_LEFT_Y_POS_INCHES = 22.75 / 2;
@@ -155,7 +147,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int FRONT_RIGHT_DRIVE_MOTOR_CAN_ID = 10;
     private static final int FRONT_RIGHT_STEER_MOTOR_CAN_ID = 11;
     private static final int FRONT_RIGHT_CANCODER_CAN_ID = 11;
+    // Competition
     private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.26978;
+    // Kitbot
+    //private static final double FRONT_RIGHT_ENCODER_OFFSET = 0.40479;
 
     private static final double FRONT_RIGHT_X_POS_INCHES = 8.125;
     private static final double FRONT_RIGHT_Y_POS_INCHES = -22.75 / 2;
@@ -164,7 +159,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int BACK_LEFT_DRIVE_MOTOR_CAN_ID = 16;
     private static final int BACK_LEFT_STEER_MOTOR_CAN_ID = 17;
     private static final int BACK_LEFT_CANCODER_CAN_ID = 17;
+    // Competition
     private static final double BACK_LEFT_ENCODER_OFFSET = -0.37476;
+    // Kitbot
+    //private static final double BACK_LEFT_ENCODER_OFFSET = 0.19946;
 
     private static final double BACK_LEFT_X_POS_INCHES = -12.625;
     private static final double BACK_LEFT_Y_POS_INCHES = 22.75 / 2;
@@ -173,7 +171,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     private static final int BACK_RIGHT_DRIVE_MOTOR_CAN_ID = 14;
     private static final int BACK_RIGHT_STEER_MOTOR_CAN_ID = 15;
     private static final int BACK_RIGHT_CANCODER_CAN_ID = 15;
+    // Competition
     private static final double BACK_RIGHT_ENCODER_OFFSET = 0.02148;
+    // Kitbot
+    //private static final double BACK_RIGHT_ENCODER_OFFSET = 0.31958;
 
     private static final double BACK_RIGHT_X_POS_INCHES = -12.625;
     private static final double BACK_RIGHT_Y_POS_INCHES = -22.75 / 2;
@@ -229,35 +230,6 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       DriverStation.reportError("Unable to open field layout: " + fieldLayoutJSON, ex.getStackTrace());
     }
 
-    PhotonCamera.setVersionCheckEnabled(false);
-
-    // // Back left camera
-    // camera1 = new PhotonCamera("Camera1");
-
-    // camera1Offset = new Transform3d(
-    //     new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(6), Units.inchesToMeters(9.783)),
-    //     new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(135)));
-
-    // // Back right camera
-    // camera2 = new PhotonCamera("Camera6");
-
-    // camera2Offset = new Transform3d(
-    //     new Translation3d(Units.inchesToMeters(-13.625), Units.inchesToMeters(-6), Units.inchesToMeters(9.783)),
-    //     new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-135)));
-
-    // camera1PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //     camera1,
-    //     camera1Offset);
-
-    // camera1PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-    // camera2PoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-    //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //     camera2,
-    //     camera2Offset);
-
-    // camera2PoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
   }
 
@@ -323,43 +295,6 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     return getState().Pose;
   }
 
-  @Override
-  public void periodic() {
-
-    // Optional<EstimatedRobotPose> pose1 = updatePhotonPoseEstimator(camera1PoseEstimator);
-    // Optional<EstimatedRobotPose> pose2 = updatePhotonPoseEstimator(camera2PoseEstimator);
-
-    // // TODO test rejecting bad pose estimates
-    // if (pose1.isPresent()) {
-
-    //   if(camera1.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
-    //     addVisionMeasurement(pose1.get().estimatedPose.toPose2d(),
-    //       pose1.get().timestampSeconds);
-    //   }
-      
-    // }
-
-
-    // if (pose2.isPresent()) {
-
-    //   if(camera2.getLatestResult().getMultiTagResult().estimatedPose.ambiguity < 0.2) {
-    //     addVisionMeasurement(pose2.get().estimatedPose.toPose2d(),
-    //       pose2.get().timestampSeconds);
-    //   }
-      
-    // }
-
-    // //TODO remove for competition
-    // SmartDashboard.putNumber("Pose Estimator X", getCurrentPose2d().getX());
-    // SmartDashboard.putNumber("Pose Estimator Y", getCurrentPose2d().getY());
-    // SmartDashboard.putNumber("Pose Estimator Rotation", getCurrentPose2d().getRotation().getDegrees());
-
-  }
-
-  // private Optional<EstimatedRobotPose> updatePhotonPoseEstimator(PhotonPoseEstimator poseEstimator) {
-  //   return poseEstimator.update();
-  // }
-
   /**
    * Gets the estimated pose
    * 
@@ -368,5 +303,11 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public Pose2d getCurrentPose2d() {
     return m_odometry.getEstimatedPosition();
   }
+
+  @Override
+  public void periodic() {
+    
+  }
+
 
 }

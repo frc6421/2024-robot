@@ -214,8 +214,8 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
       // shoot preload
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
-      new ShooterRevUpCommand(shooterSubsystem, 2500),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 47)),
+      new ShooterRevUpCommand(shooterSubsystem, () -> 2500),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.15),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -224,8 +224,8 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
-      new ShooterRevUpCommand(shooterSubsystem, 2500),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 47)),
+      new ShooterRevUpCommand(shooterSubsystem, () -> 2500),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.15),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -234,8 +234,8 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToSecondNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(27.5)),
-      new ShooterRevUpCommand(shooterSubsystem, 3500),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 27.5)),
+      new ShooterRevUpCommand(shooterSubsystem, () -> 3500),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.15),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -244,8 +244,8 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToPrepThirdNoteCommand, driveToThirdNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(26)),
-      new ShooterRevUpCommand(shooterSubsystem, 3750),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 26)),
+      new ShooterRevUpCommand(shooterSubsystem, () -> 3750),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.15),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -254,8 +254,8 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFourthNoteCommand, driveToScoreFourthNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(24)),
-      new ShooterRevUpCommand(shooterSubsystem, 4250),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 24)),
+      new ShooterRevUpCommand(shooterSubsystem, () -> 4250),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.15),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -264,8 +264,8 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
       new ParallelDeadlineGroup( 
         new SequentialCommandGroup(driveToFifthNoteCommand, driveToScoreFifthNoteCommand), 
         new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-      new InstantCommand(() -> shooterAngleSubsystem.setAngle(23.5)),
-      new ShooterRevUpCommand(shooterSubsystem, 4250),
+      new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 23.5)),
+      new ShooterRevUpCommand(shooterSubsystem, () -> 4250),
       new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
       new WaitCommand(0.15),
       new InstantCommand(() -> transitionSubsystem.stopTransition()),
