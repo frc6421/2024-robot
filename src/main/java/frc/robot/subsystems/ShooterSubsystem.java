@@ -172,7 +172,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
       double pitchAngle = Cameras.getPitch(Cameras.speakerCamera, targetTagID);
 
-      return (0.0063 * Math.pow(pitchAngle, 4) - 0.1296 * Math.pow(pitchAngle, 3) + 0.3485 * Math.pow(pitchAngle, 2) - 19.675 * pitchAngle + 3829.6);
+      if(pitchAngle > VisionConstants.SPEAKER_PITCH_ARRAY[0]) {
+
+        return VisionConstants.SHOOTER_RPM_ARRAY[0];
+
+      } else if(pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[12]) {
+
+        return VisionConstants.SHOOTER_RPM_ARRAY[12];
+
+      } else {
+
+        return (0.0063 * Math.pow(pitchAngle, 4) - 0.1296 * Math.pow(pitchAngle, 3) + 0.3485 * Math.pow(pitchAngle, 2) - 19.675 * pitchAngle + 3829.6);
+
+      }
 
     } else {
 
