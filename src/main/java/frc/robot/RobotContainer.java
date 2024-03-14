@@ -253,7 +253,7 @@ public class RobotContainer {
     operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_SHOOT));
     
     // Subwoofer + robot length (2 ft back)
-    operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_PLUS_ROBOT_SHOOT));
+   // operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_PLUS_ROBOT_SHOOT));
 
     operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
 
