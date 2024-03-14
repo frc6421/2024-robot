@@ -238,8 +238,9 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
-      Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.targetShooterPivotAngle))
-        .andThen(new ShooterRevUpCommand(shooterSubsystem, () -> shooterSubsystem.getTargetShooterRPM()))
+      Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()))
+        .andThen(new WaitCommand(0.1))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, () -> shooterSubsystem.getTargetRPM()))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
@@ -263,7 +264,7 @@ public class RobotContainer {
     operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SPEAKER));
     
     // Subwoofer + robot length (2 ft back)
-    operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_PLUS_ROBOT_SHOOT));
+    //operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SUB_PLUS_ROBOT_SHOOT));
 
     operatorController.leftTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.YELLOW)));
 

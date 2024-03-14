@@ -163,6 +163,25 @@ public class ShooterSubsystem extends SubsystemBase {
     return 60 * bottomShooterMotor.getVelocity().getValue();
   }
 
+  public double getTargetRPM() {
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+
+    if (allianceColor.isPresent()) {
+
+      targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
+
+      double pitchAngle = Cameras.getPitch(Cameras.speakerCamera, targetTagID);
+
+      return (0.0063 * Math.pow(pitchAngle, 4) - 0.1296 * Math.pow(pitchAngle, 3) + 0.3485 * Math.pow(pitchAngle, 2) - 19.675 * pitchAngle + 3829.6);
+
+    } else {
+
+      return VisionConstants.SHOOTER_RPM_ARRAY[0];
+
+    }
+
+  }
+
 
   @Override
   public void periodic() {
@@ -170,6 +189,7 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
     SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
 
+    /*
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
     if (allianceColor.isPresent()) {
@@ -195,12 +215,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    SmartDashboard.putNumber("Target RPM", targetShooterRPM);
+    */
 
-  }
+    SmartDashboard.putNumber("Target RPM", getTargetRPM());
 
-  public double getTargetShooterRPM() {
-    return targetShooterRPM;
   }
   
 }

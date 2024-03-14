@@ -66,7 +66,7 @@ public class LEDSubsystem extends SubsystemBase {
         
         case BLUE:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i,0,0,255);
+            ledBuffer.setRGB(i,0, 255, 0);
           }
           break;
 

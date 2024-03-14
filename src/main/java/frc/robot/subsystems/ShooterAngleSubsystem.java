@@ -124,11 +124,31 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     return angleEncoder.getPosition();
   }
 
+  public double getTargetAngle() {
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+
+    if (allianceColor.isPresent()) {
+
+      targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
+
+      double pitchAngle = Cameras.getPitch(Cameras.speakerCamera, targetTagID);
+
+      return (-0.014 * Math.pow(pitchAngle, 2) + 0.8784 * pitchAngle + 41.158);
+
+    } else {
+
+      return VisionConstants.SHOOTER_PIVOT_ARRAY[0];
+
+    }
+
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Current Angle", getAngleEncoderPosition());
 
+    /*
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
     if (allianceColor.isPresent()) {
@@ -144,7 +164,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
         if(Cameras.getPitch(Cameras.speakerCamera, targetTagID) >= VisionConstants.SPEAKER_PITCH_ARRAY[i]) {
 
-          if(i < 13) {
+          if(i < 12) {
 
             targetShooterPivotAngle = MathUtil.interpolate(VisionConstants.SHOOTER_PIVOT_ARRAY[i], 
                 VisionConstants.SHOOTER_PIVOT_ARRAY[i + 1],
@@ -152,7 +172,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
           } else {
 
-            targetShooterPivotAngle = VisionConstants.SHOOTER_PIVOT_ARRAY[13];
+            targetShooterPivotAngle = VisionConstants.SHOOTER_PIVOT_ARRAY[12];
 
           }
           
@@ -164,8 +184,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
       }
 
     }
+    */
 
-    SmartDashboard.putNumber("Target Pivot Angle", targetShooterPivotAngle);
+    SmartDashboard.putNumber("Target Pivot Angle", getTargetAngle());
 
   }
 

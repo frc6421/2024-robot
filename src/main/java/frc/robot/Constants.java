@@ -116,7 +116,9 @@ public static class TrajectoryConstants {
     public static final double AMP_YAW_ANGLE = -3.70;
 
     /** In degrees */
-    public static final double[] SPEAKER_PITCH_ARRAY = {17.40, 10.60, 4.80, 0.38, -3.13, -6.00, -8.16, -9.94, -11.43, -13.13, -14.27, -14.72, -15.26};
+    // Only first and last values are used to check edge cases with equation
+    //TODO update
+    public static final double[] SPEAKER_PITCH_ARRAY = {17, 10.60, 4.80, 0.38, -3.13, -6.00, -8.16, -9.94, -11.43, -13.13, -14.27, -14.72, -15.26};
 
     /** In degrees */
     public static final double[] SPEAKER_YAW_ARRAY = {0.0};

@@ -39,7 +39,7 @@ public class ShooterRevUpCommand extends Command {
 
     if(DriverStation.isTeleop()) {
 
-      shooterVelocity = shooterSubsystem.getTargetShooterRPM();
+      shooterVelocity = shooterSubsystem.getTargetRPM();
 
     }
 
