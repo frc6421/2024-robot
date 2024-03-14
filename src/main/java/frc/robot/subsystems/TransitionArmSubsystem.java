@@ -22,6 +22,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final int ARMMOTORLEFT_CAN_ID = 23;
 
     public static final double ARMMOTORRIGHT_CLIMB_KP = 0.064;
+    public static final double ARMMOTORLEFT_CLIMB_KP = 0.064;
 
     public static final double ARMMOTORRIGHT_KP = 0.016;
     public static final double ARMMOTORRIGHT_KI = 0.0;
@@ -37,7 +38,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
     public static final int ARM_STATOR_CURRENT_LIMIT = 100;
 
-    public static final float ARM_FORAWRD_SOFT_LIMIT = 100;
+    public static final float ARM_FORWARD_SOFT_LIMIT = 116;
     public static final float ARM_REVERSE_SOFT_LIMIT = -7;
     public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0);
 
@@ -91,12 +92,12 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP, 0);
 
       // Set slot 1 right PID values
-      armRightPIDController.setP(TransitionArmConstants.ARMMOTORRIGHT_KP, 1);
+      armRightPIDController.setP(TransitionArmConstants.ARMMOTORRIGHT_CLIMB_KP, 1);
       armRightPIDController.setI(TransitionArmConstants.ARMMOTORRIGHT_KI, 1);
       armRightPIDController.setD(TransitionArmConstants.ARMMOTORRIGHT_KD, 1);
 
       // Set slot 1 left PID values
-      armLeftPIDController.setP(TransitionArmConstants.ARMMOTORLEFT_KP, 1);
+      armLeftPIDController.setP(TransitionArmConstants.ARMMOTORLEFT_CLIMB_KP, 1);
       armLeftPIDController.setI(TransitionArmConstants.ARMMOTORLEFT_KP, 1);
       armLeftPIDController.setD(TransitionArmConstants.ARMMOTORLEFT_KP, 1);
 
@@ -113,10 +114,10 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armMotorLeft.setSmartCurrentLimit(TransitionArmConstants.ARM_STATOR_CURRENT_LIMIT);
 
       // Soft Limits
-      armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      armMotorRight.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT);
       armMotorRight.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-      armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORAWRD_SOFT_LIMIT);
+      armMotorLeft.setSoftLimit(SoftLimitDirection.kForward, TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT);
       armMotorLeft.setSoftLimit(SoftLimitDirection.kReverse, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
       armMotorLeft.enableSoftLimit(SoftLimitDirection.kForward, true);

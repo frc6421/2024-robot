@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
@@ -178,5 +179,11 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public double getClimberRightMotorPosition() {
     return rightClimberEncoder.getPosition();
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Left climber position", getClimberLeftMotorPosition());
+    SmartDashboard.putNumber("Right climber position", getClimberRightMotorPosition());
   }
 }

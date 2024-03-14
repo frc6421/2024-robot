@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.time.Instant;
 import java.util.List;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -17,9 +18,14 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.ClimberStates;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
@@ -33,33 +39,22 @@ public class ClimberDanceCommand extends Command {
   private final TransitionSubsystem transitionSubsystem;
   //private final DriveSubsystem driveSubsystem;
 
-  private static enum ClimberStates {
-    NOT_CLIMBING, // State when the robot is not climbing/trapping (do we need this state?)
-    PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
-    ARMS_HIGH, // Raise both arms to the climbing position
-    CLIMB, // Lower climber arms
-    PREPARE_TRAP, // Raise transition arm to trap degree
-    SCORE_TRAP // Spit out note
-  }
-
   private final static double TRANSITION_ARM_MID_ANGLE = 25.0;
   private final static double TRANSITION_ARM_HIGH_ANGLE = 90.0;
-  private final static double TRANSITION_ARM_TRAP_ANGLE = 110.0;
+  private final static double TRANSITION_ARM_TRAP_ANGLE = 106.0;
 
   private final static double CLIMBER_LOW_ROTATIONS = 0.0;
-  private final static double CLIMBER_MID_ROTATIONS = 0.0;
-  private final static double CLIMBER_HIGH_ROTATIONS = 0.0;
+  private final static double CLIMBER_MID_ROTATIONS = 2150.0;
+  private final static double CLIMBER_HIGH_ROTATIONS = 4396.0;
 
-  private int counter;
+  private boolean exitCommand = false;
 
-  private ClimberStates climberStates;
   public ClimberDanceCommand(ClimberSubsystem climberSubsystem, TransitionArmSubsystem transitionArmSubsystem, TransitionSubsystem transitionSubsystem) {
     addRequirements(climberSubsystem, transitionArmSubsystem, transitionSubsystem);
 
     this.climberSubsystem = climberSubsystem;
     this.transitionArmSubsystem = transitionArmSubsystem;
     this.transitionSubsystem = transitionSubsystem;
-    climberStates = ClimberStates.PREPARE_CLIMB;
 
     // TrajectoryConfig config = new TrajectoryConfig(
     //       AutoConstants.AUTO_MAX_VELOCITY_METERS_PER_SECOND - 2,
@@ -97,41 +92,51 @@ public class ClimberDanceCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    counter = 0;
+    exitCommand = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    counter++;
-
-    switch(climberStates) {
+    switch(RobotContainer.climberState) {
       case PREPARE_CLIMB:
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_MID_ANGLE);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_MID_ROTATIONS);
+        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_MID_ANGLE, 0);
+        climberSubsystem.setClimberMotorPosition(CLIMBER_MID_ROTATIONS, 0);
         // TODO DRIVE
         // Wheels to coast, Point wheels toward the stage, Drive back 
-        climberStates = ClimberStates.ARMS_HIGH;
+        RobotContainer.climberState = ClimberStates.ARMS_HIGH;
+        exitCommand = true;
       break;
       case ARMS_HIGH:
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS);
-        climberStates = ClimberStates.CLIMB;
+        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE, 0);
+        climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
+        RobotContainer.climberState = ClimberStates.CLIMB;
+
+        exitCommand = true;
       break;
       case CLIMB:
-        climberSubsystem.setClimberMotorPosition(CLIMBER_LOW_ROTATIONS);
-        climberStates = ClimberStates.PREPARE_TRAP;
+        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE, 1);
+        climberSubsystem.setClimberMotorPosition(CLIMBER_LOW_ROTATIONS, 1);
+        RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
+
+        exitCommand = true;
       break;
       case PREPARE_TRAP:
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_TRAP_ANGLE);
-        climberStates = ClimberStates.SCORE_TRAP;
+        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_TRAP_ANGLE, 1);
+        RobotContainer.climberState = ClimberStates.SCORE_TRAP;
+
+        exitCommand = true;
       break;
       case SCORE_TRAP:
-        transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED);
-        new WaitCommand(0.4);
-        transitionSubsystem.stopTransition();
+
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
+          .andThen(new WaitCommand(0.4))
+          .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()));
+
         // TODO Reverse climb?
+
+        exitCommand = true;
       break;
     }
   }
@@ -143,6 +148,6 @@ public class ClimberDanceCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return counter >= 1;
+    return exitCommand;
   }
 }

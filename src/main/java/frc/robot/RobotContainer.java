@@ -10,6 +10,7 @@ import frc.robot.commands.BlueCenterLineThreePieceCommand;
 import frc.robot.commands.BlueSixPieceCommand;
 import frc.robot.commands.BlueFourPieceCommand;
 import frc.robot.commands.BlueTwoPieceCommand;
+import frc.robot.commands.ClimberDanceCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -53,6 +54,7 @@ import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.ShooterPrepCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.Constants.ClimberStates;
 import frc.robot.Constants.RobotStates;
 import frc.robot.commands.SpeakerAlignVisionCommand;
 import frc.robot.commands.SpeakerAlignVisionCommandV2;
@@ -107,6 +109,7 @@ public class RobotContainer {
 
   
   public static RobotStates robotState;
+  public static ClimberStates climberState;
 
   private SendableChooser<Command> autoChooser;
 
@@ -152,6 +155,7 @@ public class RobotContainer {
 
 
     robotState = RobotStates.DRIVE;
+    climberState = ClimberStates.PREPARE_CLIMB;
 
     autoChooser = new SendableChooser<>();
 
@@ -203,16 +207,6 @@ public class RobotContainer {
     driverController.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
 
     // Scores
-    // driverController.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
-    //   .andThen(new InstantCommand(() -> driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
-    //   .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
-    //   .andThen(new WaitCommand(0.5))
-    //   .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
-    //   .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
-    //   .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINNIMUM_SOFT_LIMIT_DEGREES))
-    //   .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT)))
-    //   .andThen(new InstantCommand(() -> state = RobotStates.DRIVE)))));
-
     driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
@@ -266,21 +260,27 @@ public class RobotContainer {
     operatorController.rightTrigger().onTrue(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.BLUE)));
     
     // CLIMB STATE \\
+    operatorController.x().onTrue(new ClimberDanceCommand(climberSubsystem, armSubsystem, transitionSubsystem));
 
+    // SCORE IN TRAP \\
+    operatorController.y().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED))
+        .andThen(new WaitCommand(0.4))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));
+    
     // Oopsie button
-    operatorController.back().onTrue(new InstantCommand(() -> robotState = RobotStates.DRIVE));
-    operatorController.back().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS))
-      .andThen(new WaitCommand(1))
-      .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))));
+    // operatorController.back().onTrue(new InstantCommand(() -> robotState = RobotStates.DRIVE));
+    // operatorController.back().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS))
+    //   .andThen(new WaitCommand(1))
+    //   .andThen(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT))));
 
-    // Climb out
-    operatorController.rightBumper().onTrue(new InstantCommand(() -> robotState = RobotStates.CLIMB));
-    operatorController.rightBumper().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0)
-      .andThen(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS))));
+    // // Climb out
+    // operatorController.rightBumper().onTrue(new InstantCommand(() -> robotState = RobotStates.CLIMB));
+    // operatorController.rightBumper().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0)
+    //   .andThen(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS))));
 
-    // Climb in
-    operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
-    operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_EXTENDED_CLIMB)));
+    // // Climb in
+    // operatorController.leftBumper().onTrue(new InstantCommand(() -> climberSubsystem.setClimberMotorPosition(ClimberConstants.CLIMBER_CLIMB_IN_POS)));
+    // operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(TransitionArmConstants.ARM_EXTENDED_CLIMB)));
 
     // TRAP STATE \\ 
 
