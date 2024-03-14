@@ -87,6 +87,14 @@ public class FlipRedCenterLineFourPieceCommand extends SequentialCommandGroup {
         new Pose2d(TrajectoryConstants.NOTE7_RED.minus(new Translation2d(Units.inchesToMeters(9), 0)), new Rotation2d(Units.degreesToRadians(210))),
         new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170)))), reverseConfig);
 
+    Trajectory driveToFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170))),
+        new Pose2d(TrajectoryConstants.NOTE6_RED.minus(new Translation2d(Units.inchesToMeters(12), 0)), new Rotation2d(Units.degreesToRadians(240)))), forwardConfig);
+
+    Trajectory driveToScoreFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        new Pose2d(TrajectoryConstants.NOTE6_RED.minus(new Translation2d(Units.inchesToMeters(12), 0)), new Rotation2d(Units.degreesToRadians(240))),
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170)))), reverseConfig);
+
      //Simulation
     //  field = new Field2d();
 
@@ -99,6 +107,8 @@ public class FlipRedCenterLineFourPieceCommand extends SequentialCommandGroup {
     //     field.getObject("Drive to score second Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
     //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
     //     field.getObject("Drive to score third Trajectory").setTrajectory(driveToScoreThirdNoteTrajectory);
+    //     field.getObject("Drive to 4 Trajectory").setTrajectory(driveToFourthNoteTrajectory);
+    //     field.getObject("Drive to score 4 Trajectory").setTrajectory(driveToScoreFourthNoteTrajectory);
 
     //   }
 
@@ -149,6 +159,22 @@ public class FlipRedCenterLineFourPieceCommand extends SequentialCommandGroup {
         driveSubsystem::autoSetModuleStates,
         driveSubsystem);
 
+    SwerveControllerCommand driveToFourthNoteCommand = new SwerveControllerCommand(
+        driveToFourthNoteTrajectory,
+        driveSubsystem::getPose2d,
+        driveSubsystem.kinematics,
+        holonomicDriveController,
+        driveSubsystem::autoSetModuleStates,
+        driveSubsystem);
+
+    SwerveControllerCommand driveToScoreFourthNoteCommand = new SwerveControllerCommand(
+        driveToScoreFourthNoteTrajectory,
+        driveSubsystem::getPose2d,
+        driveSubsystem.kinematics,
+        holonomicDriveController,
+        driveSubsystem::autoSetModuleStates,
+        driveSubsystem);
+
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -174,6 +200,16 @@ public class FlipRedCenterLineFourPieceCommand extends SequentialCommandGroup {
         // go to and shoot third note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
+          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(27)),
+        new ShooterRevUpCommand(shooterSubsystem, 4500),
+        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
+        new WaitCommand(0.2),
+        new InstantCommand(() -> transitionSubsystem.stopTransition()),
+        new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
+        // go to 4 note
+        new ParallelDeadlineGroup( 
+          new SequentialCommandGroup(driveToFourthNoteCommand, driveToScoreFourthNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(27)),
         new ShooterRevUpCommand(shooterSubsystem, 4500),

@@ -29,6 +29,9 @@
           "arrows": false,
           "style": "Box/Image"
         },
+        "Drive to pick up 4 Trajectory": {
+          "style": "Track"
+        },
         "Drive to prep third Trajectory": {
           "arrows": false,
           "style": "Line"
