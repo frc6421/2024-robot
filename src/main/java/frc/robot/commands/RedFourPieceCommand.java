@@ -172,8 +172,8 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
         // shoot preload
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(47)),
-        new ShooterRevUpCommand(shooterSubsystem, 3250),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 47)),
+        new ShooterRevUpCommand(shooterSubsystem, () -> 3250),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -182,8 +182,8 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(38)),
-        new ShooterRevUpCommand(shooterSubsystem, 3250),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 38)),
+        new ShooterRevUpCommand(shooterSubsystem, () -> 3250),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -192,8 +192,8 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(38)),
-        new ShooterRevUpCommand(shooterSubsystem, 3250),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 38)),
+        new ShooterRevUpCommand(shooterSubsystem, () -> 3250),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -202,8 +202,8 @@ public class RedFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(38)),
-        new ShooterRevUpCommand(shooterSubsystem, 3250),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 38)),
+        new ShooterRevUpCommand(shooterSubsystem, () -> 3250),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),

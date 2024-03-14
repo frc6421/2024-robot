@@ -55,31 +55,31 @@ public class LEDSubsystem extends SubsystemBase {
 
         case HOT_PINK:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i,255,0,70);
+            ledBuffer.setRGB(i,255,70,0);
           }
           break;
         
         case GREEN:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i,0,255,0);
+            ledBuffer.setRGB(i,0,0,255);
           }
           break;
         
         case BLUE:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i,0,0,255);
+            ledBuffer.setRGB(i,0, 255, 0);
           }
           break;
 
         case PURPLE:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i,70,0,180);
+            ledBuffer.setRGB(i,70,180,0);
           }
           break;
         
         case YELLOW:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i,255,75,0);
+            ledBuffer.setRGB(i,255,0,75);
           }
           break;
         
