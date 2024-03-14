@@ -120,7 +120,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 47)),
-        new ShooterRevUpCommand(shooterSubsystem, () -> 2500),
+        new ShooterRevUpCommand(shooterSubsystem),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.25),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -128,7 +128,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
         driveToScoreCommand,
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 47)),
-        new ShooterRevUpCommand(shooterSubsystem, () -> 2500),
+        new ShooterRevUpCommand(shooterSubsystem),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.25),
         new InstantCommand(() -> driveSubsystem.setControl(new SwerveRequest.ApplyChassisSpeeds())),

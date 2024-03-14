@@ -12,7 +12,6 @@ import frc.robot.Cameras;
 import frc.robot.Constants.VisionConstants;
 
 import java.util.Optional;
-import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;

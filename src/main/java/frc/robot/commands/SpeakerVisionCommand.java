@@ -14,19 +14,13 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Cameras;
-import frc.robot.Constants.RobotStates;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class SpeakerVisionCommand extends Command {
@@ -50,7 +44,6 @@ public class SpeakerVisionCommand extends Command {
   private MedianFilter filter = new MedianFilter(10);
 
   private final SwerveRequest.FieldCentric visionDriveRequest;
-  private final SwerveRequest.SwerveDriveBrake brakeRequest;
 
   private Optional<DriverStation.Alliance> allianceColor;
 
@@ -66,8 +59,6 @@ public class SpeakerVisionCommand extends Command {
     visionDriveRequest = new SwerveRequest.FieldCentric()
         .withDriveRequestType(DriveRequestType.Velocity)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo);
-
-    brakeRequest = new SwerveRequest.SwerveDriveBrake();
 
     rotationController = new PIDController(rotationP, 0.0, 0.0);
 

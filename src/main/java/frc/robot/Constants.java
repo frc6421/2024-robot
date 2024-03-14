@@ -109,8 +109,7 @@ public static class TrajectoryConstants {
     public static enum RobotStates{
         DRIVE,
         INTAKE,
-        SUB_SHOOT,
-        SUB_PLUS_ROBOT_SHOOT,
+        SPEAKER,
         AMP,
         TRAP,
         CLIMB,
@@ -124,6 +123,7 @@ public static class TrajectoryConstants {
       PREPARE_TRAP, // Raise transition arm to trap degree
       SCORE_TRAP // Spit out note
     }
+    
   public static class VisionConstants {
 
     //TODO change these to degrees recorded in notebook

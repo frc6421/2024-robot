@@ -4,13 +4,9 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.ShooterSubsystem.ShooterConstants;
 
 public class ShooterRevUpCommand extends Command {
 
@@ -23,10 +19,9 @@ public class ShooterRevUpCommand extends Command {
   private Timer time;
 
   /** Creates a new ShooterRevUp. */
-  public ShooterRevUpCommand(ShooterSubsystem shooterSubsystem, DoubleSupplier targetRPM) {
+  public ShooterRevUpCommand(ShooterSubsystem shooterSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterSubsystem = shooterSubsystem;
-    shooterVelocity = targetRPM.getAsDouble();
 
     addRequirements(shooterSubsystem);
 
@@ -37,11 +32,7 @@ public class ShooterRevUpCommand extends Command {
   @Override
   public void initialize() {
 
-    if(DriverStation.isTeleop()) {
-
-      shooterVelocity = shooterSubsystem.getTargetRPM();
-
-    }
+    shooterVelocity = shooterSubsystem.getTargetRPM();
 
     // set shooter to target speed
     shooterSubsystem.setTopShooterMotorVelocity(shooterVelocity);
