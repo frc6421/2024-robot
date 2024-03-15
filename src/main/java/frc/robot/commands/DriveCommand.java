@@ -8,12 +8,14 @@ import java.util.Optional;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.DriveSubsystem;
@@ -30,11 +32,14 @@ public class DriveCommand extends Command {
   private final CommandXboxController driverController;
 
   private final SwerveRequest.FieldCentric driveRequest;
+  private final SwerveRequest.PointWheelsAt climbDriveRequest;
 
   private final SlewRateLimiter xDriveSlew;
   private final SlewRateLimiter yDriveSlew;
 
   private int invert = 1;
+
+  private boolean isCoast = false;
 
   /** Creates a new DriveCommand. */
   public DriveCommand(DriveSubsystem drive, CommandXboxController controller) {
@@ -44,6 +49,10 @@ public class DriveCommand extends Command {
 
     driveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(maxSpeed * percentDeadband).withRotationalDeadband(maxAngularRate * percentDeadband) // Add a 10% deadband
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+        .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+    climbDriveRequest = new SwerveRequest.PointWheelsAt()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
@@ -58,6 +67,7 @@ public class DriveCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    isCoast = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -71,10 +81,31 @@ public class DriveCommand extends Command {
     double ySpeed = yDriveSlew.calculate(-driverController.getLeftX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
     double rotationalSpeed = -driverController.getRightX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC;
 
-    driveSubsystem.setControl(
+    if(driverController.a().getAsBoolean()) {
+
+      if(!isCoast) {
+        driveSubsystem.configNeutralMode(NeutralModeValue.Coast);
+
+        isCoast = true;
+      }
+
+      driveSubsystem.setControl(climbDriveRequest.withModuleDirection(new Rotation2d(0)));
+
+    } else {
+
+      if(isCoast) {
+        driveSubsystem.configNeutralMode(NeutralModeValue.Brake);
+
+        isCoast = false;
+      }
+
+      driveSubsystem.setControl(
         driveRequest.withVelocityX(xSpeed * invert)
             .withVelocityY(ySpeed * invert)
             .withRotationalRate(rotationalSpeed));
+      
+    }
+    
 
   }
 

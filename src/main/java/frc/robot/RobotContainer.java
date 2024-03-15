@@ -178,6 +178,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Competition").add("Auto Chooser", autoChooser);
     //Shuffleboard.getTab("Competition").add("Robot State", state);
     Shuffleboard.getTab("Competition").addString("Robot State", () -> robotState.name());
+    Shuffleboard.getTab("Competition").addString("Climber State", () -> climberState.name());
   }
 
   /**

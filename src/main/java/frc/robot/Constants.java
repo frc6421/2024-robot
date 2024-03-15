@@ -106,23 +106,23 @@ public static class TrajectoryConstants {
 
   }
 
-    public static enum RobotStates{
-        DRIVE,
-        INTAKE,
-        SPEAKER,
-        AMP,
-        TRAP,
-        CLIMB,
-        BARF
-    }
+  public static enum RobotStates{
+    DRIVE,
+    INTAKE,
+    SPEAKER,
+    AMP,
+    TRAP,
+    CLIMB,
+    BARF
+  }
 
-    public static enum ClimberStates {
-      PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
-      ARMS_HIGH, // Raise both arms to the climbing position
-      CLIMB, // Lower climber arms
-      PREPARE_TRAP, // Raise transition arm to trap degree
-      SCORE_TRAP // Spit out note
-    }
+  public static enum ClimberStates {
+    PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
+    ARMS_HIGH, // Raise both arms to the climbing position
+    CLIMB, // Lower climber arms
+    PREPARE_TRAP, // Raise transition arm to trap degree
+    SCORE_TRAP // Spit out note
+  }
     
   public static class VisionConstants {
 
@@ -135,8 +135,7 @@ public static class TrajectoryConstants {
 
     /** In degrees */
     // Only first and last values are used to check edge cases with equation
-    //TODO update
-    public static final double[] SPEAKER_PITCH_ARRAY = {17, 10.60, 4.80, 0.38, -3.13, -6.00, -8.16, -9.94, -11.43, -13.13, -14.27, -14.72, -15.26};
+    public static final double[] SPEAKER_PITCH_ARRAY = {18.36, 10.96, 5.05, 0.77, -2.87, -5.56, -7.92, -9.74, -11.23, -12.86, -14.14, -14.61, -15.32};
 
     /** In degrees */
     public static final double[] SPEAKER_YAW_ARRAY = {0.0};
@@ -144,7 +143,7 @@ public static class TrajectoryConstants {
     public static final double SPEAKER_YAW_ANGLE = -1.32;
 
     /** In degrees */
-    public static final double[] SHOOTER_PIVOT_ARRAY = {52, 50, 47, 43.5, 40, 37, 34.5, 32.5, 31, 29, 28, 27.35, 26.3};
+    public static final double[] SHOOTER_PIVOT_ARRAY = {52, 50, 45.5, 42, 38.25, 35.25, 32.75, 31, 29.75, 28, 26, 25.55, 24.4};
 
     /** In RPM */
     public static final double[] SHOOTER_RPM_ARRAY = {3500, 3600, 3700, 3800, 3900, 4000, 4100, 4250, 4400, 4550, 4700, 4900, 5100};

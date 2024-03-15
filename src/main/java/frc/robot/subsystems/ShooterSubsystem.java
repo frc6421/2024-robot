@@ -175,9 +175,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         return VisionConstants.SHOOTER_RPM_ARRAY[0];
 
-      } else if(pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[12]) {
+      } else if(pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1]) {
 
-        return VisionConstants.SHOOTER_RPM_ARRAY[12];
+        return VisionConstants.SHOOTER_RPM_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1];
 
       } else {
 

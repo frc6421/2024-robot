@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -111,6 +112,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    */
   public void setAngle(DoubleSupplier angle){
     angleMotorPID.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition, 0, 0, SparkPIDController.ArbFFUnits.kVoltage);
+
+    System.out.println("Target Shooter Angle: " + angle + " @ " + Timer.getMatchTime());
   }
 
 
@@ -135,9 +138,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
         return VisionConstants.SHOOTER_PIVOT_ARRAY[0];
 
-      } else if(pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[12]) {
+      } else if(pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1]) {
 
-        return VisionConstants.SHOOTER_PIVOT_ARRAY[12];
+        return VisionConstants.SHOOTER_PIVOT_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1];
 
       } else {
 
@@ -156,56 +159,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Current Angle", getAngleEncoderPosition());
 
-    /*
-    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
-
-    if (allianceColor.isPresent()) {
-
-      targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
-
-    }
-
-    if (Cameras.isTarget(Cameras.speakerCamera)) {
-
-      // Check distance from the target using camera pitch
-      for (int i = 0; i < VisionConstants.SPEAKER_PITCH_ARRAY.length; i++) {
-
-        if(Cameras.getPitch(Cameras.speakerCamera, targetTagID) >= VisionConstants.SPEAKER_PITCH_ARRAY[i]) {
-
-          if(i < 12) {
-
-            targetShooterPivotAngle = MathUtil.interpolate(VisionConstants.SHOOTER_PIVOT_ARRAY[i], 
-                VisionConstants.SHOOTER_PIVOT_ARRAY[i + 1],
-                ((VisionConstants.SPEAKER_PITCH_ARRAY[i + 1] - Cameras.getPitch(Cameras.speakerCamera, targetTagID)) / (VisionConstants.SPEAKER_PITCH_ARRAY[i + 1] - VisionConstants.SPEAKER_PITCH_ARRAY[i])));
-
-          } else {
-
-            targetShooterPivotAngle = VisionConstants.SHOOTER_PIVOT_ARRAY[12];
-
-          }
-          
-
-          break;
-
-        }
-
-      }
-
-    }
-    */
-
-    SmartDashboard.putNumber("Target Pivot Angle", getTargetAngle());
 
   }
 
-  // @Override
-  // public void initSendable(SendableBuilder builder) {
-  //     // TODO Auto-generated method stub
-  //     super.initSendable(builder);
-
-  //     builder.addDoubleProperty("Get Pivot Angle", this::getAngleEncoderPosition, null);
-  //     builder.addDoubleProperty("Set Pivot Angle", null, this::setAngle);
-  // }
 }

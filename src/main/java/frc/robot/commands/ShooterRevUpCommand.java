@@ -40,6 +40,8 @@ public class ShooterRevUpCommand extends Command {
 
     time.reset();
     time.start();
+
+    System.out.println("Target Shooter Velocity: " + shooterVelocity + " @ " + Timer.getMatchTime());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
