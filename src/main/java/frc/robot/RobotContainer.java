@@ -251,10 +251,8 @@ public class RobotContainer {
     // CLIMB STATE \\
     operatorController.x().onTrue(new ClimberDanceCommand(climberSubsystem, armSubsystem, transitionSubsystem));
 
-    // SCORE IN TRAP \\
-    operatorController.y().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED))
-        .andThen(new WaitCommand(0.4))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));
+    // TRAP STATE \\
+    operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.TRAP));
 
 
     // Testing Controller
