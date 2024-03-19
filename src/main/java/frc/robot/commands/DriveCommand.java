@@ -81,30 +81,30 @@ public class DriveCommand extends Command {
     double ySpeed = yDriveSlew.calculate(-driverController.getLeftX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
     double rotationalSpeed = -driverController.getRightX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC;
 
-    if(driverController.a().getAsBoolean()) {
+    // if(driverController.a().getAsBoolean()) {
 
-      if(!isCoast) {
-        driveSubsystem.configNeutralMode(NeutralModeValue.Coast);
+    //   if(!isCoast) {
+    //     driveSubsystem.configNeutralMode(NeutralModeValue.Coast);
 
-        isCoast = true;
-      }
+    //     isCoast = true;
+    //   }
 
-      driveSubsystem.setControl(climbDriveRequest.withModuleDirection(new Rotation2d(0)));
+    //   driveSubsystem.setControl(climbDriveRequest.withModuleDirection(new Rotation2d(0)));
 
-    } else {
+    // } else {
 
-      if(isCoast) {
-        driveSubsystem.configNeutralMode(NeutralModeValue.Brake);
+    //   if(isCoast) {
+    //     driveSubsystem.configNeutralMode(NeutralModeValue.Brake);
 
-        isCoast = false;
-      }
+    //     isCoast = false;
+    //   }
 
       driveSubsystem.setControl(
         driveRequest.withVelocityX(xSpeed * invert)
             .withVelocityY(ySpeed * invert)
             .withRotationalRate(rotationalSpeed));
       
-    }
+    //}
     
 
   }

@@ -12,6 +12,7 @@ import frc.robot.Constants.ClimberStates;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
 public class ClimberDanceCommand extends Command {
@@ -22,11 +23,11 @@ public class ClimberDanceCommand extends Command {
   //private final DriveSubsystem driveSubsystem;
 
   private final static double TRANSITION_ARM_MID_ANGLE = 25.0;
-  private final static double TRANSITION_ARM_HIGH_ANGLE = 90.0;
-  private final static double TRANSITION_ARM_TRAP_ANGLE = 106.0;
+  private final static double TRANSITION_ARM_HIGH_ANGLE = 105;
+  private final static double TRANSITION_ARM_TRAP_ANGLE = TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT;
 
   private final static double CLIMBER_LOW_ROTATIONS = 0.0;
-  private final static double CLIMBER_MID_ROTATIONS = 2150.0;
+  private final static double CLIMBER_MID_ROTATIONS = 500.0;
   private final static double CLIMBER_HIGH_ROTATIONS = 4396.0;
 
   private boolean exitCommand = false;
@@ -83,6 +84,7 @@ public class ClimberDanceCommand extends Command {
 
     switch(RobotContainer.climberState) {
       case PREPARE_CLIMB:
+        //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_MID_ANGLE, 0);
         transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_MID_ANGLE, 0);
         climberSubsystem.setClimberMotorPosition(CLIMBER_MID_ROTATIONS, 0);
         // TODO DRIVE
@@ -91,6 +93,7 @@ public class ClimberDanceCommand extends Command {
         exitCommand = true;
       break;
       case ARMS_HIGH:
+        //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 0);
         transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE, 0);
         climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
         RobotContainer.climberState = ClimberStates.CLIMB;
@@ -98,28 +101,29 @@ public class ClimberDanceCommand extends Command {
         exitCommand = true;
       break;
       case CLIMB:
+        //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 1);
         transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE, 1);
         climberSubsystem.setClimberMotorPosition(CLIMBER_LOW_ROTATIONS, 1);
-        RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
+        //RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
 
         exitCommand = true;
       break;
-      case PREPARE_TRAP:
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_TRAP_ANGLE, 1);
-        RobotContainer.climberState = ClimberStates.SCORE_TRAP;
+      // case PREPARE_TRAP:
+      //   transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_TRAP_ANGLE, 1);
+      //   RobotContainer.climberState = ClimberStates.SCORE_TRAP;
 
-        exitCommand = true;
-      break;
-      case SCORE_TRAP:
+      //   exitCommand = true;
+      // break;
+      // case SCORE_TRAP:
 
-        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
-          .andThen(new WaitCommand(0.4))
-          .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()));
+      //   new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
+      //     .andThen(new WaitCommand(0.4))
+      //     .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()));
 
-        // TODO Reverse climb?
+      //   // TODO Reverse climb?
 
-        exitCommand = true;
-      break;
+      //   exitCommand = true;
+      // break;
     }
   }
 

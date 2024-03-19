@@ -182,8 +182,8 @@ public class AmpVisionCommand extends Command {
 
     // TODO check inverts on Frog, both alliances
     driveSubsystem.setControl(
-        visionDriveRequest.withVelocityX(xSpeed)
-            .withVelocityY(-ySpeed)
+        visionDriveRequest.withVelocityX(-xSpeed)
+            .withVelocityY(0)
             .withTargetDirection(targetRotation));
 
   }
@@ -210,7 +210,7 @@ public class AmpVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (xController.atSetpoint() && yController.atSetpoint() && visionDriveRequest.HeadingController.atSetpoint())
+    return (xController.atSetpoint() && visionDriveRequest.HeadingController.atSetpoint())
         || exitCommand;
   }
 }

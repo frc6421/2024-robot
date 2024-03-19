@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionArmSubsystem extends SubsystemBase{
@@ -44,9 +45,9 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
     public static final double ARM_GEAR_RATIO_CONVERSION = 360.0 / TransitionArmConstants.ARM_GEAR_RATIO; // degrees
 
-    public static final double ARM_EXTENDED_CLIMB = 95;
+    public static final double ARM_EXTENDED_CLIMB = 105;
 
-    public static final double ARM_AMP_POSITION = 87.5;
+    public static final double ARM_AMP_POSITION = 95;
   }
 
   // fields
@@ -131,11 +132,15 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
       armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
       armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+
+      SmartDashboard.putNumber("Arm Position", getArmMotorPositionDeg());
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // // This method will be called once per scheduler run
+    // System.out.println("Left Arm Motor Position" + getEncoderLeftPosition());
+    // System.out.println("Right Arm Motor Position" + getEncoderRightPosition());
   }
 
   /**
@@ -176,5 +181,11 @@ public class TransitionArmSubsystem extends SubsystemBase{
   public double getEncoderRightPosition()
   {
     return armRightEncoder.getPosition();
+  }
+
+  public void resetEncoder()
+  {
+      armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+      armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
   }
 }

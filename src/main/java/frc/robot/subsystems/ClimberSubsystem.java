@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
@@ -25,7 +26,7 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final double CLIMBER_GEAR_RATIO = 25;
 
     // PID
-    public static final double CLIMBER_CLIMB_KP = 0.07;
+    public static final double CLIMBER_CLIMB_KP = 0.075;
 
     public static final double CLIMBER_KS = -0.4;
     public static final double CLIMBER_KP = 0.02;
@@ -130,7 +131,11 @@ public class ClimberSubsystem extends SubsystemBase {
     // Zeros the motors
     leftClimberEncoder.setPosition(0);
     rightClimberEncoder.setPosition(0);
-
+    
+    SmartDashboard.putNumber("Left Climb Position", getClimberLeftMotorPosition());
+    SmartDashboard.putNumber("Right Climb Position", getClimberRightMotorPosition());
+    SmartDashboard.putNumber("Left Climb Vel", leftClimberMotor.get());
+    SmartDashboard.putNumber("Right Climb Vel", rightClimberMotor.get());
 
   }
 

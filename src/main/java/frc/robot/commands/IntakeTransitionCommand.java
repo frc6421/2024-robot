@@ -66,7 +66,7 @@ public class IntakeTransitionCommand extends Command {
     if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && !hasTOFOut)
     {
       LEDSubsystem.setColor(LEDColors.GREEN);
-      transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED / 1.5);
+      transitionSubsystem.setTransitionVoltage(3);
     }
 
     if(transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)

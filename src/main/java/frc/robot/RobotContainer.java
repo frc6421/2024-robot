@@ -23,8 +23,12 @@ import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 import java.util.Map;
 
 import com.ctre.phoenix.unmanaged.Unmanaged;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,6 +60,9 @@ import frc.robot.commands.TrapVisionCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.subsystems.DriveSubsystem;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -64,6 +71,7 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final PowerDistribution pdh;
   
   // Controllers \\
   private final CommandXboxController driverController; 
@@ -118,11 +126,14 @@ public class RobotContainer {
     // Comment this line out to use TunerX, uncomment to improve CAN utilization
     Unmanaged.setPhoenixDiagnosticsStartTime(-1);
 
+    pdh = new PowerDistribution(1, PowerDistribution.ModuleType.kRev);
+
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
     testingcontroller = new CommandXboxController(testingcontrollerPort);
 
     DriverStation.silenceJoystickConnectionWarning(true);
+    pdh.clearStickyFaults();
 
     driveSubsystem = new DriveSubsystem();
     intakeSubsystem = new IntakeSubsystem();
@@ -201,7 +212,11 @@ public class RobotContainer {
     driverController.y().toggleOnTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
-      Map.entry(RobotStates.TRAP, new TrapVisionCommand(driveSubsystem))),
+      Map.entry(RobotStates.TRAP, new TrapVisionCommand(driveSubsystem)),
+      Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
+      Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
+      Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
+      Map.entry(RobotStates.INTAKE, new InstantCommand(() -> robotState = RobotStates.INTAKE))),
     () -> robotState));
 
     // INTAKE STATE \\
@@ -219,8 +234,9 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+        .andThen(new InstantCommand(() -> armSubsystem.resetEncoder()))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0))
-        .andThen(new WaitCommand(0.3))
+        .andThen(new WaitCommand(0.7))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
@@ -239,8 +255,21 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
-        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))),
+        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
+      Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
+      Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
+      Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
+      Map.entry(RobotStates.INTAKE, new InstantCommand(() -> robotState = RobotStates.INTAKE)),
+      Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP))),
       () -> robotState));
+    
+    driverController.a().whileTrue(new InstantCommand(() -> driveSubsystem.configNeutralMode(NeutralModeValue.Coast))
+      .andThen(new RunCommand(() -> driveSubsystem.setControl(new SwerveRequest.PointWheelsAt()
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+        .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+        .withModuleDirection(new Rotation2d(0))))));
+      
+    driverController.a().onFalse(new InstantCommand(() -> driveSubsystem.configNeutralMode(NeutralModeValue.Brake)));
 
     // AMP STATE \\
     operatorController.a().onTrue(new InstantCommand(() -> robotState = RobotStates.AMP));

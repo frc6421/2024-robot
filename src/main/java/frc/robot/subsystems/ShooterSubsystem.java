@@ -181,7 +181,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
       } else {
 
-        return (0.0063 * Math.pow(pitchAngle, 4) - 0.1296 * Math.pow(pitchAngle, 3) + 0.3485 * Math.pow(pitchAngle, 2) - 19.675 * pitchAngle + 3829.6);
+        return (0.0057 * Math.pow(pitchAngle, 4) - 0.0992 * Math.pow(pitchAngle, 3) + 0.2836 * Math.pow(pitchAngle, 2) - 21.406 * pitchAngle + 3797.1);
 
       }
 

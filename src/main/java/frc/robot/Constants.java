@@ -119,23 +119,23 @@ public static class TrajectoryConstants {
   public static enum ClimberStates {
     PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
     ARMS_HIGH, // Raise both arms to the climbing position
-    CLIMB, // Lower climber arms
-    PREPARE_TRAP, // Raise transition arm to trap degree
-    SCORE_TRAP // Spit out note
+    CLIMB // Lower climber arms
+    // PREPARE_TRAP, // Raise transition arm to trap degree
+    // SCORE_TRAP // Spit out note
   }
     
   public static class VisionConstants {
 
     //TODO change these to degrees recorded in notebook
     /** In degrees */
-    public static final double AMP_PITCH_ANGLE = 19;
+    public static final double AMP_PITCH_ANGLE = 22.3;
 
     /** In degrees */
-    public static final double AMP_YAW_ANGLE = -3.70;
+    public static final double AMP_YAW_ANGLE = -3.0;
 
     /** In degrees */
     // Only first and last values are used to check edge cases with equation
-    public static final double[] SPEAKER_PITCH_ARRAY = {18.36, 10.96, 5.05, 0.77, -2.87, -5.56, -7.92, -9.74, -11.23, -12.86, -14.14, -14.61, -15.32};
+    public static final double[] SPEAKER_PITCH_ARRAY = {16.71, 9.21, 3.83, -0.51, -3.90, -6.56, -8.68, -10.56, -12.12, -13.37, -14.49, -15.59, -16.39};
 
     /** In degrees */
     public static final double[] SPEAKER_YAW_ARRAY = {0.0};
@@ -149,10 +149,10 @@ public static class TrajectoryConstants {
     public static final double[] SHOOTER_RPM_ARRAY = {3500, 3600, 3700, 3800, 3900, 4000, 4100, 4250, 4400, 4550, 4700, 4900, 5100};
 
     /** In degrees */
-    public static final double TRAP_PITCH_ANGLE = 0.0;
+    public static final double TRAP_PITCH_ANGLE = -16.0;
 
     /** In degrees */
-    public static final double TRAP_YAW_ANGLE = 0.0;
+    public static final double TRAP_YAW_ANGLE = 10.5;
 
   }
 
