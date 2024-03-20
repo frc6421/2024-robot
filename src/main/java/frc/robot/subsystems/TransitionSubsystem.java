@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,7 +29,9 @@ public class TransitionSubsystem extends SubsystemBase {
     public static final double TRANSITION_CENTER_SPEED = -0.5;
 
     // Its about 400-380 when nothing is detected
-    public static final double DETECTION_DISTANCE_MM = 350; // 350
+    public static final double DETECTION_DISTANCE_MM = 250; // 350
+
+    public static final double INIT_DETECTION_DISTANCE_MM = 250;
   }
 
   private final CANSparkFlex transitionMotor;
@@ -36,6 +39,12 @@ public class TransitionSubsystem extends SubsystemBase {
   private final RelativeEncoder transitionEncoder;
   public final TimeOfFlight timeOfFlightIn;
   public final TimeOfFlight timeOfFlightOut;
+
+  private final MedianFilter inFilter;
+  private final MedianFilter outFilter;
+
+  private double inFilteredValue;
+  private double outFilteredValue;
 
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem() {
@@ -49,6 +58,9 @@ public class TransitionSubsystem extends SubsystemBase {
     timeOfFlightIn = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_IN_CAN_ID);
     timeOfFlightOut = new TimeOfFlight(TransitionConstants.TIME_OF_FLIGHT_SENSOR_OUT_CAN_ID);
 
+    timeOfFlightIn.setRangeOfInterest(8, 8, 12, 12);
+    timeOfFlightOut.setRangeOfInterest(8, 8, 12, 12);
+
     // Set Encoder
     transitionEncoder = transitionMotor.getEncoder(); 
 
@@ -60,6 +72,10 @@ public class TransitionSubsystem extends SubsystemBase {
 
     // Gear Ratio
     transitionEncoder.setPositionConversionFactor(TransitionConstants.TRANSITION_GEAR_RATIO);
+
+    inFilter = new MedianFilter(5);
+    outFilter = new MedianFilter(5);
+
   }
 
   /**Returns the double value of the TOF In sensor
@@ -67,14 +83,14 @@ public class TransitionSubsystem extends SubsystemBase {
    * @return double
    */
   public double getTOFInRange() {
-    return timeOfFlightIn.getRange();
+    return inFilteredValue;
   }
   /**Returns the double value of the TOF Out sensor
    * Unit - MM
    * @return double
    */
   public double getTOFOutRange() {
-    return timeOfFlightOut.getRange();
+    return outFilteredValue;
   }
 
   /**Sets the given voltage to the transitionMotor
@@ -96,8 +112,11 @@ public class TransitionSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    SmartDashboard.putNumber("TOF In range", getTOFInRange());
-    SmartDashboard.putNumber("TOF Out range", getTOFOutRange());
+    inFilteredValue = inFilter.calculate(timeOfFlightIn.getRange()); 
+    outFilteredValue = outFilter.calculate(timeOfFlightOut.getRange()); 
+
+    SmartDashboard.putNumber("TOF In range", inFilteredValue);
+    SmartDashboard.putNumber("TOF Out range", outFilteredValue);
   }
 }
 

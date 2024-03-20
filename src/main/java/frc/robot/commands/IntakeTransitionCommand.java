@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.RobotStates;
@@ -25,11 +26,13 @@ public class IntakeTransitionCommand extends Command {
 
   /** Creates a new CenterNoteInTransition. */
   public IntakeTransitionCommand(TransitionSubsystem transitionSubsystem, IntakeSubsystem intakeSubsystem) {
-    
-    addRequirements(transitionSubsystem, intakeSubsystem);
+    System.out.println("IntakeTransition Constructor");
 
     this.transitionSubsystem = transitionSubsystem;
     this.intakeSubsystem = intakeSubsystem;
+
+    addRequirements(transitionSubsystem, intakeSubsystem);
+
 
     //timer = new Timer();
   }
@@ -37,7 +40,7 @@ public class IntakeTransitionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    System.out.println("IntakeTransition Init");
     LEDSubsystem.setColor(LEDColors.YELLOW);
     // timer.reset();
     // timer.start();
@@ -46,14 +49,19 @@ public class IntakeTransitionCommand extends Command {
 
     hasTOFOut = false;
 
-    if(transitionSubsystem.timeOfFlightIn.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM || 
-       transitionSubsystem.timeOfFlightOut.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM)
+    System.out.println("Init ToF In: " + transitionSubsystem.getTOFInRange());
+    System.out.println("init ToF Out: " + transitionSubsystem.getTOFOutRange());
+
+    if(transitionSubsystem.getTOFInRange() >= TransitionConstants.INIT_DETECTION_DISTANCE_MM || 
+       transitionSubsystem.getTOFOutRange() >= TransitionConstants.INIT_DETECTION_DISTANCE_MM)
     {
       transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED);
       intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_IN_SPEED);
     }
     else
     {
+      System.out.println("*** ToF stopping in init!!!! ***");
+
       transitionSubsystem.setTransitionVoltage(0);
       intakeSubsystem.setIntakeVoltage(0);
     }
@@ -63,13 +71,13 @@ public class IntakeTransitionCommand extends Command {
   @Override
   public void execute() {
     
-    if(transitionSubsystem.timeOfFlightIn.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM && !hasTOFOut)
+    if(transitionSubsystem.getTOFInRange() <= TransitionConstants.DETECTION_DISTANCE_MM && !hasTOFOut)
     {
       LEDSubsystem.setColor(LEDColors.GREEN);
       transitionSubsystem.setTransitionVoltage(3);
     }
 
-    if(transitionSubsystem.timeOfFlightOut.getRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
+    if(transitionSubsystem.getTOFOutRange() <= TransitionConstants.DETECTION_DISTANCE_MM)
     {
       LEDSubsystem.setColor(LEDColors.HOT_PINK);
       intakeSubsystem.setIntakeVoltage(0);
@@ -87,12 +95,17 @@ public class IntakeTransitionCommand extends Command {
     transitionSubsystem.setTransitionVoltage(0);
 
     RobotContainer.robotState = RobotStates.DRIVE;
+
+    System.out.println("IntakeTransition End");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (transitionSubsystem.timeOfFlightOut.getRange() >= TransitionConstants.DETECTION_DISTANCE_MM && hasTOFOut); 
+    System.out.println("Finish ToF In: " + transitionSubsystem.getTOFInRange());
+    System.out.println("Finish ToF Out: " + transitionSubsystem.getTOFOutRange());
+
+    return (transitionSubsystem.getTOFOutRange() >= TransitionConstants.DETECTION_DISTANCE_MM && hasTOFOut); 
     //|| (timer.get() >= 0.5);
   }
 }
