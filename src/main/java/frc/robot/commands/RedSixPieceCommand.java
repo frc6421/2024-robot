@@ -71,42 +71,29 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
     // robot leaves start zone and moves to pick up note at podium
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(6), 0)),
-            new Rotation2d(Units.degreesToRadians(180)))),
-        forwardConfig);
+        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(6), 0)),
-            new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)),
-            new Rotation2d(Units.degreesToRadians(180)))),
-        reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)),
-            new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(6), 0)),
-            new Rotation2d(Units.degreesToRadians(180)))),
-        forwardConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(6), 0)),
-            new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(6), 0)),
-            new Rotation2d(Units.degreesToRadians(153)))),
-        forwardConfig);
+        new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(153)))), forwardConfig);
 
     Trajectory driveToCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(6), 0)),
-            new Rotation2d(Units.degreesToRadians(153))),
+        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(153))),
         new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(210))),
         new Pose2d(TrajectoryConstants.NOTE6_RED, new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE6_RED, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(183)))),
-        reverseConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(183)))), reverseConfig);
 
     Trajectory driveToSecondCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(183))),
@@ -115,19 +102,19 @@ public class RedSixPieceCommand extends SequentialCommandGroup {
     // Simulation
     field = new Field2d();
 
-    if (RobotBase.isSimulation()) {
-      SmartDashboard.putData(field);
+    // if (RobotBase.isSimulation()) {
+    //   SmartDashboard.putData(field);
 
-      field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
+    //   field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
 
-      field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-      field.getObject("Drive to score 1 Trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
-      field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-      field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
-      field.getObject("Drive to 4 Trajectory").setTrajectory(driveToCenterNoteTrajectory);
-      field.getObject("Drive to score 4 Trajectory").setTrajectory(driveToScoreCenterNoteTrajectory);
-      field.getObject("Drive to 5 Trajectory").setTrajectory(driveToSecondCenterNoteTrajectory);
-    }
+    //   field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //   field.getObject("Drive to score 1 Trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
+    //   field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //   field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
+    //   field.getObject("Drive to 4 Trajectory").setTrajectory(driveToCenterNoteTrajectory);
+    //   field.getObject("Drive to score 4 Trajectory").setTrajectory(driveToScoreCenterNoteTrajectory);
+    //   field.getObject("Drive to 5 Trajectory").setTrajectory(driveToSecondCenterNoteTrajectory);
+    // }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,

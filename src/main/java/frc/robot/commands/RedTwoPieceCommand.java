@@ -125,7 +125,7 @@ public class RedTwoPieceCommand extends SequentialCommandGroup {
         new WaitCommand(0.25),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-        new ParallelDeadlineGroup(driveToFirstNoteCommand, new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
+        new ParallelDeadlineGroup(driveToFirstNoteCommand, new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))),
         driveToScoreCommand,
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 47)),
         new ShooterRevUpCommand(shooterSubsystem),

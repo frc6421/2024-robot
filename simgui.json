@@ -82,7 +82,8 @@
           "style": "Line"
         },
         "Drive to third Trajectory": {
-          "style": "Box/Image"
+          "arrows": false,
+          "style": "Line"
         },
         "Robot": {
           "length": 0.9398000240325928,
