@@ -85,8 +85,7 @@ public class ClimberDanceCommand extends Command {
     switch(RobotContainer.climberState) {
       case PREPARE_CLIMB:
         //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_MID_ANGLE, 0);
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_MID_ANGLE, 0);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_MID_ROTATIONS, 0);
+        climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
         // TODO DRIVE
         // Wheels to coast, Point wheels toward the stage, Drive back 
         RobotContainer.climberState = ClimberStates.ARMS_HIGH;
@@ -94,7 +93,6 @@ public class ClimberDanceCommand extends Command {
       break;
       case ARMS_HIGH:
         //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 0);
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE, 0);
         climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
         RobotContainer.climberState = ClimberStates.CLIMB;
 
@@ -102,7 +100,6 @@ public class ClimberDanceCommand extends Command {
       break;
       case CLIMB:
         //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 1);
-        transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_HIGH_ANGLE, 1);
         climberSubsystem.setClimberMotorPosition(CLIMBER_LOW_ROTATIONS, 1);
         //RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
 
