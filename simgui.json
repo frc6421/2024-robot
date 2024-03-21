@@ -22,7 +22,8 @@
           "style": "Line"
         },
         "Drive to 4 Trajectory": {
-          "style": "Track"
+          "arrows": false,
+          "style": "Line"
         },
         "Drive to 5 Trajectory": {
           "arrows": false,
@@ -30,7 +31,7 @@
         },
         "Drive to first Trajectory": {
           "arrows": false,
-          "style": "Box/Image"
+          "style": "Line"
         },
         "Drive to pick up 4 Trajectory": {
           "style": "Track"
@@ -51,7 +52,8 @@
           "style": "Line"
         },
         "Drive to score 4 Trajectory": {
-          "style": "Track"
+          "arrows": false,
+          "style": "Line"
         },
         "Drive to score 5 Trajectory": {
           "arrows": false,
@@ -76,10 +78,11 @@
           "style": "Track"
         },
         "Drive to second Trajectory": {
-          "style": "Track"
+          "arrows": false,
+          "style": "Line"
         },
         "Drive to third Trajectory": {
-          "style": "Track"
+          "style": "Box/Image"
         },
         "Robot": {
           "length": 0.9398000240325928,
@@ -121,8 +124,7 @@
       },
       "Subscribers": {
         "open": true
-      },
-      "open": true
+      }
     },
     "visible": true
   }

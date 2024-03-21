@@ -239,6 +239,7 @@ public class RedFivePieceCommand extends SequentialCommandGroup {
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
+        // go to and shoot fourth note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToCenterNoteCommand, driveToScoreCenterNoteCommand), 
           new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 

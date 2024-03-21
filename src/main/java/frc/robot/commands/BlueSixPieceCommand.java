@@ -44,7 +44,7 @@ public class BlueSixPieceCommand extends SequentialCommandGroup {
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
-    private Field2d field;
+  private Field2d field;
 
   /** Creates a new BlueTwoPieceCommand. */
   public BlueSixPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
