@@ -187,7 +187,7 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         // go to and shoot first note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem),
+          new SequentialCommandGroup(new WaitCommand(0.5), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
           new PrintCommand("First Note")), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()), shooterAngleSubsystem),
         new ShooterRevUpCommand(shooterSubsystem),
@@ -198,7 +198,7 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         // go to and shoot second note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem),
+          new SequentialCommandGroup(new WaitCommand(0.5), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
           new PrintCommand("Second Note")), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()), shooterAngleSubsystem),
         new ShooterRevUpCommand(shooterSubsystem),
@@ -209,7 +209,7 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         // go to and shoot third note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem),
+          new SequentialCommandGroup(new WaitCommand(0.5), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)),
           new PrintCommand("Third Note")), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()), shooterAngleSubsystem),
         new ShooterRevUpCommand(shooterSubsystem),

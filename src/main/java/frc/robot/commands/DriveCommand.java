@@ -24,7 +24,7 @@ import frc.robot.subsystems.DriveSubsystem.DriveConstants;
 public class DriveCommand extends Command {
   private DriveSubsystem driveSubsystem;
 
-  private double percentDeadband = 0.1;
+  private double percentDeadband = 0.065;
 
   private double maxSpeed = DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC;
   private double maxAngularRate = 2 * Math.PI;
