@@ -64,8 +64,6 @@ public class AmpVisionCommand extends Command {
   private final AprilTagFieldLayout crescendoField = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   private int targetTagID = 0;
 
-  private boolean exitCommand = false;
-
   /** Creates a new AmpTrapVisionCommand. */
   public AmpVisionCommand(DriveSubsystem drive) {
     driveSubsystem = drive;
@@ -91,7 +89,6 @@ public class AmpVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    exitCommand = false;
 
     xFilter.reset();
     yFilter.reset();
@@ -107,7 +104,8 @@ public class AmpVisionCommand extends Command {
 
     } else {
 
-      exitCommand = true;
+      cancel();
+      System.out.println("AmpVisionCommand canceled - No alliance color present");
 
     }
 
@@ -126,7 +124,8 @@ public class AmpVisionCommand extends Command {
 
     } else {
 
-      exitCommand = true;
+      cancel();
+      System.out.println("AmpVisionCommand canceled - No AprilTag pose present");
 
     }
 
@@ -143,7 +142,8 @@ public class AmpVisionCommand extends Command {
     // Camera methods return 180.0 if the target tag ID is not detected
     if (currentX == 180.0 || currentY == 180.0) {
 
-      exitCommand = true;
+      cancel();
+      System.out.println("AmpVisionCommand canceled - No AprilTag detected (amp camera)");
 
     } else {
 
@@ -180,7 +180,6 @@ public class AmpVisionCommand extends Command {
     SmartDashboard.putNumber("X Speed", xSpeed);
     SmartDashboard.putNumber("Y Speed", ySpeed);
 
-    // TODO check inverts on Frog, both alliances
     driveSubsystem.setControl(
         visionDriveRequest.withVelocityX(-xSpeed)
             .withVelocityY(0)
@@ -192,7 +191,7 @@ public class AmpVisionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    if (exitCommand) {
+    if (interrupted) {
 
       System.out.println("*****AmpVisionCommand Interrupted*****");
       System.out.println("Alliance Present: " + allianceColor.isPresent());
@@ -210,7 +209,6 @@ public class AmpVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (xController.atSetpoint() && visionDriveRequest.HeadingController.atSetpoint())
-        || exitCommand;
+    return (xController.atSetpoint() && visionDriveRequest.HeadingController.atSetpoint());
   }
 }

@@ -50,8 +50,6 @@ public class SpeakerVisionCommand extends Command {
   private final AprilTagFieldLayout crescendoField = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   private int targetTagID = 0;
 
-  private boolean exitCommand = false;
-
   /** Creates a new SpeakerVisionCommand. */
   public SpeakerVisionCommand(DriveSubsystem drive) {
     driveSubsystem = drive;
@@ -71,7 +69,6 @@ public class SpeakerVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    exitCommand = false;
 
     filter.reset();
 
@@ -85,7 +82,8 @@ public class SpeakerVisionCommand extends Command {
 
     } else {
 
-      exitCommand = true;
+      cancel();
+      System.out.println("SpeakerVisionCommand canceled - No alliance color present");
 
     }
 
@@ -127,7 +125,8 @@ public class SpeakerVisionCommand extends Command {
     // Camera methods return 180.0 if the target tag ID is not detected
     if (currentRotation == 180.0) {
 
-      exitCommand = true;
+      cancel();
+      System.out.println("SpeakerVisionCommand canceled - No AprilTag detected (speaker camera)");
 
     } else {
 
@@ -150,11 +149,10 @@ public class SpeakerVisionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    if (exitCommand) {
+    if (interrupted) {
 
       System.out.println("*****SpeakerVisionCommand Interrupted*****");
       System.out.println("Alliance Present: " + allianceColor.isPresent());
-      System.out.println("AprilTag Pose Present: " + crescendoField.getTagPose(targetTagID).isPresent());
 
     }
 
@@ -168,6 +166,6 @@ public class SpeakerVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return rotationController.atSetpoint() || exitCommand;
+    return rotationController.atSetpoint();
   }
 }
