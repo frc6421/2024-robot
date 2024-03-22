@@ -54,6 +54,7 @@ import frc.robot.commands.RedFivePieceCommand;
 import frc.robot.commands.RedFourPieceCommand;
 import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.ShuttleVisionCommand;
 import frc.robot.Constants.ClimberStates;
 import frc.robot.commands.SpeakerVisionCommand;
 import frc.robot.commands.TrapVisionCommand;
@@ -95,9 +96,6 @@ public class RobotContainer {
   // Commands \\
   private final DriveCommand driveCommand;
   private final IntakeTransitionCommand intakeTransitionCommand;
-  private final AmpVisionCommand ampVisionCommand;
-  private final SpeakerVisionCommand speakerVisionCommand;
-  // private final TrapVisionCommand trapVisionCommand;
 
   private final BlueTwoPieceCommand blueTwoPiece;
   private final RedTwoPieceCommand redTwoPiece;
@@ -146,9 +144,6 @@ public class RobotContainer {
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
-    ampVisionCommand = new AmpVisionCommand(driveSubsystem);
-    speakerVisionCommand = new SpeakerVisionCommand(driveSubsystem);
-    // trapVisionCommand = new TrapVisionCommand(driveSubsystem);
 
     blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
@@ -206,12 +201,13 @@ public class RobotContainer {
   private void configureBindings() {
 
     // Driver Controller: drive controls (left/right joystick), barf (left trigger - set to run as a button), intake (left bumper), score (right bumper), vision align (Y)
-    // Operator Controller: change scoring location (4 states), A - amp, X - climb, Y - trap, B - speaker, LT - LED yellow, RT - LED purple
+    // Operator Controller: change scoring location (3 states), A - amp, Y - shuttle, B - speaker, X - actuate climb
 
     // Vision Align \\
     driverController.y().toggleOnTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
+      Map.entry(RobotStates.SHUTTLE, new ShuttleVisionCommand()),
       Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP)),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
@@ -256,6 +252,17 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
+      Map.entry(RobotStates.SHUTTLE, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()))
+        .andThen(new WaitCommand(0.1))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new WaitCommand(0.4))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
+        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
       Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
@@ -280,8 +287,8 @@ public class RobotContainer {
     // CLIMB STATE \\
     operatorController.x().onTrue(new ClimberDanceCommand(climberSubsystem, armSubsystem, transitionSubsystem));
 
-    // TRAP STATE \\
-    operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.TRAP));
+    // SHUTTLE STATE \\
+    operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SHUTTLE));
 
 
     // Testing Controller

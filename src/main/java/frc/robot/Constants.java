@@ -113,7 +113,8 @@ public static class TrajectoryConstants {
     AMP,
     TRAP,
     CLIMB,
-    BARF
+    BARF,
+    SHUTTLE
   }
 
   public static enum ClimberStates {
