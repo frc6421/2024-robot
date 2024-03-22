@@ -342,7 +342,7 @@ public class RobotContainer {
    * Turns LEDs blue when an AprilTag is detected while in amp, speaker, or trap state
    */
   public void setVisionLEDs() {
-    if(robotState.equals(RobotStates.AMP) && Cameras.isTarget(Cameras.ampCamera)) {
+    if(robotState.equals(RobotStates.AMP) && (Cameras.isTarget(Cameras.ampCamera) || Cameras.isTarget(Cameras.speakerCamera))) {
 
       LEDSubsystem.setColor(LEDColors.BLUE);
 

@@ -129,10 +129,16 @@ public static class TrajectoryConstants {
 
     //TODO change these to degrees recorded in notebook
     /** In degrees */
-    public static final double AMP_PITCH_ANGLE = 22.3;
+    public static final double AMP_CLOSE_PITCH_ANGLE = 1.80;
 
     /** In degrees */
-    public static final double AMP_YAW_ANGLE = -3.0;
+    public static final double AMP_CLOSE_YAW_ANGLE = -1.26;
+
+    /** In degrees */
+    public static final double AMP_FAR_PITCH_ANGLE = 17.99;
+
+    /** In degrees */
+    public static final double AMP_FAR_YAW_ANGLE = 0.95;
 
     /** In degrees */
     // Only first and last values are used to check edge cases with equation

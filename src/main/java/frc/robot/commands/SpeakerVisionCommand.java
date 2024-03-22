@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Cameras;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 
 public class SpeakerVisionCommand extends Command {
   private DriveSubsystem driveSubsystem;
@@ -118,6 +120,8 @@ public class SpeakerVisionCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    LEDSubsystem.setColor(LEDColors.RED);
 
     double currentRotation = filter.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
 

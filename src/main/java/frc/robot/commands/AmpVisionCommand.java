@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Cameras;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDConstants.LEDColors;
 
 public class AmpVisionCommand extends Command {
   private DriveSubsystem driveSubsystem;
@@ -33,29 +35,33 @@ public class AmpVisionCommand extends Command {
   private double maxSpeed = 2;
 
   // In camera degrees
-  // TODO tune PID
   private PIDController xController;
-  private PIDController yController;
+  //private PIDController yController;
 
-  private double xP = 0.1;
-  private double yP = 0.1;
+  private double xP = 0.08;
+  private double xD = 0.0016;
+
+  //private double yP = 0.08;
+  //private double yD = 0.0016;
+
   private double rotationP = 5.0;
 
-  // TODO tune these error ranges
   // In camera degrees
-  private double allowableXError = 0.25;
-  private double allowableYError = 0.25;
+  private double allowableXError = 0.8;
+  //private double allowableYError = 0.8;
+
+  private double allowableVelocityError = 10.0;
 
   // In gyro radians
   private double allowableRotationError = 0.035;
 
   private double xSpeed = 0.0;
-  private double ySpeed = 0.0;
+  //private double ySpeed = 0.0;
 
   private Rotation2d targetRotation;
 
   private MedianFilter xFilter = new MedianFilter(10);
-  private MedianFilter yFilter = new MedianFilter(10);
+  //private MedianFilter yFilter = new MedianFilter(10);
 
   private final SwerveRequest.FieldCentricFacingAngle visionDriveRequest;
 
@@ -76,11 +82,11 @@ public class AmpVisionCommand extends Command {
     visionDriveRequest.HeadingController.setTolerance(allowableRotationError);
     visionDriveRequest.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
-    xController = new PIDController(xP, 0.0, 0.0);
-    yController = new PIDController(yP, 0.0, 0.0);
+    xController = new PIDController(xP, 0.0, xD);
+    //yController = new PIDController(yP, 0.0, yD);
 
-    xController.setTolerance(allowableXError);
-    yController.setTolerance(allowableYError);
+    xController.setTolerance(allowableXError, allowableVelocityError);
+    //yController.setTolerance(allowableYError, allowableVelocityError);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
@@ -90,11 +96,13 @@ public class AmpVisionCommand extends Command {
   @Override
   public void initialize() {
 
+    System.out.println("AmpVisionCommand Initialize");
+
     xFilter.reset();
-    yFilter.reset();
+    //yFilter.reset();
 
     xController.reset();
-    yController.reset();
+    //yController.reset();
 
     allianceColor = DriverStation.getAlliance();
 
@@ -104,27 +112,20 @@ public class AmpVisionCommand extends Command {
 
     } else {
 
-      cancel();
+      this.cancel();
       System.out.println("AmpVisionCommand canceled - No alliance color present");
 
     }
-
-    // Set setpoint to center the robot on the amp in the x direction
-    xController.setSetpoint(VisionConstants.AMP_YAW_ANGLE);
-
-    // Set setpoint to drive the robot up against the amp
-    yController.setSetpoint(VisionConstants.AMP_PITCH_ANGLE);
 
     // Set setpoint to turn the robot to the correct angle (degrees to work with the
     // drive request)
     if (crescendoField.getTagPose(targetTagID).isPresent()) {
 
-      // TODO check invert with running auto first on red/in general on blue
       targetRotation = crescendoField.getTagPose(targetTagID).get().getRotation().toRotation2d();
 
     } else {
 
-      cancel();
+      this.cancel();
       System.out.println("AmpVisionCommand canceled - No AprilTag pose present");
 
     }
@@ -135,15 +136,41 @@ public class AmpVisionCommand extends Command {
   @Override
   public void execute() {
 
-    double currentX = xFilter.calculate(Cameras.getYaw(Cameras.ampCamera, targetTagID));
-    double currentY = yFilter.calculate(Cameras.getPitch(Cameras.ampCamera, targetTagID));
+    LEDSubsystem.setColor(LEDColors.RED);
+
+    double currentX;
+    //double currentY;
+
+    if(Cameras.isTarget(Cameras.speakerCamera) && !Cameras.isTarget(Cameras.ampCamera)) {
+
+      currentX = xFilter.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
+      //currentY = yFilter.calculate(Cameras.getPitch(Cameras.speakerCamera, targetTagID));
+
+      // Set setpoint to center the robot on the amp in the x direction
+      xController.setSetpoint(VisionConstants.AMP_FAR_YAW_ANGLE);
+
+      // Set setpoint to drive the robot up against the amp
+      //yController.setSetpoint(VisionConstants.AMP_FAR_PITCH_ANGLE);
+
+    } else {
+
+      currentX = xFilter.calculate(Cameras.getYaw(Cameras.ampCamera, targetTagID));
+      //currentY = yFilter.calculate(Cameras.getPitch(Cameras.ampCamera, targetTagID));
+
+      // Set setpoint to center the robot on the amp in the x direction
+      xController.setSetpoint(VisionConstants.AMP_CLOSE_YAW_ANGLE);
+
+      // Set setpoint to drive the robot up against the amp
+      //yController.setSetpoint(VisionConstants.AMP_CLOSE_PITCH_ANGLE);
+
+    }
 
     // Ends command if no AprilTag is detected in the camera frame
     // Camera methods return 180.0 if the target tag ID is not detected
-    if (currentX == 180.0 || currentY == 180.0) {
+    if (currentX == 180.0) {
 
-      cancel();
-      System.out.println("AmpVisionCommand canceled - No AprilTag detected (amp camera)");
+      this.cancel();
+      System.out.println("AmpVisionCommand canceled - No AprilTag detected");
 
     } else {
 
@@ -157,28 +184,30 @@ public class AmpVisionCommand extends Command {
 
       }
 
-      if (yController.atSetpoint()) {
+      // if (yController.atSetpoint()) {
 
-        ySpeed = 0.0;
+      //   ySpeed = 0.0;
 
-      } else {
+      // } else {
 
-        ySpeed = MathUtil.clamp(yController.calculate(currentY), -maxSpeed, maxSpeed);
+      //   ySpeed = MathUtil.clamp(yController.calculate(currentY), -maxSpeed, maxSpeed);
 
-      }
+      // }
 
     }
 
+    //System.out.println("Position Error: " + xController.getPositionError() + " Velocity Error: " + xController.getVelocityError());
+
     SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
-    SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
+    //SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
     SmartDashboard.putNumber("Target Rotation (Radians)", visionDriveRequest.HeadingController.getSetpoint());
 
     SmartDashboard.putNumber("Current X (Yaw)", currentX);
-    SmartDashboard.putNumber("Current Y (Pitch)", currentY);
+    //SmartDashboard.putNumber("Current Y (Pitch)", currentY);
     SmartDashboard.putNumber("Current Rotation (Radians)", Units.degreesToRadians(driveSubsystem.getPigeon2().getAngle()));
 
     SmartDashboard.putNumber("X Speed", xSpeed);
-    SmartDashboard.putNumber("Y Speed", ySpeed);
+    //SmartDashboard.putNumber("Y Speed", ySpeed);
 
     driveSubsystem.setControl(
         visionDriveRequest.withVelocityX(-xSpeed)
@@ -190,6 +219,8 @@ public class AmpVisionCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
+    System.out.println("AmpVisionCommand End");
 
     if (interrupted) {
 
