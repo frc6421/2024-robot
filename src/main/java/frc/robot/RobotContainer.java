@@ -97,7 +97,7 @@ public class RobotContainer {
   private final IntakeTransitionCommand intakeTransitionCommand;
   private final AmpVisionCommand ampVisionCommand;
   private final SpeakerVisionCommand speakerVisionCommand;
-  private final TrapVisionCommand trapVisionCommand;
+  // private final TrapVisionCommand trapVisionCommand;
 
   private final BlueTwoPieceCommand blueTwoPiece;
   private final RedTwoPieceCommand redTwoPiece;
@@ -148,7 +148,7 @@ public class RobotContainer {
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
     ampVisionCommand = new AmpVisionCommand(driveSubsystem);
     speakerVisionCommand = new SpeakerVisionCommand(driveSubsystem);
-    trapVisionCommand = new TrapVisionCommand(driveSubsystem);
+    // trapVisionCommand = new TrapVisionCommand(driveSubsystem);
 
     blueTwoPiece = new BlueTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redTwoPiece = new RedTwoPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
@@ -212,7 +212,7 @@ public class RobotContainer {
     driverController.y().toggleOnTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
-      Map.entry(RobotStates.TRAP, new TrapVisionCommand(driveSubsystem)),
+      Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP)),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
       Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
