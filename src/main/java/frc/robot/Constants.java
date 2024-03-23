@@ -147,8 +147,9 @@ public static class TrajectoryConstants {
     /** In degrees */
     public static final double[] SPEAKER_YAW_ARRAY = {0.0};
 
-    public static final double SPEAKER_YAW_ANGLE = -1.32;
+    public static final double SPEAKER_YAW_ANGLE = 4.24;
 
+    //TODO update both arrays
     /** In degrees */
     public static final double[] SHOOTER_PIVOT_ARRAY = {52, 50, 45.5, 42, 38.25, 35.25, 32.75, 31, 29.75, 28, 26, 25.55, 24.4};
 
