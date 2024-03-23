@@ -79,7 +79,7 @@
         },
         "Drive to second Trajectory": {
           "arrows": false,
-          "style": "Line"
+          "style": "Box/Image"
         },
         "Drive to third Trajectory": {
           "arrows": false,
