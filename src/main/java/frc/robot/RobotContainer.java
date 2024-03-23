@@ -294,7 +294,7 @@ public class RobotContainer {
     //   .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0)))
     //   .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))));
 
-    // testingcontroller.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
+    testingcontroller.a().onTrue(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
 
     // testingcontroller.leftBumper().toggleOnTrue(intakeTransitionCommand);
 

@@ -26,9 +26,10 @@ public class ClimberDanceCommand extends Command {
   private final static double TRANSITION_ARM_HIGH_ANGLE = 105;
   private final static double TRANSITION_ARM_TRAP_ANGLE = TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT;
 
-  private final static double CLIMBER_LOW_ROTATIONS = 0.0;
-  private final static double CLIMBER_MID_ROTATIONS = 500.0;
-  private final static double CLIMBER_HIGH_ROTATIONS = 4396.0;
+  // TODO what are these numbers
+  private final static double CLIMBER_MID_ROTATIONS = 0;
+  //private final static double CLIMBER_HIGH_ROTATIONS = 0;
+  private final static double CLIMBER_IN_VOLTAGE = 0;
 
   private boolean exitCommand = false;
 
@@ -85,26 +86,28 @@ public class ClimberDanceCommand extends Command {
     switch(RobotContainer.climberState) {
       case PREPARE_CLIMB:
         //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_MID_ANGLE, 0);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
+        climberSubsystem.setClimberMotorPosition(CLIMBER_MID_ROTATIONS, 0);
         // TODO DRIVE
         // Wheels to coast, Point wheels toward the stage, Drive back 
-        RobotContainer.climberState = ClimberStates.ARMS_HIGH;
-        exitCommand = true;
-      break;
-      case ARMS_HIGH:
-        //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 0);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
         RobotContainer.climberState = ClimberStates.CLIMB;
-
         exitCommand = true;
       break;
       case CLIMB:
         //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 1);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_LOW_ROTATIONS, 1);
+        //climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 1);
         //RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
+
+        climberSubsystem.setClimberVoltage(CLIMBER_IN_VOLTAGE);
 
         exitCommand = true;
       break;
+      // case ARMS_HIGH:
+      //   //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 0);
+      //   climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 0);
+      //   RobotContainer.climberState = ClimberStates.CLIMB;
+
+      //   exitCommand = true;
+      // break;
       // case PREPARE_TRAP:
       //   transitionArmSubsystem.setArmMotorPosition(TRANSITION_ARM_TRAP_ANGLE, 1);
       //   RobotContainer.climberState = ClimberStates.SCORE_TRAP;
