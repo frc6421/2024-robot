@@ -156,7 +156,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
         } else {
 
-          return (-0.007 * Math.pow(pitchAngle, 2) + 0.8518 * pitchAngle + 38.273);
+          return (-0.0145 * Math.pow(pitchAngle, 2) + 0.8718 * pitchAngle + 42.134);
 
         }
 
