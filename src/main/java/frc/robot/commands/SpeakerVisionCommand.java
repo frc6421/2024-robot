@@ -35,15 +35,17 @@ public class SpeakerVisionCommand extends Command {
   // TODO tune PID
   private PIDController rotationController;
 
-  private double rotationP = 0.1;
+  private double rotationP = 0.08;
+  private double rotationD = 0.0016;
 
   // In camera degrees
-  // TODO tune
-  private double allowableRotationError = 0.25;
+  private double allowableRotationError = 0.8;
+
+  private double allowableVelocityError = 10;
 
   private double rotationSpeed = 0.0;
 
-  private MedianFilter filter = new MedianFilter(10);
+  private MedianFilter filter = new MedianFilter(5);
 
   private final SwerveRequest.FieldCentric visionDriveRequest;
 
@@ -51,6 +53,8 @@ public class SpeakerVisionCommand extends Command {
 
   private final AprilTagFieldLayout crescendoField = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   private int targetTagID = 0;
+
+  private boolean exitCommand = false;
 
   /** Creates a new SpeakerVisionCommand. */
   public SpeakerVisionCommand(DriveSubsystem drive) {
@@ -60,9 +64,9 @@ public class SpeakerVisionCommand extends Command {
         .withDriveRequestType(DriveRequestType.Velocity)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-    rotationController = new PIDController(rotationP, 0.0, 0.0);
+    rotationController = new PIDController(rotationP, 0.0, rotationD);
 
-    rotationController.setTolerance(allowableRotationError);
+    rotationController.setTolerance(allowableRotationError, allowableVelocityError);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
@@ -71,6 +75,7 @@ public class SpeakerVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    exitCommand = false;
 
     filter.reset();
 
@@ -84,7 +89,7 @@ public class SpeakerVisionCommand extends Command {
 
     } else {
 
-      cancel();
+      exitCommand = true;
       System.out.println("SpeakerVisionCommand canceled - No alliance color present");
 
     }
@@ -127,7 +132,7 @@ public class SpeakerVisionCommand extends Command {
     // Camera methods return 180.0 if the target tag ID is not detected
     if (currentRotation == 180.0) {
 
-      cancel();
+      exitCommand = true;
       System.out.println("SpeakerVisionCommand canceled - No AprilTag detected (speaker camera)");
 
     } else {
@@ -168,6 +173,6 @@ public class SpeakerVisionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return rotationController.atSetpoint();
+    return rotationController.atSetpoint() || exitCommand;
   }
 }
