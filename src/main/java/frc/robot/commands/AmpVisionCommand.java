@@ -202,6 +202,7 @@ public class AmpVisionCommand extends Command {
       }
 
       adjustRotation = targetRotation.minus(new Rotation2d(currentX));
+      
     }
 
 
