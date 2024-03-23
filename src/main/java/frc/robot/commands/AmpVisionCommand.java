@@ -60,9 +60,7 @@ public class AmpVisionCommand extends Command {
 
   // Both in gyro radians
   private Rotation2d targetRotation;
-  private Rotation2d averageRotation;
-
-  private double averageRotationRadians;
+  private Rotation2d adjustRotation;
 
   private MedianFilter xAmpFilter = new MedianFilter(5);
   private MedianFilter yAmpFilter = new MedianFilter(5);
@@ -203,10 +201,9 @@ public class AmpVisionCommand extends Command {
 
       }
 
+      adjustRotation = targetRotation.minus(new Rotation2d(currentX));
     }
 
-    averageRotationRadians = (driveSubsystem.getPose2d().getRotation().getRadians() + targetRotation.getRadians()) / 2;
-    averageRotation = new Rotation2d(averageRotationRadians);
 
     SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
     SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
@@ -220,22 +217,10 @@ public class AmpVisionCommand extends Command {
     SmartDashboard.putNumber("X Speed", xSpeed);
     SmartDashboard.putNumber("Y Speed", ySpeed);
 
-    if(Math.abs(xController.getPositionError()) < 25) {
-
-      driveSubsystem.setControl(
-        visionDriveRequest.withVelocityX(-xSpeed)
-            .withVelocityY(ySpeed)
-            .withTargetDirection(targetRotation));
-      
-    } else {
-
-      driveSubsystem.setControl(
-        visionDriveRequest.withVelocityX(-xSpeed)
-            .withVelocityY(ySpeed)
-            .withTargetDirection(averageRotation));
-
-    }
-    
+    driveSubsystem.setControl(
+      visionDriveRequest.withVelocityX(-xSpeed)
+          .withVelocityY(ySpeed)
+          .withTargetDirection(adjustRotation));
 
   }
 
