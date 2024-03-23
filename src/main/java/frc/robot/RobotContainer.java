@@ -20,7 +20,9 @@ import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -28,6 +30,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -342,6 +345,7 @@ public class RobotContainer {
    * Turns LEDs blue when an AprilTag is detected while in amp, speaker, or trap state
    */
   public void setVisionLEDs() {
+
     if(robotState.equals(RobotStates.AMP) && (Cameras.isTarget(Cameras.ampCamera) || Cameras.isTarget(Cameras.speakerCamera))) {
 
       LEDSubsystem.setColor(LEDColors.BLUE);
@@ -350,13 +354,10 @@ public class RobotContainer {
 
       LEDSubsystem.setColor(LEDColors.BLUE);
 
-    } else if(robotState.equals(RobotStates.TRAP) && Cameras.isTarget(Cameras.ampCamera)) {
-
-      LEDSubsystem.setColor(LEDColors.BLUE);
-
     } else {
 
       LEDSubsystem.setColor(LEDColors.OFF);
+
     }
   }
 }

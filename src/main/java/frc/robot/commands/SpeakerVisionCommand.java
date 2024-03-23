@@ -121,8 +121,6 @@ public class SpeakerVisionCommand extends Command {
   @Override
   public void execute() {
 
-    LEDSubsystem.setColor(LEDColors.RED);
-
     double currentRotation = filter.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
 
     // Ends command if no AprilTag is detected in the camera frame

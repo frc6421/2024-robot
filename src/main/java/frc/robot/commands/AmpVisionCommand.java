@@ -32,23 +32,23 @@ public class AmpVisionCommand extends Command {
   private DriveSubsystem driveSubsystem;
 
   // In meters
-  private double maxSpeed = 2;
+  private double maxSpeed = 2.5;
 
   // In camera degrees
   private PIDController xController;
-  //private PIDController yController;
+  private PIDController yController;
 
   private double xP = 0.08;
   private double xD = 0.0016;
 
-  //private double yP = 0.08;
-  //private double yD = 0.0016;
+  private double yP = 0.08;
+  private double yD = 0.0016;
 
   private double rotationP = 5.0;
 
   // In camera degrees
   private double allowableXError = 0.8;
-  //private double allowableYError = 0.8;
+  private double allowableYError = 0.8;
 
   private double allowableVelocityError = 10.0;
 
@@ -56,12 +56,18 @@ public class AmpVisionCommand extends Command {
   private double allowableRotationError = 0.035;
 
   private double xSpeed = 0.0;
-  //private double ySpeed = 0.0;
+  private double ySpeed = 0.0;
 
+  // Both in gyro radians
   private Rotation2d targetRotation;
+  private Rotation2d averageRotation;
 
-  private MedianFilter xFilter = new MedianFilter(10);
-  //private MedianFilter yFilter = new MedianFilter(10);
+  private double averageRotationRadians;
+
+  private MedianFilter xAmpFilter = new MedianFilter(5);
+  private MedianFilter yAmpFilter = new MedianFilter(5);
+  private MedianFilter xSpeakerFilter = new MedianFilter(5);
+  private MedianFilter ySpeakerFilter = new MedianFilter(5);
 
   private final SwerveRequest.FieldCentricFacingAngle visionDriveRequest;
 
@@ -69,6 +75,8 @@ public class AmpVisionCommand extends Command {
 
   private final AprilTagFieldLayout crescendoField = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   private int targetTagID = 0;
+
+  private boolean exitCommand = false;
 
   /** Creates a new AmpTrapVisionCommand. */
   public AmpVisionCommand(DriveSubsystem drive) {
@@ -83,10 +91,10 @@ public class AmpVisionCommand extends Command {
     visionDriveRequest.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
     xController = new PIDController(xP, 0.0, xD);
-    //yController = new PIDController(yP, 0.0, yD);
+    yController = new PIDController(yP, 0.0, yD);
 
     xController.setTolerance(allowableXError, allowableVelocityError);
-    //yController.setTolerance(allowableYError, allowableVelocityError);
+    yController.setTolerance(allowableYError, allowableVelocityError);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
@@ -95,14 +103,17 @@ public class AmpVisionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    exitCommand = false;
 
     System.out.println("AmpVisionCommand Initialize");
 
-    xFilter.reset();
-    //yFilter.reset();
+    xAmpFilter.reset();
+    yAmpFilter.reset();
+    xSpeakerFilter.reset();
+    ySpeakerFilter.reset();
 
     xController.reset();
-    //yController.reset();
+    yController.reset();
 
     allianceColor = DriverStation.getAlliance();
 
@@ -112,7 +123,7 @@ public class AmpVisionCommand extends Command {
 
     } else {
 
-      this.cancel();
+      exitCommand = true;
       System.out.println("AmpVisionCommand canceled - No alliance color present");
 
     }
@@ -125,7 +136,7 @@ public class AmpVisionCommand extends Command {
 
     } else {
 
-      this.cancel();
+      exitCommand = true;
       System.out.println("AmpVisionCommand canceled - No AprilTag pose present");
 
     }
@@ -136,40 +147,38 @@ public class AmpVisionCommand extends Command {
   @Override
   public void execute() {
 
-    LEDSubsystem.setColor(LEDColors.RED);
-
     double currentX;
-    //double currentY;
+    double currentY;
 
     if(Cameras.isTarget(Cameras.speakerCamera) && !Cameras.isTarget(Cameras.ampCamera)) {
 
-      currentX = xFilter.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
-      //currentY = yFilter.calculate(Cameras.getPitch(Cameras.speakerCamera, targetTagID));
+      currentX = xSpeakerFilter.calculate(Cameras.getYaw(Cameras.speakerCamera, targetTagID));
+      currentY = ySpeakerFilter.calculate(Cameras.getPitch(Cameras.speakerCamera, targetTagID));
 
       // Set setpoint to center the robot on the amp in the x direction
       xController.setSetpoint(VisionConstants.AMP_FAR_YAW_ANGLE);
 
       // Set setpoint to drive the robot up against the amp
-      //yController.setSetpoint(VisionConstants.AMP_FAR_PITCH_ANGLE);
+      yController.setSetpoint(VisionConstants.AMP_FAR_PITCH_ANGLE);
 
     } else {
 
-      currentX = xFilter.calculate(Cameras.getYaw(Cameras.ampCamera, targetTagID));
-      //currentY = yFilter.calculate(Cameras.getPitch(Cameras.ampCamera, targetTagID));
+      currentX = xAmpFilter.calculate(Cameras.getYaw(Cameras.ampCamera, targetTagID));
+      currentY = yAmpFilter.calculate(Cameras.getPitch(Cameras.ampCamera, targetTagID));
 
       // Set setpoint to center the robot on the amp in the x direction
       xController.setSetpoint(VisionConstants.AMP_CLOSE_YAW_ANGLE);
 
       // Set setpoint to drive the robot up against the amp
-      //yController.setSetpoint(VisionConstants.AMP_CLOSE_PITCH_ANGLE);
+      yController.setSetpoint(VisionConstants.AMP_CLOSE_PITCH_ANGLE);
 
     }
 
     // Ends command if no AprilTag is detected in the camera frame
     // Camera methods return 180.0 if the target tag ID is not detected
-    if (currentX == 180.0) {
+    if (currentX == 180.0 || currentY == 180.0) {
 
-      this.cancel();
+      exitCommand = true;
       System.out.println("AmpVisionCommand canceled - No AprilTag detected");
 
     } else {
@@ -184,35 +193,49 @@ public class AmpVisionCommand extends Command {
 
       }
 
-      // if (yController.atSetpoint()) {
+      if (yController.atSetpoint()) {
 
-      //   ySpeed = 0.0;
+        ySpeed = 0.0;
 
-      // } else {
+      } else {
 
-      //   ySpeed = MathUtil.clamp(yController.calculate(currentY), -maxSpeed, maxSpeed);
+        ySpeed = MathUtil.clamp(yController.calculate(currentY), -maxSpeed, maxSpeed);
 
-      // }
+      }
 
     }
 
-    //System.out.println("Position Error: " + xController.getPositionError() + " Velocity Error: " + xController.getVelocityError());
+    averageRotationRadians = (driveSubsystem.getPose2d().getRotation().getRadians() + targetRotation.getRadians()) / 2;
+    averageRotation = new Rotation2d(averageRotationRadians);
 
     SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
-    //SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
+    SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
     SmartDashboard.putNumber("Target Rotation (Radians)", visionDriveRequest.HeadingController.getSetpoint());
 
     SmartDashboard.putNumber("Current X (Yaw)", currentX);
-    //SmartDashboard.putNumber("Current Y (Pitch)", currentY);
-    SmartDashboard.putNumber("Current Rotation (Radians)", Units.degreesToRadians(driveSubsystem.getPigeon2().getAngle()));
+    SmartDashboard.putNumber("Current Y (Pitch)", currentY);
+    SmartDashboard.putNumber("Current Rotation (Radians)", driveSubsystem.getPigeon2().getRotation2d().getRadians());
+    SmartDashboard.putNumber("Current Pose Rotation", driveSubsystem.getPose2d().getRotation().getRadians());
 
     SmartDashboard.putNumber("X Speed", xSpeed);
-    //SmartDashboard.putNumber("Y Speed", ySpeed);
+    SmartDashboard.putNumber("Y Speed", ySpeed);
 
-    driveSubsystem.setControl(
+    if(Math.abs(xController.getPositionError()) < 25) {
+
+      driveSubsystem.setControl(
         visionDriveRequest.withVelocityX(-xSpeed)
-            .withVelocityY(0)
+            .withVelocityY(ySpeed)
             .withTargetDirection(targetRotation));
+      
+    } else {
+
+      driveSubsystem.setControl(
+        visionDriveRequest.withVelocityX(-xSpeed)
+            .withVelocityY(ySpeed)
+            .withTargetDirection(averageRotation));
+
+    }
+    
 
   }
 
@@ -233,13 +256,14 @@ public class AmpVisionCommand extends Command {
     driveSubsystem.setControl(
         visionDriveRequest.withVelocityX(0)
             .withVelocityY(0)
-            .withTargetDirection(driveSubsystem.getPigeon2().getRotation2d()));
+            .withTargetDirection(driveSubsystem.getPose2d().getRotation()));
 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (xController.atSetpoint() && visionDriveRequest.HeadingController.atSetpoint());
+    return (xController.atSetpoint() && yController.atSetpoint() && visionDriveRequest.HeadingController.atSetpoint())
+      || exitCommand;
   }
 }

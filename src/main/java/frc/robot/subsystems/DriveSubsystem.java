@@ -284,15 +284,6 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     return getState().Pose;
   }
 
-  /**
-   * Gets the estimated pose
-   * 
-   * @return estimated pose from pose estimator (Pose2d)
-   */
-  public Pose2d getCurrentPose2d() {
-    return m_odometry.getEstimatedPosition();
-  }
-
   @Override
   public void periodic() {
     
