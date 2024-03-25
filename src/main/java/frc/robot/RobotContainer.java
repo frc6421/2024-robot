@@ -182,12 +182,10 @@ public class RobotContainer {
     autoChooser.addOption("Red Center Line Stage 3 Piece", redCenterLineThreePiece);
     autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
     autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
-    autoChooser.addOption("Blue Center Line Side 3 Piece", flipBlueCenterLineFourPiece);
-    autoChooser.addOption("Red Center Line Side 3 Piece", flipRedCenterLineFourPiece);
+    autoChooser.addOption("Blue Side 3.5 Piece Skip Wing", flipBlueCenterLineFourPiece);
+    autoChooser.addOption("Red Side 3.5 Piece Skip Wing", flipRedCenterLineFourPiece);
     autoChooser.addOption("Blue 5 Piece", blueFivePiece);
     autoChooser.addOption("Red 5 Piece", redFivePiece);
-    autoChooser.addOption("Blue 6 Piece", blueSixPiece);
-    autoChooser.addOption("Red 6 Piece", redSixPiece);
 
     // Configure the trigger bindings
     configureBindings();
