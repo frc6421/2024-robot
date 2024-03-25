@@ -27,9 +27,9 @@ public class ClimberDanceCommand extends Command {
   private final static double TRANSITION_ARM_TRAP_ANGLE = TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT;
 
   // TODO what are these numbers
-  private final static double CLIMBER_MID_ROTATIONS = 0;
+  private final static double CLIMBER_MID_ROTATIONS = -3620;
   //private final static double CLIMBER_HIGH_ROTATIONS = 0;
-  private final static double CLIMBER_IN_VOLTAGE = 0;
+  private final static double CLIMBER_IN_VOLTAGE = -8;
 
   private boolean exitCommand = false;
 

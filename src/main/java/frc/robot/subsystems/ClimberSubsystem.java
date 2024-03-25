@@ -41,10 +41,10 @@ public class ClimberSubsystem extends SubsystemBase {
     // Climber just under hooks: 2150
     // Climber new soft limit: 4396
     // Soft Limits
-    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = 0; 
+    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = -6500; 
 
     // The soft limit = full extension + amount to bring in for climb
-    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 4396;
+    public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 0;
 
     // Current Limits
     public static final int CLIMBER_STATOR_CURRENT_LIMIT = 100;
