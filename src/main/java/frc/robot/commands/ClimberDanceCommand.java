@@ -29,7 +29,7 @@ public class ClimberDanceCommand extends Command {
   // TODO what are these numbers
   private final static double CLIMBER_MID_ROTATIONS = -3620;
   //private final static double CLIMBER_HIGH_ROTATIONS = 0;
-  private final static double CLIMBER_IN_VOLTAGE = -8;
+  private final static double CLIMBER_IN_VOLTAGE = -12;
 
   private boolean exitCommand = false;
 
