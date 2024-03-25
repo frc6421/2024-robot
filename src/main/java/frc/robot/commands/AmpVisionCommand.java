@@ -201,7 +201,7 @@ public class AmpVisionCommand extends Command {
 
       }
 
-      adjustRotation = targetRotation.minus(new Rotation2d(currentX));
+      adjustRotation = targetRotation.minus(new Rotation2d(Units.degreesToRadians(((currentX + VisionConstants.AMP_CLOSE_YAW_ANGLE) / 2))));
       
     }
 
