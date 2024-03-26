@@ -41,7 +41,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
     public static final float ARM_FORWARD_SOFT_LIMIT = 116;
     public static final float ARM_REVERSE_SOFT_LIMIT = -7;
-    public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/17.0);
+    public static final double ARM_GEAR_RATIO = 3 * 3 * 5 * (48.0/16.0);
 
     public static final double ARM_GEAR_RATIO_CONVERSION = 360.0 / TransitionArmConstants.ARM_GEAR_RATIO; // degrees
 
