@@ -22,7 +22,8 @@ public class LEDSubsystem extends SubsystemBase {
       PURPLE,
       YELLOW,
       GREEN,
-      RED
+      RED,
+      ORANGE
     }
 
   }
@@ -86,6 +87,12 @@ public class LEDSubsystem extends SubsystemBase {
         case RED:
           for (int i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setRGB(i,255,0,0);
+          }
+          break;
+
+        case ORANGE:
+          for (int i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,255,0,30);
           }
           break;
 

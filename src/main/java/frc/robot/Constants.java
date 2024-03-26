@@ -40,6 +40,8 @@ public final class Constants {
     public static final double AUTO_MAX_ANGULAR_VELOCITY_RAD_PER_SEC = 2 * Math.PI;
     public static final double AUTO_MAX_ANGULAR_ACCELERATION_RAD_PER_SEC = 2 * Math.PI;
 
+    public static final double AUTO_INTAKE_DELAY = 0.4;
+
 
   }
 
