@@ -197,13 +197,13 @@ public class TrapVisionCommand extends Command {
 
     }
 
-    SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
-    SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
-    SmartDashboard.putNumber("Target Rotation (Radians)", rotationController.getSetpoint());
+    // SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
+    // SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
+    // SmartDashboard.putNumber("Target Rotation (Radians)", rotationController.getSetpoint());
 
-    SmartDashboard.putNumber("Current X (Yaw)", currentX);
-    SmartDashboard.putNumber("Current Y (Pitch)", currentY);
-    SmartDashboard.putNumber("Current Rotation (Radians)", currentRotation);
+    // SmartDashboard.putNumber("Current X (Yaw)", currentX);
+    // SmartDashboard.putNumber("Current Y (Pitch)", currentY);
+    // SmartDashboard.putNumber("Current Rotation (Radians)", currentRotation);
 
     driveSubsystem.setControl(
         visionDriveRequest.withVelocityX(xSpeed)

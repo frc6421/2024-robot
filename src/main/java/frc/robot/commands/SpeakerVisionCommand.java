@@ -141,9 +141,9 @@ public class SpeakerVisionCommand extends Command {
 
     }
 
-    SmartDashboard.putNumber("Target Rotation (Yaw)", rotationController.getSetpoint());
+    // SmartDashboard.putNumber("Target Rotation (Yaw)", rotationController.getSetpoint());
 
-    SmartDashboard.putNumber("Current Rotation (Yaw)", currentRotation);
+    // SmartDashboard.putNumber("Current Rotation (Yaw)", currentRotation);
 
     driveSubsystem.setControl(
         visionDriveRequest.withVelocityX(0)

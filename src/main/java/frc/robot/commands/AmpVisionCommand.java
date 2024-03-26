@@ -204,17 +204,17 @@ public class AmpVisionCommand extends Command {
     }
 
 
-    SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
-    SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
-    SmartDashboard.putNumber("Target Rotation (Radians)", visionDriveRequest.HeadingController.getSetpoint());
+    // SmartDashboard.putNumber("Target X (Yaw)", xController.getSetpoint());
+    // SmartDashboard.putNumber("Target Y (Pitch)", yController.getSetpoint());
+    // SmartDashboard.putNumber("Target Rotation (Radians)", visionDriveRequest.HeadingController.getSetpoint());
 
-    SmartDashboard.putNumber("Current X (Yaw)", currentX);
-    SmartDashboard.putNumber("Current Y (Pitch)", currentY);
-    SmartDashboard.putNumber("Current Rotation (Radians)", driveSubsystem.getPigeon2().getRotation2d().getRadians());
-    SmartDashboard.putNumber("Current Pose Rotation", driveSubsystem.getPose2d().getRotation().getRadians());
+    // SmartDashboard.putNumber("Current X (Yaw)", currentX);
+    // SmartDashboard.putNumber("Current Y (Pitch)", currentY);
+    // SmartDashboard.putNumber("Current Rotation (Radians)", driveSubsystem.getPigeon2().getRotation2d().getRadians());
+    // SmartDashboard.putNumber("Current Pose Rotation", driveSubsystem.getPose2d().getRotation().getRadians());
 
-    SmartDashboard.putNumber("X Speed", xSpeed);
-    SmartDashboard.putNumber("Y Speed", ySpeed);
+    // SmartDashboard.putNumber("X Speed", xSpeed);
+    // SmartDashboard.putNumber("Y Speed", ySpeed);
 
     driveSubsystem.setControl(
       visionDriveRequest.withVelocityX(-xSpeed)

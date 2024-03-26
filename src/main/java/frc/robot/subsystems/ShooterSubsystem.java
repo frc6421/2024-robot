@@ -205,8 +205,8 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
-    SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
+    // SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
+    // SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
 
     /*
      * Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
@@ -237,7 +237,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      */
 
-    SmartDashboard.putNumber("Target RPM", getTargetRPM());
+    //SmartDashboard.putNumber("Target RPM", getTargetRPM());
 
   }
 

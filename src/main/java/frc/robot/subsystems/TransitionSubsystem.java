@@ -115,8 +115,8 @@ public class TransitionSubsystem extends SubsystemBase {
     inFilteredValue = inFilter.calculate(timeOfFlightIn.getRange()); 
     outFilteredValue = outFilter.calculate(timeOfFlightOut.getRange()); 
 
-    SmartDashboard.putNumber("TOF In range", inFilteredValue);
-    SmartDashboard.putNumber("TOF Out range", outFilteredValue);
+    // SmartDashboard.putNumber("TOF In range", inFilteredValue);
+    // SmartDashboard.putNumber("TOF Out range", outFilteredValue);
   }
 }
 

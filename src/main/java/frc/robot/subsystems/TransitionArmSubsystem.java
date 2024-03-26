@@ -133,7 +133,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
       armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-      SmartDashboard.putNumber("Arm Position", getArmMotorPositionDeg());
+      //SmartDashboard.putNumber("Arm Position", getArmMotorPositionDeg());
   }
 
   @Override
