@@ -26,7 +26,6 @@ public class IntakeTransitionCommand extends Command {
 
   /** Creates a new CenterNoteInTransition. */
   public IntakeTransitionCommand(TransitionSubsystem transitionSubsystem, IntakeSubsystem intakeSubsystem) {
-    System.out.println("IntakeTransition Constructor");
 
     this.transitionSubsystem = transitionSubsystem;
     this.intakeSubsystem = intakeSubsystem;
@@ -40,7 +39,6 @@ public class IntakeTransitionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("IntakeTransition Init");
     LEDSubsystem.setColor(LEDColors.YELLOW);
     // timer.reset();
     // timer.start();
@@ -48,9 +46,6 @@ public class IntakeTransitionCommand extends Command {
     RobotContainer.robotState = RobotStates.INTAKE;
 
     hasTOFOut = false;
-
-    System.out.println("Init ToF In: " + transitionSubsystem.getTOFInRange());
-    System.out.println("init ToF Out: " + transitionSubsystem.getTOFOutRange());
 
     if(transitionSubsystem.getTOFInRange() >= TransitionConstants.INIT_DETECTION_DISTANCE_MM || 
        transitionSubsystem.getTOFOutRange() >= TransitionConstants.INIT_DETECTION_DISTANCE_MM)
@@ -60,7 +55,6 @@ public class IntakeTransitionCommand extends Command {
     }
     else
     {
-      System.out.println("*** ToF stopping in init!!!! ***");
 
       transitionSubsystem.setTransitionVoltage(0);
       intakeSubsystem.setIntakeVoltage(0);
@@ -96,14 +90,11 @@ public class IntakeTransitionCommand extends Command {
 
     RobotContainer.robotState = RobotStates.DRIVE;
 
-    System.out.println("IntakeTransition End");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("Finish ToF In: " + transitionSubsystem.getTOFInRange());
-    System.out.println("Finish ToF Out: " + transitionSubsystem.getTOFOutRange());
 
     return (transitionSubsystem.getTOFOutRange() >= TransitionConstants.DETECTION_DISTANCE_MM && hasTOFOut); 
     //|| (timer.get() >= 0.5);

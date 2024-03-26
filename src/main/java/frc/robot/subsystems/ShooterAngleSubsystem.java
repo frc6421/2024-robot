@@ -119,7 +119,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     angleMotorPID.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition, 0, 0,
         SparkPIDController.ArbFFUnits.kVoltage);
 
-    System.out.println("Target Shooter Angle: " + angle + " @ " + Timer.getMatchTime());
+    System.out.println("Target Shooter Angle: " + angle.getAsDouble() + " @ " + Timer.getMatchTime());
   }
 
   /**

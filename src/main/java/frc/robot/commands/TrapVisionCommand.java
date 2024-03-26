@@ -219,8 +219,6 @@ public class TrapVisionCommand extends Command {
     if (exitCommand) {
 
       System.out.println("*****TrapVisionCommand Interrupted*****");
-      System.out.println("Alliance Present: " + allianceColor.isPresent());
-      System.out.println("AprilTag Pose Present: " + crescendoField.getTagPose(targetTagID).isPresent());
 
     }
 

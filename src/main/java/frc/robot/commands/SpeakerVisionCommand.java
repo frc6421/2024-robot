@@ -156,10 +156,9 @@ public class SpeakerVisionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    if (interrupted) {
+    if (exitCommand) {
 
       System.out.println("*****SpeakerVisionCommand Interrupted*****");
-      System.out.println("Alliance Present: " + allianceColor.isPresent());
 
     }
 

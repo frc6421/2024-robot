@@ -103,8 +103,6 @@ public class AmpVisionCommand extends Command {
   public void initialize() {
     exitCommand = false;
 
-    System.out.println("AmpVisionCommand Initialize");
-
     xAmpFilter.reset();
     yAmpFilter.reset();
     xSpeakerFilter.reset();
@@ -231,11 +229,9 @@ public class AmpVisionCommand extends Command {
 
     System.out.println("AmpVisionCommand End");
 
-    if (interrupted) {
+    if (exitCommand) {
 
       System.out.println("*****AmpVisionCommand Interrupted*****");
-      System.out.println("Alliance Present: " + allianceColor.isPresent());
-      System.out.println("AprilTag Pose Present: " + crescendoField.getTagPose(targetTagID).isPresent());
 
     }
 
