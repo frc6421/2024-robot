@@ -4,12 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.BlueCenterLineFourPieceCommand;
-import frc.robot.commands.BlueCenterLineThreePieceCommand;
-import frc.robot.commands.BlueFivePieceCommand;
-import frc.robot.commands.BlueFourPieceCommand;
-import frc.robot.commands.BlueSixPieceCommand;
-import frc.robot.commands.BlueTwoPieceCommand;
 import frc.robot.commands.ClimberDanceCommand;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -45,20 +39,26 @@ import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.commands.AmpVisionCommand;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.FlipBlueCenterLineFourPieceCommand;
-import frc.robot.commands.FlipRedCenterLineFourPieceCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
-import frc.robot.commands.RedCenterLineFourPieceCommand;
-import frc.robot.commands.RedCenterLineThreePieceCommand;
-import frc.robot.commands.RedFivePieceCommand;
-import frc.robot.commands.RedFourPieceCommand;
-import frc.robot.commands.RedSixPieceCommand;
-import frc.robot.commands.RedTwoPieceCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.Constants.ClimberStates;
 import frc.robot.commands.SpeakerVisionCommand;
 import frc.robot.commands.TrapVisionCommand;
+import frc.robot.commands.autoCommands.BlueCenterLineFourPieceCommand;
+import frc.robot.commands.autoCommands.BlueCenterLineThreePieceCommand;
+import frc.robot.commands.autoCommands.BlueFivePieceCommand;
+import frc.robot.commands.autoCommands.BlueFourPieceCommand;
+import frc.robot.commands.autoCommands.BlueSixPieceCommand;
+import frc.robot.commands.autoCommands.BlueTwoPieceCommand;
+import frc.robot.commands.autoCommands.FlipBlueCenterLineFourPieceCommand;
+import frc.robot.commands.autoCommands.FlipRedCenterLineFourPieceCommand;
+import frc.robot.commands.autoCommands.RedCenterLineFourPieceCommand;
+import frc.robot.commands.autoCommands.RedCenterLineThreePieceCommand;
+import frc.robot.commands.autoCommands.RedFivePieceCommand;
+import frc.robot.commands.autoCommands.RedFourPieceCommand;
+import frc.robot.commands.autoCommands.RedSixPieceCommand;
+import frc.robot.commands.autoCommands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.subsystems.DriveSubsystem;
 
