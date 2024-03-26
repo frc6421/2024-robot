@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +41,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Climber new soft limit: 7000
     // Soft Limits
-    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = -7000; 
+    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = -6450; 
 
     // The soft limit = full extension + amount to bring in for climb
     public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 0;
@@ -48,6 +49,9 @@ public class ClimberSubsystem extends SubsystemBase {
     // Current Limits
     public static final int CLIMBER_STATOR_CURRENT_LIMIT = 100;
   }
+
+  private final MedianFilter leftFilter;
+  private final MedianFilter rightFilter;
 
   //Create new Motors/Controllers
   private CANSparkFlex leftClimberMotor;
@@ -127,9 +131,13 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberEncoder.setPositionConversionFactor(ClimberConstants.CLIMBER_GEAR_RATIO);
     rightClimberEncoder.setPositionConversionFactor(ClimberConstants.CLIMBER_GEAR_RATIO);
 
+    //Median filters
+    leftFilter = new MedianFilter(5);
+    rightFilter = new MedianFilter(5);
+
     // Current limits
-    leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
-    rightClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
+    // leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
+    // rightClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
 
     // Zeros the motors
     leftClimberEncoder.setPosition(0);
@@ -169,7 +177,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @return  position as a double (the average position of both motors)
    */
   public double getClimberMotorPosition() {
-    return (leftClimberEncoder.getPosition() + rightClimberEncoder.getPosition()) / 2;
+    return (getClimberLeftMotorPosition() + getClimberRightMotorPosition()) / 2;
   }
 
   /** 
@@ -177,7 +185,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @return  position as a double
    */
   public double getClimberLeftMotorPosition() {
-    return leftClimberEncoder.getPosition();
+    return leftFilter.calculate(leftClimberEncoder.getPosition());
   }
 
   /** 
@@ -185,7 +193,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @return  position as a double
    */
   public double getClimberRightMotorPosition() {
-    return rightClimberEncoder.getPosition();
+    return rightFilter.calculate(rightClimberEncoder.getPosition());
   }
 
   public void setClimberVoltage(double volts)

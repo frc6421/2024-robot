@@ -12,6 +12,7 @@ import frc.robot.Constants.ClimberStates;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.subsystems.ClimberSubsystem.ClimberConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
@@ -98,8 +99,6 @@ public class ClimberDanceCommand extends Command {
         //RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
 
         climberSubsystem.setClimberVoltage(CLIMBER_IN_VOLTAGE);
-
-        exitCommand = true;
       break;
       // case ARMS_HIGH:
       //   //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 0);
@@ -129,11 +128,18 @@ public class ClimberDanceCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+    if(!exitCommand) {
+      climberSubsystem.setClimberVoltage(0);
+    }
+    
+
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return exitCommand;
+    return (climberSubsystem.getClimberMotorPosition() <= ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS) || exitCommand;
   }
 }
