@@ -121,7 +121,7 @@ public static class TrajectoryConstants {
 
   public static enum ClimberStates {
     PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
-    ARMS_HIGH, // Raise both arms to the climbing position
+    //ARMS_HIGH // Raise both arms to the climbing position
     CLIMB // Lower climber arms
     // PREPARE_TRAP, // Raise transition arm to trap degree
     // SCORE_TRAP // Spit out note

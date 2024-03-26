@@ -308,7 +308,7 @@ public class RobotContainer {
     //   .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0)))
     //   .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))));
 
-    // testingcontroller.a().onTrue(new InstantCommand(() -> armSubsystem.setArmMotorPosition(90)));
+    //testingcontroller.a().onTrue(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
 
     // testingcontroller.leftBumper().toggleOnTrue(intakeTransitionCommand);
 
@@ -319,7 +319,8 @@ public class RobotContainer {
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
 
-    // testingcontroller.x().toggleOnTrue(shooterTuningCommand);
+    testingcontroller.x().whileTrue(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
+    testingcontroller.x().onFalse(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
     // testingcontroller.b().onTrue((new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
     //     .andThen(new WaitCommand(0.6))
     //     .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));
