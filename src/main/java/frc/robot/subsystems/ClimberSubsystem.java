@@ -135,10 +135,6 @@ public class ClimberSubsystem extends SubsystemBase {
     leftFilter = new MedianFilter(5);
     rightFilter = new MedianFilter(5);
 
-    // Current limits
-    // leftClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
-    // rightClimberMotor.setSmartCurrentLimit(ClimberConstants.CLIMBER_STATOR_CURRENT_LIMIT);
-
     // Zeros the motors
     leftClimberEncoder.setPosition(0);
     rightClimberEncoder.setPosition(0);
