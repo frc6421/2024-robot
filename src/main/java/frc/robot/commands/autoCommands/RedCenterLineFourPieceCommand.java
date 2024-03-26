@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.autoCommands;
 
 import java.util.List;
 
@@ -17,9 +17,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -27,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TrajectoryConstants;
+import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -37,17 +37,18 @@ import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class BlueFivePieceCommand extends SequentialCommandGroup {
+public class RedCenterLineFourPieceCommand extends SequentialCommandGroup {
   private DriveSubsystem driveSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private TransitionSubsystem transitionSubsystem;
   private ShooterSubsystem shooterSubsystem;
   private ShooterAngleSubsystem shooterAngleSubsystem;
 
+
   private Field2d field;
 
   /** Creates a new BlueTwoPieceCommand. */
-  public BlueFivePieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
+  public RedCenterLineFourPieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle) {
 
     driveSubsystem = drive;
     intakeSubsystem = intake;
@@ -69,38 +70,29 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
 
     // robot leaves start zone and moves to pick up note at podium
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER, new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.NOTE2.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(0)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.RED_FOUR_PIECE_START, new Rotation2d(Units.degreesToRadians(120))),
+        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(180))), 
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170)))), forwardConfig);
 
-    Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE2.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+    // Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
+    //     new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(18.375), 0)), new Rotation2d(Units.degreesToRadians(180))),
+    //     new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170)))), forwardConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.NOTE1.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0))), forwardConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170))),
+        new Pose2d(TrajectoryConstants.NOTE8_RED.plus(new Translation2d(Units.inchesToMeters(-6), Units.inchesToMeters(4))), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE1.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE8_RED.plus(new Translation2d(Units.inchesToMeters(-6), Units.inchesToMeters(4))), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170)))), reverseConfig);
 
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0))), forwardConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170))),
+        new Pose2d(TrajectoryConstants.NOTE7_RED.minus(new Translation2d(Units.inchesToMeters(9), Units.inchesToMeters(-4))), new Rotation2d(Units.degreesToRadians(210)))), forwardConfig);
 
     Trajectory driveToScoreThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
-
-    Trajectory driveToCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.BLUE_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(-30))),
-        new Pose2d(TrajectoryConstants.NOTE6_BLUE, new Rotation2d(Units.degreesToRadians(0)))), forwardConfig);
-
-    Trajectory driveToScoreCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE6_BLUE, new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.BLUE_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.BLUE_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(-3)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE7_RED.minus(new Translation2d(Units.inchesToMeters(9), Units.inchesToMeters(-4))), new Rotation2d(Units.degreesToRadians(210))),
+        new Pose2d(TrajectoryConstants.RED_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(170)))), reverseConfig);
 
 
      //Simulation
@@ -112,18 +104,13 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
     //     field.setRobotPose(driveToFirstNoteTrajectory.getInitialPose());
       
     //     field.getObject("Drive to first Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-    //     field.getObject("Drive to score first Trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
+    //     field.getObject("Drive to score first trajectory").setTrajectory(driveToScoreFirstNoteTrajectory);
     //     field.getObject("Drive to second Trajectory").setTrajectory(driveToSecondNoteTrajectory);
     //     field.getObject("Drive to score second Trajectory").setTrajectory(driveToScoreSecondNoteTrajectory);
     //     field.getObject("Drive to third Trajectory").setTrajectory(driveToThirdNoteTrajectory);
     //     field.getObject("Drive to score third Trajectory").setTrajectory(driveToScoreThirdNoteTrajectory);
-    //     field.getObject("Drive to 4 Trajectory").setTrajectory(driveToCenterNoteTrajectory);
-    //     field.getObject("Drive to score 4 Trajectory").setTrajectory(driveToScoreCenterNoteTrajectory);
 
     //   }
-
-    // System.out.println("TIME: " + (driveToFirstNoteTrajectory.getTotalTimeSeconds() + driveToScoreFirstNoteTrajectory.getTotalTimeSeconds() + driveToSecondNoteTrajectory.getTotalTimeSeconds() + driveToScoreSecondNoteTrajectory.getTotalTimeSeconds() + driveToThirdNoteTrajectory.getTotalTimeSeconds() + driveToScoreThirdNoteTrajectory.getTotalTimeSeconds()));
-
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,
@@ -137,6 +124,9 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         new PIDController(AutoConstants.Y_DRIVE_P, AutoConstants.Y_DRIVE_I, AutoConstants.Y_DRIVE_D),
         thetaController);
 
+       //System.out.println("TIME: " + (driveToFirstNoteTrajectory.getTotalTimeSeconds() + driveToSecondNoteTrajectory.getTotalTimeSeconds() + driveToScoreSecondNoteTrajectory.getTotalTimeSeconds() + driveToThirdNoteTrajectory.getTotalTimeSeconds() + driveToScoreThirdNoteTrajectory.getTotalTimeSeconds()));
+
+
     SwerveControllerCommand driveToFirstNoteCommand = new SwerveControllerCommand(
         driveToFirstNoteTrajectory,
         driveSubsystem::getPose2d,
@@ -145,13 +135,13 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         driveSubsystem::autoSetModuleStates,
         driveSubsystem);
 
-    SwerveControllerCommand driveToScoreFirstNoteCommand = new SwerveControllerCommand(
-        driveToScoreFirstNoteTrajectory,
-        driveSubsystem::getPose2d,
-        driveSubsystem.kinematics,
-        holonomicDriveController,
-        driveSubsystem::autoSetModuleStates,
-        driveSubsystem);
+    // SwerveControllerCommand driveToScoreFirstNoteCommand = new SwerveControllerCommand(
+    //     driveToScoreFirstNoteTrajectory,
+    //     driveSubsystem::getPose2d,
+    //     driveSubsystem.kinematics,
+    //     holonomicDriveController,
+    //     driveSubsystem::autoSetModuleStates,
+    //     driveSubsystem);
 
     SwerveControllerCommand driveToSecondNoteCommand = new SwerveControllerCommand(
         driveToSecondNoteTrajectory,
@@ -185,21 +175,7 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         driveSubsystem::autoSetModuleStates,
         driveSubsystem);
 
-    SwerveControllerCommand driveToCenterNoteCommand = new SwerveControllerCommand(
-        driveToCenterNoteTrajectory,
-        driveSubsystem::getPose2d,
-        driveSubsystem.kinematics,
-        holonomicDriveController,
-        driveSubsystem::autoSetModuleStates,
-        driveSubsystem);
 
-    SwerveControllerCommand driveToScoreCenterNoteCommand = new SwerveControllerCommand(
-        driveToScoreCenterNoteTrajectory,
-        driveSubsystem::getPose2d,
-        driveSubsystem.kinematics,
-        holonomicDriveController,
-        driveSubsystem::autoSetModuleStates,
-        driveSubsystem);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -213,8 +189,8 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
         // go to and shoot first note
         new ParallelDeadlineGroup( 
-          new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+          new SequentialCommandGroup(driveToFirstNoteCommand), 
+          new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
         new ShooterRevUpCommand(shooterSubsystem),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
@@ -224,7 +200,7 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         // go to and shoot second note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+          new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
         new ShooterRevUpCommand(shooterSubsystem),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
@@ -234,16 +210,7 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         // go to and shoot third note
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
-        new ShooterRevUpCommand(shooterSubsystem),
-        new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
-        new WaitCommand(0.2),
-        new InstantCommand(() -> transitionSubsystem.stopTransition()),
-        new InstantCommand(() -> shooterSubsystem.stopShooterMotor()),
-        new ParallelDeadlineGroup( 
-          new SequentialCommandGroup(driveToCenterNoteCommand, driveToScoreCenterNoteCommand), 
-          new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem)), 
+          new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
         new ShooterRevUpCommand(shooterSubsystem),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
