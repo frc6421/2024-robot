@@ -41,7 +41,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Climber new soft limit: 7000
     // Soft Limits
-    public static final float CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS = -6450; 
+    public static final float CLIMBER_LEFT_REVERSE_SOFT_LIMIT_ROTATIONS = -6450; 
+    public static final float CLIMBER_RIGHT_REVERSE_SOFT_LIMIT_ROTATIONS = -6450;
 
     // The soft limit = full extension + amount to bring in for climb
     public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 0;
@@ -84,13 +85,13 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Soft limits
     rightClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
-    rightClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
+    rightClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_RIGHT_REVERSE_SOFT_LIMIT_ROTATIONS);
 
     rightClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     rightClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
     leftClimberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS);
-    leftClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS);
+    leftClimberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.CLIMBER_LEFT_REVERSE_SOFT_LIMIT_ROTATIONS);
 
     leftClimberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     leftClimberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -200,6 +201,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    System.out.println("Left Climb Pos.: " + getClimberLeftMotorPosition() + " Right Climb Pos.: " + getClimberRightMotorPosition());
     
   }
 

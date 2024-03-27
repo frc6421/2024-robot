@@ -47,7 +47,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
     public static final double ARM_EXTENDED_CLIMB = 105;
 
-    public static final double ARM_AMP_POSITION = 95;
+    public static final double ARM_AMP_POSITION = 92;
   }
 
   // fields
@@ -141,6 +141,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
     // // This method will be called once per scheduler run
     // System.out.println("Left Arm Motor Position" + getEncoderLeftPosition());
     // System.out.println("Right Arm Motor Position" + getEncoderRightPosition());
+
+    //System.out.println("Left Arm Pos.: " + getEncoderLeftPosition() + " Right Arm Pos.: " + getEncoderRightPosition());
   }
 
   /**

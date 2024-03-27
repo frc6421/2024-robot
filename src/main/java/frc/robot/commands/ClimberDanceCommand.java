@@ -140,6 +140,6 @@ public class ClimberDanceCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (climberSubsystem.getClimberLeftMotorPosition() <= ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS && climberSubsystem.getClimberRightMotorPosition() <= ClimberConstants.CLIMBER_REVERSE_SOFT_LIMIT_ROTATIONS) || exitCommand;
+    return (climberSubsystem.getClimberLeftMotorPosition() <= ClimberConstants.CLIMBER_LEFT_REVERSE_SOFT_LIMIT_ROTATIONS && climberSubsystem.getClimberRightMotorPosition() <= ClimberConstants.CLIMBER_RIGHT_REVERSE_SOFT_LIMIT_ROTATIONS) || exitCommand;
   }
 }

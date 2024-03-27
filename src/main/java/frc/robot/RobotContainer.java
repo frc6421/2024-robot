@@ -237,9 +237,8 @@ public class RobotContainer {
     driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
-        .andThen(new InstantCommand(() -> armSubsystem.resetEncoder()))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0))
-        .andThen(new WaitCommand(0.7))
+        .andThen(new WaitCommand(0.3))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
