@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +27,10 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final int LEFT_CLIMBER_CAN_ID = 41;
     private static final int RIGHT_CLIMBER_CAN_ID = 40;
 
+    // DIO ports
+    private static final int LEFT_CLIMBER_LIMIT_SWITCH_PORT = 1;
+    private static final int RIGHT_CLIMBER_LIMIT_SWITCH_PORT = 0;
+
     // Gear ratio 
     private static final double CLIMBER_GEAR_RATIO = 25;
 
@@ -41,10 +47,9 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Climber new soft limit: 7000
     // Soft Limits
-    public static final float CLIMBER_LEFT_REVERSE_SOFT_LIMIT_ROTATIONS = -6450; 
-    public static final float CLIMBER_RIGHT_REVERSE_SOFT_LIMIT_ROTATIONS = -6450;
+    public static final float CLIMBER_LEFT_REVERSE_SOFT_LIMIT_ROTATIONS = -7000; 
+    public static final float CLIMBER_RIGHT_REVERSE_SOFT_LIMIT_ROTATIONS = -7000;
 
-    // The soft limit = full extension + amount to bring in for climb
     public static final float CLIMBER_FORWARD_SOFT_LIMIT_ROTATIONS = 0;
 
     // Current Limits
@@ -58,6 +63,9 @@ public class ClimberSubsystem extends SubsystemBase {
   private CANSparkFlex leftClimberMotor;
   private CANSparkFlex rightClimberMotor;
 
+  private DigitalInput leftLimitSwitch;
+  private DigitalInput rightLimitSwitch;
+
   private final SparkPIDController rightClimberPIDController;
   private final SparkPIDController leftClimberPIDController;
 
@@ -70,6 +78,10 @@ public class ClimberSubsystem extends SubsystemBase {
     // Make new NEO Motors
     leftClimberMotor = new CANSparkFlex(ClimberConstants.LEFT_CLIMBER_CAN_ID, MotorType.kBrushless);
     rightClimberMotor = new CANSparkFlex(ClimberConstants.RIGHT_CLIMBER_CAN_ID, MotorType.kBrushless);
+
+    // Make new magnetic limit switches
+    leftLimitSwitch = new DigitalInput(ClimberConstants.LEFT_CLIMBER_LIMIT_SWITCH_PORT);
+    rightLimitSwitch = new DigitalInput(ClimberConstants.RIGHT_CLIMBER_LIMIT_SWITCH_PORT);
 
     // Factory default
     leftClimberMotor.restoreFactoryDefaults();
@@ -193,16 +205,45 @@ public class ClimberSubsystem extends SubsystemBase {
     return rightFilter.calculate(rightClimberEncoder.getPosition());
   }
 
+  /**
+   * Gets if left climber limit switch is triggered
+   * 
+   * @return boolean true if limit switch is triggered
+   */
+  public boolean getLeftSwitch() {
+    return !leftLimitSwitch.get();
+  }
+
+  /**
+   * Gets if right climber limit switch is triggered
+   * 
+   * @return boolean true if limit switch is triggered
+   */
+  public boolean getRightSwitch() {
+    return !rightLimitSwitch.get();
+  }
+
   public void setClimberVoltage(double volts)
   {
     rightClimberMotor.setVoltage(volts);
     leftClimberMotor.setVoltage(volts);
   }
 
+  public void setLeftClimberVoltage(double volts) {
+    leftClimberMotor.setVoltage(volts);
+  }
+
+  public void setRightClimberVoltage(double volts) {
+    rightClimberMotor.setVoltage(volts);
+  }
+
   @Override
   public void periodic() {
 
     System.out.println("Left Climb Pos.: " + getClimberLeftMotorPosition() + " Right Climb Pos.: " + getClimberRightMotorPosition());
+
+    SmartDashboard.putBoolean("Is Left Limit", getLeftSwitch());
+    SmartDashboard.putBoolean("Is Right Limit", getRightSwitch());
     
   }
 

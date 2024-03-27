@@ -28,7 +28,7 @@ public class ClimberDanceCommand extends Command {
   private final static double TRANSITION_ARM_TRAP_ANGLE = TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT;
 
   // TODO what are these numbers
-  private final static double CLIMBER_MID_ROTATIONS = -3620;
+  private final static double CLIMBER_MID_ROTATIONS = -4220;
   //private final static double CLIMBER_HIGH_ROTATIONS = 0;
   private final static double CLIMBER_IN_VOLTAGE = -12;
 
@@ -98,7 +98,21 @@ public class ClimberDanceCommand extends Command {
         //climberSubsystem.setClimberMotorPosition(CLIMBER_HIGH_ROTATIONS, 1);
         //RobotContainer.climberState = ClimberStates.PREPARE_TRAP;
 
-        climberSubsystem.setClimberVoltage(CLIMBER_IN_VOLTAGE);
+        if(climberSubsystem.getLeftSwitch() && !climberSubsystem.getRightSwitch()) {
+
+          climberSubsystem.setLeftClimberVoltage(0);
+          climberSubsystem.setRightClimberVoltage(CLIMBER_IN_VOLTAGE);
+
+        } else if(!climberSubsystem.getLeftSwitch() && climberSubsystem.getRightSwitch()) {
+
+          climberSubsystem.setLeftClimberVoltage(CLIMBER_IN_VOLTAGE);
+          climberSubsystem.setRightClimberVoltage(0);
+
+        } else {
+
+          climberSubsystem.setClimberVoltage(CLIMBER_IN_VOLTAGE);
+
+        }
       break;
       // case ARMS_HIGH:
       //   //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_HIGH_ANGLE, 0);
@@ -140,6 +154,7 @@ public class ClimberDanceCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (climberSubsystem.getClimberLeftMotorPosition() <= ClimberConstants.CLIMBER_LEFT_REVERSE_SOFT_LIMIT_ROTATIONS && climberSubsystem.getClimberRightMotorPosition() <= ClimberConstants.CLIMBER_RIGHT_REVERSE_SOFT_LIMIT_ROTATIONS) || exitCommand;
+    return (climberSubsystem.getLeftSwitch() && climberSubsystem.getRightSwitch() && !exitCommand) 
+      || exitCommand;
   }
 }
