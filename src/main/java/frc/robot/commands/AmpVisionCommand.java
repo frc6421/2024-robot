@@ -132,6 +132,8 @@ public class AmpVisionCommand extends Command {
 
     } else {
 
+      targetRotation = driveSubsystem.getPose2d().getRotation();
+      
       exitCommand = true;
       System.out.println("AmpVisionCommand canceled - No AprilTag pose present");
 

@@ -181,6 +181,12 @@ public class ClimberSubsystem extends SubsystemBase {
     rightClimberPIDController.setReference(position, CANSparkFlex.ControlType.kPosition, slot, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberRightMotorPosition() * 360), ArbFFUnits.kVoltage);
   }
 
+  public void setClimberMotorPosition(double positionR, double positionL) {
+    leftClimberPIDController.setReference(positionL, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberLeftMotorPosition() * 360), ArbFFUnits.kVoltage);
+    rightClimberPIDController.setReference(positionR, CANSparkFlex.ControlType.kPosition, 0, (ClimberConstants.CLIMBER_KS + ClimberConstants.CLIMBER_KG) * Math.cos(getClimberRightMotorPosition() * 360), ArbFFUnits.kVoltage);
+  }
+
+
   /** 
    * Returns a value in rotations of the climber motor(s)
    * @return  position as a double (the average position of both motors)
@@ -239,12 +245,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    System.out.println("Left Climb Pos.: " + getClimberLeftMotorPosition() + " Right Climb Pos.: " + getClimberRightMotorPosition());
-
     SmartDashboard.putBoolean("Is Left Limit", getLeftSwitch());
     SmartDashboard.putBoolean("Is Right Limit", getRightSwitch());
-    
   }
 
   public void initSendable(SendableBuilder builder)

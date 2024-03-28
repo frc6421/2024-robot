@@ -28,7 +28,8 @@ public class ClimberDanceCommand extends Command {
   private final static double TRANSITION_ARM_TRAP_ANGLE = TransitionArmConstants.ARM_FORWARD_SOFT_LIMIT;
 
   // TODO what are these numbers
-  private final static double CLIMBER_MID_ROTATIONS = -4220;
+  private final static double CLIMBER_RIGHT_MID_ROTATIONS = -4525;
+  private final static double CLIMBER_LEFT_MID_ROTATIONS = -4525;
   //private final static double CLIMBER_HIGH_ROTATIONS = 0;
   private final static double CLIMBER_IN_VOLTAGE = -12;
 
@@ -87,7 +88,7 @@ public class ClimberDanceCommand extends Command {
     switch(RobotContainer.climberState) {
       case PREPARE_CLIMB:
         //new ArmCommand(transitionArmSubsystem, TRANSITION_ARM_MID_ANGLE, 0);
-        climberSubsystem.setClimberMotorPosition(CLIMBER_MID_ROTATIONS, 0);
+        climberSubsystem.setClimberMotorPosition(CLIMBER_RIGHT_MID_ROTATIONS, CLIMBER_LEFT_MID_ROTATIONS);
         // TODO DRIVE
         // Wheels to coast, Point wheels toward the stage, Drive back 
         RobotContainer.climberState = ClimberStates.CLIMB;

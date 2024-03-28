@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem",
+      "/Shuffleboard/Climber Numbers/ClimberSubsystem": "Subsystem",
       "/Shuffleboard/Climber Tuning/ClimberTuningCommand": "Command",
       "/Shuffleboard/Climber Tuning/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
@@ -23,7 +24,7 @@
         },
         "Drive to 4 Trajectory": {
           "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to 5 Trajectory": {
           "arrows": false,
@@ -83,7 +84,7 @@
         },
         "Drive to third Trajectory": {
           "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Robot": {
           "length": 0.9398000240325928,

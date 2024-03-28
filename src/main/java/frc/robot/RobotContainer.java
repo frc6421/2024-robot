@@ -214,7 +214,7 @@ public class RobotContainer {
     driverController.y().toggleOnTrue(new SelectCommand<RobotStates>(Map.ofEntries(
       Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
-      Map.entry(RobotStates.SHUTTLE, new ShuttleVisionCommand()),
+      Map.entry(RobotStates.SHUTTLE, new InstantCommand(() -> robotState = RobotStates.SHUTTLE)),
       Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP)),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),

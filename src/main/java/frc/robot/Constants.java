@@ -129,18 +129,17 @@ public static class TrajectoryConstants {
     
   public static class VisionConstants {
 
-    //TODO change these to degrees recorded in notebook
     /** In degrees */
-    public static final double AMP_CLOSE_PITCH_ANGLE = 1.80;
+    public static final double AMP_CLOSE_PITCH_ANGLE = 1.27;
 
     /** In degrees */
-    public static final double AMP_CLOSE_YAW_ANGLE = -1.26;
+    public static final double AMP_CLOSE_YAW_ANGLE = -1.99;
 
     /** In degrees */
-    public static final double AMP_FAR_PITCH_ANGLE = 17.99;
+    public static final double AMP_FAR_PITCH_ANGLE = 18.56;
 
     /** In degrees */
-    public static final double AMP_FAR_YAW_ANGLE = 0.95;
+    public static final double AMP_FAR_YAW_ANGLE = 2.40;
 
     /** In degrees */
     // Only first and last values are used to check edge cases with equation
@@ -149,7 +148,7 @@ public static class TrajectoryConstants {
     /** In degrees */
     public static final double[] SPEAKER_YAW_ARRAY = {0.0};
 
-    public static final double SPEAKER_YAW_ANGLE = 4.24;
+    public static final double SPEAKER_YAW_ANGLE = 1.32; //4.24
 
     //TODO update both arrays
     /** In degrees */
