@@ -82,7 +82,7 @@ public class RobotContainer {
   // Controllers \\
   private final CommandXboxController driverController; 
   private final CommandXboxController operatorController;
-  private final CommandXboxController testingcontroller;
+  //private final CommandXboxController testingcontroller;
 
   private static final int driverControllerPort = 0;
   private static final int operatorControllerPort = 1;
@@ -133,7 +133,7 @@ public class RobotContainer {
 
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
-    testingcontroller = new CommandXboxController(testingcontrollerPort);
+    //testingcontroller = new CommandXboxController(testingcontrollerPort);
 
     DriverStation.silenceJoystickConnectionWarning(true);
     pdh.clearStickyFaults();
@@ -296,6 +296,9 @@ public class RobotContainer {
     // SHUTTLE STATE \\
     operatorController.y().onTrue(new InstantCommand(() -> robotState = RobotStates.SHUTTLE));
 
+    // Blocker up \\
+    operatorController.rightBumper().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION - 2, 0));
+
 
     // Testing Controller
     // testingcontroller.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
@@ -318,8 +321,8 @@ public class RobotContainer {
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
 
-    testingcontroller.x().whileTrue(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
-    testingcontroller.x().onFalse(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
+    // testingcontroller.x().whileTrue(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
+    // testingcontroller.x().onFalse(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
     // testingcontroller.b().onTrue((new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
     //     .andThen(new WaitCommand(0.6))
     //     .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));

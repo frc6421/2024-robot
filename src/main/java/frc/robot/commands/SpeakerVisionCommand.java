@@ -135,6 +135,8 @@ public class SpeakerVisionCommand extends Command {
       exitCommand = true;
       System.out.println("SpeakerVisionCommand canceled - No AprilTag detected (speaker camera)");
 
+      rotationSpeed = 0;
+
     } else {
 
       rotationSpeed = MathUtil.clamp(rotationController.calculate(currentRotation), -maxAngularSpeed, maxAngularSpeed);

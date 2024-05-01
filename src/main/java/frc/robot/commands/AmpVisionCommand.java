@@ -179,6 +179,8 @@ public class AmpVisionCommand extends Command {
       exitCommand = true;
       System.out.println("AmpVisionCommand canceled - No AprilTag detected");
 
+      adjustRotation = driveSubsystem.getPose2d().getRotation();
+
     } else {
 
       if (xController.atSetpoint()) {
@@ -218,10 +220,19 @@ public class AmpVisionCommand extends Command {
     // SmartDashboard.putNumber("X Speed", xSpeed);
     // SmartDashboard.putNumber("Y Speed", ySpeed);
 
-    driveSubsystem.setControl(
+    if(adjustRotation.equals(null)) {
+
+      System.out.println("Null angle");
+      exitCommand = true;
+
+    } else {
+
+      driveSubsystem.setControl(
       visionDriveRequest.withVelocityX(-xSpeed)
           .withVelocityY(ySpeed)
           .withTargetDirection(adjustRotation));
+
+    }
 
   }
 
@@ -237,10 +248,19 @@ public class AmpVisionCommand extends Command {
 
     }
 
-    driveSubsystem.setControl(
-        visionDriveRequest.withVelocityX(0)
+    if(driveSubsystem.getPose2d().getRotation().equals(null)) {
+
+      exitCommand = true;
+      System.out.println("Null angle in end");
+
+    } else {
+
+      driveSubsystem.setControl(
+          visionDriveRequest.withVelocityX(0)
             .withVelocityY(0)
             .withTargetDirection(driveSubsystem.getPose2d().getRotation()));
+
+    }
 
   }
 

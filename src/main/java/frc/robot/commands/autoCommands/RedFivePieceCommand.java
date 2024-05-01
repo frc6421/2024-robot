@@ -76,34 +76,34 @@ public class RedFivePieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE9.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(180)))), reverseConfig);
 
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_RED_SUBWOOFER.minus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(0), 0)), new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(189)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION.minus(new Translation2d(Units.inchesToMeters(4), 0)), new Rotation2d(Units.degreesToRadians(187)))), forwardConfig);
 
     // Trajectory driveToScoreThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
     //     new Pose2d(TrajectoryConstants.NOTE10.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180))),
     //     new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(183)))), forwardConfig);
 
     Trajectory driveToCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(189))),
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION.minus(new Translation2d(Units.inchesToMeters(4), 0)), new Rotation2d(Units.degreesToRadians(187))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.NOTE6_RED.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreCenterNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE6_RED.minus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(Units.degreesToRadians(180))),
         new Pose2d(TrajectoryConstants.RED_EDGE_OF_STAGE, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION, new Rotation2d(Units.degreesToRadians(189)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.RED_CENTER_LINE_SHOOTING_POSITION.minus(new Translation2d(Units.inchesToMeters(4), 0)), new Rotation2d(Units.degreesToRadians(187)))), reverseConfig);
 
     // Simulation
     //  field = new Field2d();

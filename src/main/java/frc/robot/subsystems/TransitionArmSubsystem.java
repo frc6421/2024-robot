@@ -47,7 +47,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
     public static final double ARM_EXTENDED_CLIMB = 105;
 
-    public static final double ARM_AMP_POSITION = 92;
+    public static final double ARM_AMP_POSITION = 96;
   }
 
   // fields

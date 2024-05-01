@@ -17,6 +17,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -145,8 +146,11 @@ public class ClimberSubsystem extends SubsystemBase {
     rightClimberEncoder.setPositionConversionFactor(ClimberConstants.CLIMBER_GEAR_RATIO);
 
     //Median filters
-    leftFilter = new MedianFilter(5);
-    rightFilter = new MedianFilter(5);
+    leftFilter = new MedianFilter(7);
+    rightFilter = new MedianFilter(7);
+
+    leftClimberMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 40);
+    rightClimberMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 40);
 
     // Zeros the motors
     leftClimberEncoder.setPosition(0);

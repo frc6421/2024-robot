@@ -18,7 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public static final int INTAKE_MOTOR_GEAR_RATIO = 1;
 
     //Current Limit
-    public static final int INTAKE_STATOR_CURRENT_LIMIT = 120;
+    public static final int INTAKE_STATOR_CURRENT_LIMIT = 200;
 
     public static final double INTAKE_IN_SPEED = 0.85 * 12;
 

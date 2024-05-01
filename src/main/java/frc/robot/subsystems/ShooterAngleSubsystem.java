@@ -148,7 +148,16 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
         if (pitchAngle > VisionConstants.SPEAKER_PITCH_ARRAY[0]) {
 
-          return VisionConstants.SHOOTER_PIVOT_ARRAY[0];
+          if(DriverStation.isAutonomous()) {
+
+            return 28.5;
+
+          } else {
+
+            return VisionConstants.SHOOTER_PIVOT_ARRAY[0];
+
+          }
+          
 
         } else if (pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1]) {
 
@@ -156,7 +165,15 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
         } else {
 
-          return (-0.0141 * Math.pow(pitchAngle, 2) + 0.9016 * pitchAngle + 41.795); //41.295
+          if(targetTagID == 4) {
+
+            return (-0.0096 * Math.pow(pitchAngle, 2) + 0.9242 * pitchAngle + 40.386); //39.886
+
+          } else {
+
+            return (-0.0094 * Math.pow(pitchAngle, 2) + 0.9388 * pitchAngle + 39.683); //39.883
+
+          } 
 
         }
 

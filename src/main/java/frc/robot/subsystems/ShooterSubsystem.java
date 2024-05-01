@@ -180,7 +180,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (pitchAngle > VisionConstants.SPEAKER_PITCH_ARRAY[0]) {
 
-          return VisionConstants.SHOOTER_RPM_ARRAY[0];
+          if(DriverStation.isAutonomous()) {
+
+            return 4670;
+            
+          } else {
+
+            return VisionConstants.SHOOTER_RPM_ARRAY[0];
+
+          }
 
         } else if (pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1]) {
 
@@ -188,7 +196,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
         } else {
 
-          return (0.0062 * Math.pow(pitchAngle, 4) - 0.1262 * Math.pow(pitchAngle, 3) + 0.5301 * Math.pow(pitchAngle, 2) - 21.906 * pitchAngle + 3818.5);
+          if(targetTagID == 4) {
+
+            return (0.007 * Math.pow(pitchAngle, 4) - 0.1335 * Math.pow(pitchAngle, 3) + 0.3034 * Math.pow(pitchAngle, 2) - 20.564 * pitchAngle + 3824.6);
+
+          } else {
+
+            return (0.0054 * Math.pow(pitchAngle, 4) - 0.1195 * Math.pow(pitchAngle, 3) + 0.7534 * Math.pow(pitchAngle, 2) - 23.165 * pitchAngle + 3812.6);
+          }
 
         }
 
