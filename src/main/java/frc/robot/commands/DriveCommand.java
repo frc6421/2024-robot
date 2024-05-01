@@ -26,7 +26,7 @@ public class DriveCommand extends Command {
 
   private double percentDeadband = 0.065;
 
-  private double maxSpeed = DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC;
+  private double maxSpeed = DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC * 0.75;
   private double maxAngularRate = 2 * Math.PI;
 
   private final CommandXboxController driverController;
