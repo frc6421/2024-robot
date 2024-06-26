@@ -24,6 +24,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -97,6 +98,7 @@ public class RobotContainer {
   private final TransitionArmSubsystem armSubsystem;
   private final LEDSubsystem ledSubsystem;
   private final ClimberSubsystem climberSubsystem;
+  private final Telemetry telemetry;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -146,6 +148,7 @@ public class RobotContainer {
     ledSubsystem = new LEDSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
+    telemetry = new Telemetry(0);
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);
@@ -184,6 +187,10 @@ public class RobotContainer {
     autoChooser.addOption("Red Side 3.5 Piece Skip Wing", flipRedCenterLineFourPiece);
     autoChooser.addOption("Blue 5 Piece", blueFivePiece);
     autoChooser.addOption("Red 5 Piece", redFivePiece);
+
+    // Telemetry
+    driveSubsystem.registerTelemetry(telemetry::telemeterize);
+    DriverStation.startDataLog(DataLogManager.getLog());
 
     // Configure the trigger bindings
     configureBindings();
