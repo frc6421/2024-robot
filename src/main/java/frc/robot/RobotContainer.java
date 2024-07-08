@@ -190,7 +190,6 @@ public class RobotContainer {
 
     // Telemetry
     driveSubsystem.registerTelemetry(telemetry::telemeterize);
-    DriverStation.startDataLog(DataLogManager.getLog());
 
     // Configure the trigger bindings
     configureBindings();

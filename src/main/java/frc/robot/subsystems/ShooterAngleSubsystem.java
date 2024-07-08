@@ -150,7 +150,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
           if(DriverStation.isAutonomous()) {
 
-            return 28.5;
+            return 28.5; 
 
           } else {
 
