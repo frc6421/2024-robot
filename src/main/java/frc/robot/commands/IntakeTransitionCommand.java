@@ -96,7 +96,7 @@ public class IntakeTransitionCommand extends Command {
   @Override
   public boolean isFinished() {
 
-    return (transitionSubsystem.getTOFOutRange() >= TransitionConstants.DETECTION_DISTANCE_MM && hasTOFOut); 
+    return (transitionSubsystem.isNoteDetectedOut() && hasTOFOut); 
     //|| (timer.get() >= 0.5);
   }
 }

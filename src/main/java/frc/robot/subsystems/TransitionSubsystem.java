@@ -10,6 +10,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -76,6 +78,9 @@ public class TransitionSubsystem extends SubsystemBase {
     inFilter = new MedianFilter(5);
     outFilter = new MedianFilter(5);
 
+    //Shuffleboard tab
+    Shuffleboard.getTab("Transition").add(this);
+
   }
 
   /**Returns the double value of the TOF In sensor
@@ -108,6 +113,14 @@ public class TransitionSubsystem extends SubsystemBase {
     transitionMotor.stopMotor();
   }
 
+  public boolean isNoteDetectedOut() {
+    return (getTOFOutRange() >= TransitionConstants.DETECTION_DISTANCE_MM);
+  }
+
+  public boolean isNoteDetectedIn() {
+    return (getTOFInRange() >= TransitionConstants.DETECTION_DISTANCE_MM);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -115,8 +128,14 @@ public class TransitionSubsystem extends SubsystemBase {
     inFilteredValue = inFilter.calculate(timeOfFlightIn.getRange()); 
     outFilteredValue = outFilter.calculate(timeOfFlightOut.getRange()); 
 
-    // SmartDashboard.putNumber("TOF In range", inFilteredValue);
-    // SmartDashboard.putNumber("TOF Out range", outFilteredValue);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
+      super.initSendable(builder);
+      builder.addBooleanProperty("Note Detected In", this::isNoteDetectedIn, null);
+      builder.addBooleanProperty("Note Detected Out", this::isNoteDetectedOut, null);
   }
 }
 

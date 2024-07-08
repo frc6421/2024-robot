@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Cameras;
@@ -56,7 +58,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   private double positionMinOutput;
   private double positionMaxOutput;
 
-  public double targetShooterPivotAngle = -25;
+  public double targetShooterPivotAngle = AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES;
 
   private int targetTagID = 0;
 
@@ -108,6 +110,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     angleMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     angleMotorPID.setOutputRange(positionMinOutput, positionMaxOutput, 0);
+
+    // Shuffeboard tab
+    Shuffleboard.getTab("Shooter Angle").add(this);
   }
 
   /**
@@ -116,10 +121,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
    * @param angle The angle of which to set the motor to
    */
   public void setAngle(DoubleSupplier angle) {
+    targetShooterPivotAngle = angle.getAsDouble();
     angleMotorPID.setReference(angle.getAsDouble(), CANSparkMax.ControlType.kPosition, 0, 0,
         SparkPIDController.ArbFFUnits.kVoltage);
-
-    System.out.println("Target Shooter Angle: " + angle.getAsDouble() + " @ " + Timer.getMatchTime());
   }
 
   /**
@@ -191,6 +195,14 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+
+      builder.addDoubleProperty("4. Target Angle", () -> targetShooterPivotAngle, null);
+      builder.addDoubleProperty("5. Actual Angle", this::getAngleEncoderPosition, null);
   }
 
 }

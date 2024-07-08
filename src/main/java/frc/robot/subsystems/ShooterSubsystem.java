@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Cameras;
@@ -52,7 +54,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private VelocityVoltage shooterMotorVelocity;
 
-  public double targetShooterRPM;
+  public double targetShooterRPM = 0.0;
 
   private int targetTagID = 0;
 
@@ -106,6 +108,9 @@ public class ShooterSubsystem extends SubsystemBase {
     topShooterMotor.getConfigurator().apply(topShooterConfig);
     bottomShooterMotor.getConfigurator().apply(bottomShooterConfig);
 
+    // Shuffleboard tab
+    Shuffleboard.getTab("Shooter").add(this);
+
   }
 
   /**
@@ -114,9 +119,9 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param velocity the speed of which to run the motors, in RPM
    */
   public void setShooterMotorVelocity(double velocity) {
-    shooterMotorVelocity.withVelocity(velocity / 60);
-    topShooterMotor.setControl(shooterMotorVelocity);
-    bottomShooterMotor.setControl(shooterMotorVelocity);
+    targetShooterRPM = velocity;
+    setTopShooterMotorVelocity(velocity);
+    setBottomShooterMotorVelocity(velocity);
   }
 
   /**
@@ -219,41 +224,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // SmartDashboard.putNumber("bottom RPM", getBottomMotorVelocity());
-    // SmartDashboard.putNumber("top RPM", getTopMotorVelocity());
 
-    /*
-     * Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
-     * 
-     * if (allianceColor.isPresent()) {
-     * 
-     * targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
-     * 
-     * }
-     * 
-     * if (Cameras.isTarget(Cameras.speakerCamera)) {
-     * 
-     * // Check distance from the target using camera pitch
-     * for (int i = 0; i < VisionConstants.SPEAKER_PITCH_ARRAY.length; i++) {
-     * 
-     * if(Cameras.getPitch(Cameras.speakerCamera, targetTagID) >=
-     * VisionConstants.SPEAKER_PITCH_ARRAY[i]) {
-     * 
-     * targetShooterRPM = VisionConstants.SHOOTER_RPM_ARRAY[i];
-     * 
-     * break;
-     * 
-     * }
-     * 
-     * }
-     * 
-     * }
-     * 
-     */
+  }
 
-    //SmartDashboard.putNumber("Target RPM", getTargetRPM());
-
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+      builder.addDoubleProperty("1. Target Shooter RPM", () -> this.targetShooterRPM, null);
+      builder.addDoubleProperty("2. Top Shooter RPM", this::getTopMotorVelocity, null);
+      builder.addDoubleProperty("3. Bottom Shooter RPM", this::getBottomMotorVelocity, null);
   }
 
 }

@@ -13,6 +13,8 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -59,6 +61,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
   private final RelativeEncoder armRightEncoder;
   private final RelativeEncoder armLeftEncoder;
+
+  private double targetArmAngle = TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
 
   /** Creates a new transitionArm. */
   public TransitionArmSubsystem() {
@@ -133,37 +137,33 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
       armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-      //SmartDashboard.putNumber("Arm Position", getArmMotorPositionDeg());
+      Shuffleboard.getTab("Transition Arm").add(this);
   }
 
   @Override
   public void periodic() {
-    // // This method will be called once per scheduler run
-    // System.out.println("Left Arm Motor Position" + getEncoderLeftPosition());
-    // System.out.println("Right Arm Motor Position" + getEncoderRightPosition());
-
-    //System.out.println("Left Arm Pos.: " + getEncoderLeftPosition() + " Right Arm Pos.: " + getEncoderRightPosition());
+    
   }
 
   /**
    * Sets the arm motors to the position inputed
-   * @param position the position to set the motors to
+   * @param angle the position to set the motors to
    */
-  public void setArmMotorPosition(double position)
+  public void setArmMotorPosition(double angle)
   {
-    armRightPIDController.setReference(position, ControlType.kPosition, 0, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
-    armLeftPIDController.setReference(position, ControlType.kPosition, 0, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    setArmMotorPosition(angle, 0);
   }
 
   /**
    * Sets the arm motors to the position inputed
-   * @param position the position to set the motors to
+   * @param angle the position to set the motors to
    * @param slot the PID slot to use
    */
-  public void setArmMotorPosition(double position, int slot)
+  public void setArmMotorPosition(double angle, int slot)
   {
-    armRightPIDController.setReference(position, ControlType.kPosition, slot, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
-    armLeftPIDController.setReference(position, ControlType.kPosition, slot, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    targetArmAngle = angle;
+    armRightPIDController.setReference(angle, ControlType.kPosition, slot, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
+    armLeftPIDController.setReference(angle, ControlType.kPosition, slot, (TransitionArmConstants.ARMMOTORRIGHT_KS + TransitionArmConstants.ARMMOTORRIGHT_KG) * Math.cos(getArmMotorPositionDeg()), ArbFFUnits.kVoltage);
   }
 
   /**
@@ -175,12 +175,12 @@ public class TransitionArmSubsystem extends SubsystemBase{
     return (armRightEncoder.getPosition() + armLeftEncoder.getPosition()) / 2;
   }
 
-  public double getEncoderLeftPosition()
+  public double getEncoderLeftDegree()
   {
     return armLeftEncoder.getPosition();
   }
 
-  public double getEncoderRightPosition()
+  public double getEncoderRightDegree()
   {
     return armRightEncoder.getPosition();
   }
@@ -189,5 +189,15 @@ public class TransitionArmSubsystem extends SubsystemBase{
   {
       armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
       armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
+      super.initSendable(builder);
+
+      builder.addDoubleProperty("1. Arm Target Angle", () -> targetArmAngle, null);
+      builder.addDoubleProperty("2. Left Arm Actual Angle", this::getEncoderLeftDegree, null);
+      builder.addDoubleProperty("3. Right Arm Actual Angle", this::getEncoderRightDegree, null);
   }
 }

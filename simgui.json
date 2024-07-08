@@ -2,15 +2,20 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Pose": "Field2d",
       "/Shuffleboard/Arm Tuning/TransitionArm": "Subsystem",
       "/Shuffleboard/Climber Numbers/ClimberSubsystem": "Subsystem",
       "/Shuffleboard/Climber Tuning/ClimberTuningCommand": "Command",
       "/Shuffleboard/Climber Tuning/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Shooter Angle/ShooterAngleSubsystem": "Subsystem",
       "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
       "/Shuffleboard/Shooter Tuning/ShooterTuningCommand": "Command",
       "/Shuffleboard/Shooter Tuning/TuneShooter": "Command",
+      "/Shuffleboard/Shooter/ShooterSubsystem": "Subsystem",
+      "/Shuffleboard/Transition Arm/TransitionArmSubsystem": "Subsystem",
+      "/Shuffleboard/Transition/TransitionSubsystem": "Subsystem",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/ShooterAngleSubsystem": "Subsystem"
     },
@@ -109,8 +114,30 @@
         ".metadata": {
           "open": true
         },
+        "Shooter": {
+          "ShooterSubsystem": {
+            "open": true
+          }
+        },
+        "Shooter Angle": {
+          "ShooterAngleSubsystem": {
+            "open": true
+          }
+        },
         "Shooter Tuning": {
           "ShooterTuningCommand": {
+            "open": true
+          },
+          "open": true
+        },
+        "Transition": {
+          "TransitionSubsystem": {
+            "open": true
+          },
+          "open": true
+        },
+        "Transition Arm": {
+          "TransitionArmSubsystem": {
             "open": true
           },
           "open": true
