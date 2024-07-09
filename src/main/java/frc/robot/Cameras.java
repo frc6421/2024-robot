@@ -7,14 +7,56 @@ package frc.robot;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.robot.Constants.VisionConstants;
 
 /** Includes camera setup and all methods for getting camera data */
-public class Cameras {
+public class Cameras implements Sendable{
 
-    public static PhotonCamera ampCamera = new PhotonCamera("Camera6");
-    public static PhotonCamera speakerCamera = new PhotonCamera("Camera1");
+    public final static PhotonCamera ampCamera = new PhotonCamera("Camera6");
+    public final static PhotonCamera speakerCamera = new PhotonCamera("Camera1");
     //public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
 
+    private final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+
+    private final static Transform3d robotToAmpCamera = new Transform3d(
+        new Translation3d(VisionConstants.AMP_CAMERA_X, VisionConstants.AMP_CAMERA_Y, VisionConstants.AMP_CAMERA_Z),
+        new Rotation3d(0, VisionConstants.AMP_CAMERA_PITCH, VisionConstants.AMP_CAMERA_YAW)
+    );
+
+    private final static Transform3d robotToSpeakerCamera = new Transform3d(
+        new Translation3d(VisionConstants.SPEAKER_CAMERA_X, VisionConstants.SPEAKER_CAMERA_Y, VisionConstants.SPEAKER_CAMERA_Z),
+        new Rotation3d(0, VisionConstants.SPEAKER_CAMERA_PITCH, VisionConstants.SPEAKER_CAMERA_YAW)
+    );
+
+    private final static PhotonPoseEstimator ampCameraPoseEstimator = new PhotonPoseEstimator(
+      aprilTagFieldLayout, 
+      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+      ampCamera, 
+      robotToAmpCamera
+    );
+
+    private final static PhotonPoseEstimator speakerCameraPoseEstimator = new PhotonPoseEstimator(
+      aprilTagFieldLayout, 
+      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+      speakerCamera, 
+      robotToSpeakerCamera
+    );
+
+    private static double ampCameraEstimatedYaw = 0;
+    private static double ampCameraEstimatedPitch = 0;
+
+    private static double speakerCameraEstimatedYaw = 0;
+    private static double speakerCameraEstimatedPitch = 0;
 
     public static boolean isTarget(PhotonCamera camera) {
         return camera.getLatestResult().hasTargets();
@@ -51,7 +93,7 @@ public class Cameras {
      * @return yaw angle of target in degrees
      */
     public static double getYaw(PhotonCamera camera, int targetTagID) {
-
+        double yaw = 180.0;
         var result = camera.getLatestResult();
 
         if(result.hasTargets()) {
@@ -62,19 +104,25 @@ public class Cameras {
 
                 if(targets.get(i).getFiducialId() == targetTagID) {
 
-                    return targets.get(i).getYaw();
+                    yaw = targets.get(i).getYaw();
 
                 }
 
             }
 
-        } else {
-
-            return 180.0;
-
         }
-
-        return 180.0;
+        switch (camera.getName()) {
+          case "Camera6":
+            ampCameraEstimatedYaw = yaw;
+            break;
+          case "Camera1":
+            speakerCameraEstimatedYaw = yaw;
+            break;
+          default:
+            System.out.println("This shouldn't print.");
+            break;
+        }
+        return yaw;
        
     }
 
@@ -86,7 +134,7 @@ public class Cameras {
      * @return pitch angle of target in degrees
      */
     public static double getPitch(PhotonCamera camera, int targetTagID) {
-        
+        double pitch = 180.0;
         var result = camera.getLatestResult();
 
         if(result.hasTargets()) {
@@ -97,19 +145,25 @@ public class Cameras {
 
                 if(targets.get(i).getFiducialId() == targetTagID) {
 
-                    return targets.get(i).getPitch();
+                    pitch = targets.get(i).getPitch();
 
                 }
 
             }
 
-        } else {
-
-            return 180.0;
-
         }
-
-        return 180.0;
+        switch (camera.getName()) {
+          case "Camera6":
+            ampCameraEstimatedPitch = pitch;
+            break;
+          case "Camera1":
+            speakerCameraEstimatedPitch = pitch;
+            break;
+          default:
+            System.out.println("This shouldn't print.");
+            break;
+        }
+        return pitch;
 
     }
 
@@ -181,5 +235,10 @@ public class Cameras {
         return 1.0;
 
     }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+  }
 
 }
