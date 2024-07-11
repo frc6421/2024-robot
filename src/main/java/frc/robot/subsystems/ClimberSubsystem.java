@@ -249,8 +249,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Is Left Limit", getLeftSwitch());
-    SmartDashboard.putBoolean("Is Right Limit", getRightSwitch());
+    
   }
 
   public void initSendable(SendableBuilder builder)
