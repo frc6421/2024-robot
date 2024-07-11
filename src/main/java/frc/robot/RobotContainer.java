@@ -99,6 +99,7 @@ public class RobotContainer {
   private final LEDSubsystem ledSubsystem;
   private final ClimberSubsystem climberSubsystem;
   private final Telemetry telemetry;
+  private final Cameras cameras;
 
   // Commands \\
   private final DriveCommand driveCommand;
@@ -149,6 +150,7 @@ public class RobotContainer {
     shooterSubsystem = new ShooterSubsystem();
     shooterAngleSubsystem = new ShooterAngleSubsystem();
     telemetry = new Telemetry(0);
+    cameras = new Cameras();
 
     driveCommand = new DriveCommand(driveSubsystem, driverController);
     intakeTransitionCommand = new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem);

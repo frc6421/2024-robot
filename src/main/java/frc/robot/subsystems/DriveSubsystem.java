@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Cameras;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -287,7 +288,8 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
   @Override
   public void periodic() {
-
+    Cameras.logAmpCameraPose();
+    Cameras.logSpeakerCameraPose();
   }
 
 

@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.List;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -17,13 +15,16 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 /** Includes camera setup and all methods for getting camera data */
 public class Cameras implements Sendable{
 
-    public final static PhotonCamera ampCamera = new PhotonCamera("Camera6");
-    public final static PhotonCamera speakerCamera = new PhotonCamera("Camera1");
+    public static PhotonCamera ampCamera;
+    public static PhotonCamera speakerCamera;
     //public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
 
     private final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -57,6 +58,16 @@ public class Cameras implements Sendable{
 
     private static double speakerCameraEstimatedYaw = 0;
     private static double speakerCameraEstimatedPitch = 0;
+
+    private static double[] ampCameraPose = {0,0,0};
+    private static double[] speakerCameraPose = {0,0,0};
+
+    public Cameras() {
+      SendableRegistry.add(this, "Cameras");
+      ampCamera = new PhotonCamera("Camera6");
+      speakerCamera = new PhotonCamera("Camera1");
+      Shuffleboard.getTab("Cameras").add(this);
+    }
 
     public static boolean isTarget(PhotonCamera camera) {
         return camera.getLatestResult().hasTargets();
@@ -236,9 +247,40 @@ public class Cameras implements Sendable{
 
     }
 
-  @Override
+  public static void logAmpCameraPose() {
+    var estimatedPose = ampCameraPoseEstimator.update();
+    if (estimatedPose.isPresent()) {
+      var pose = estimatedPose.get().estimatedPose.toPose2d();
+      ampCameraPose = new double[] {
+        pose.getX(),
+        pose.getY(),
+        pose.getRotation().getDegrees()
+      };
+    }
+
+  }
+
+  public static void logSpeakerCameraPose() {
+    var estimatedPose = speakerCameraPoseEstimator.update();
+    if (estimatedPose.isPresent()) {
+      var pose = estimatedPose.get().estimatedPose.toPose2d();
+      speakerCameraPose = new double[] {
+        pose.getX(),
+        pose.getY(),
+        pose.getRotation().getDegrees()
+      };
+    }
+
+  }
+
   public void initSendable(SendableBuilder builder) {
-      super.initSendable(builder);
+    builder.setSmartDashboardType("Cameras");
+    builder.addDoubleProperty("Amp Pitch", () -> ampCameraEstimatedPitch, null);
+    builder.addDoubleProperty("Speaker Pitch", () -> speakerCameraEstimatedPitch, null);
+    builder.addDoubleProperty("Amp Yaw", () -> ampCameraEstimatedYaw, null);
+    builder.addDoubleProperty("Speaker Yaw", () -> speakerCameraEstimatedYaw, null);
+    builder.addDoubleArrayProperty("Amp Pose", () -> ampCameraPose, null);
+    builder.addDoubleArrayProperty("Speaker Pose", () -> speakerCameraPose, null);
   }
 
 }

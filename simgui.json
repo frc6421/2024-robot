@@ -114,6 +114,12 @@
         ".metadata": {
           "open": true
         },
+        "Cameras": {
+          "Cameras": {
+            "open": true
+          },
+          "open": true
+        },
         "Shooter": {
           "ShooterSubsystem": {
             "open": true
