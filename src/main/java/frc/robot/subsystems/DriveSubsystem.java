@@ -61,7 +61,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
         .withKP(0.156).withKI(0).withKD(0)
-        .withKS(0.29).withKV(0.11).withKA(0);
+        .withKS(0.26).withKV(0.14).withKA(0);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -76,17 +76,17 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    public static final double SPEED_AT_12_VOLTS_METERS_PER_SEC = 4.73;
+    public static final double SPEED_AT_12_VOLTS_METERS_PER_SEC = 5.2;
 
     // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double COUPLE_RATIO = 3.5714285714285716;
 
-    private static final double DRIVE_GEAR_RATIO = 6.746031746031747;
+    private static final double DRIVE_GEAR_RATIO = 6.12;
     private static final double STEER_GEAR_RATIO = 21.428571428571427;
     // TODO update after initial measurements and before each competition/everytime
     // treads are changed
-    private static final double WHEEL_RADIUS_INCHES = 1.91;
+    private static final double WHEEL_RADIUS_INCHES = 1.99;
 
     private static final boolean STEER_MOTOR_REVERSED = true;
     private static final boolean INVERT_LEFT_SIDE = false;
