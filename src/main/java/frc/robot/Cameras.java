@@ -17,14 +17,13 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 /** Includes camera setup and all methods for getting camera data */
 public class Cameras implements Sendable{
 
-    public static PhotonCamera ampCamera;
-    public static PhotonCamera speakerCamera;
+    public static PhotonCamera ampCamera = new PhotonCamera("Camera6");
+    public static PhotonCamera speakerCamera = new PhotonCamera("Camera1");
     //public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
 
     private final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -64,8 +63,7 @@ public class Cameras implements Sendable{
 
     public Cameras() {
       SendableRegistry.add(this, "Cameras");
-      ampCamera = new PhotonCamera("Camera6");
-      speakerCamera = new PhotonCamera("Camera1");
+
       Shuffleboard.getTab("Cameras").add(this);
     }
 
