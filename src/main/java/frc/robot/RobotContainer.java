@@ -54,7 +54,6 @@ import frc.robot.commands.autoCommands.BlueCenterLineFourPieceCommand;
 import frc.robot.commands.autoCommands.BlueCenterLineThreePieceCommand;
 import frc.robot.commands.autoCommands.BlueFivePieceCommand;
 import frc.robot.commands.autoCommands.BlueFourPieceCommand;
-import frc.robot.commands.autoCommands.BlueSixPieceCommand;
 import frc.robot.commands.autoCommands.BlueTwoPieceCommand;
 import frc.robot.commands.autoCommands.FlipBlueCenterLineFourPieceCommand;
 import frc.robot.commands.autoCommands.FlipRedCenterLineFourPieceCommand;
@@ -62,7 +61,6 @@ import frc.robot.commands.autoCommands.RedCenterLineFourPieceCommand;
 import frc.robot.commands.autoCommands.RedCenterLineThreePieceCommand;
 import frc.robot.commands.autoCommands.RedFivePieceCommand;
 import frc.robot.commands.autoCommands.RedFourPieceCommand;
-import frc.robot.commands.autoCommands.RedSixPieceCommand;
 import frc.robot.commands.autoCommands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.subsystems.DriveSubsystem;
@@ -111,8 +109,6 @@ public class RobotContainer {
   private final RedFourPieceCommand redFourPiece;
   private final BlueCenterLineThreePieceCommand blueCenterLineThreePiece;
   private final RedCenterLineThreePieceCommand redCenterLineThreePiece;
-  private final BlueSixPieceCommand blueSixPiece;
-  private final RedSixPieceCommand redSixPiece;
   private final BlueCenterLineFourPieceCommand blueCenterLineFourPiece;
   private final RedCenterLineFourPieceCommand redCenterLineFourPiece;
   private final FlipBlueCenterLineFourPieceCommand flipBlueCenterLineFourPiece;
@@ -167,8 +163,6 @@ public class RobotContainer {
     flipRedCenterLineFourPiece = new FlipRedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     blueFivePiece = new BlueFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redFivePiece = new RedFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    blueSixPiece = new BlueSixPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
-    redSixPiece = new RedSixPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
@@ -257,7 +251,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()))
         .andThen(new WaitCommand(0.1))
-        .andThen(new ShooterRevUpCommand(shooterSubsystem))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
@@ -268,7 +262,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.SHUTTLE, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()))
         .andThen(new WaitCommand(0.1))
-        .andThen(new ShooterRevUpCommand(shooterSubsystem))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))

@@ -106,6 +106,17 @@ public static class TrajectoryConstants {
   public static final Translation2d RED_CENTER_SCORE = new Translation2d(Units.inchesToMeters(503), Units.inchesToMeters(260));
   public static final Translation2d BLUE_CENTER_SCORE = new Translation2d(Units.inchesToMeters(145), Units.inchesToMeters(260));
 
+  public static final double RPM_AT_CENTER_SCORE = 4400;
+  public static final double RPM_AT_CENTER_LINE_SHOOTING_POSITION = 4300;
+  public static final double RPM_AT_FOUR_PIECE_SCORE = 3650;
+  public static final double RPM_AT_SUBWOOFER = 3500;
+
+  public static final double DEGREE_AT_CENTER_SCORE = 28.75;
+  public static final double DEGREE_AT_CENTER_LINE_SHOOTING_POSITION = 29.5;
+  public static final double DEGREE_AT_FOUR_PIECE_SCORE = 45.5;
+  public static final double DEGREE_AT_SUBWOOFER = 52;
+
+
   }
 
   public static enum RobotStates{

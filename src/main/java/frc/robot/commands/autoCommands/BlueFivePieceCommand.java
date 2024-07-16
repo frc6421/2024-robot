@@ -76,18 +76,18 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
 
     Trajectory driveToScoreFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(0))),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0))),
         new Pose2d(TrajectoryConstants.NOTE1.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0))), forwardConfig);
 
     Trajectory driveToScoreSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE1.plus(new Translation2d(Units.inchesToMeters(6), 0)), new Rotation2d(0)),
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(Units.degreesToRadians(0)))), reverseConfig);
 
     Trajectory driveToThirdNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(16), 0)), new Rotation2d(0)),
+        new Pose2d(TrajectoryConstants.FRONT_CENTER_BLUE_SUBWOOFER.plus(new Translation2d(Units.inchesToMeters(18), 0)), new Rotation2d(0)),
         new Pose2d(TrajectoryConstants.NOTE2.plus(new Translation2d(Units.inchesToMeters(0), 0)), new Rotation2d(0)), 
         new Pose2d(TrajectoryConstants.BLUE_CENTER_LINE_SHOOTING_POSITION.plus(new Translation2d(Units.inchesToMeters(4), 0)), new Rotation2d(Units.degreesToRadians(-7)))), forwardConfig);
 
@@ -208,8 +208,8 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
         // shoot preload
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_SUBWOOFER)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_SUBWOOFER),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.15),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -218,8 +218,8 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_FOUR_PIECE_SCORE)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_FOUR_PIECE_SCORE),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.15),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -228,8 +228,8 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_FOUR_PIECE_SCORE)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_FOUR_PIECE_SCORE),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.15),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -238,8 +238,8 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_CENTER_LINE_SHOOTING_POSITION)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_CENTER_LINE_SHOOTING_POSITION),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.15),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -247,8 +247,8 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToCenterNoteCommand, driveToScoreCenterNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_CENTER_LINE_SHOOTING_POSITION)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_CENTER_LINE_SHOOTING_POSITION),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.15),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),

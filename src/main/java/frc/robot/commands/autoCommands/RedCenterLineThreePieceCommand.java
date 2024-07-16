@@ -173,8 +173,8 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(scorePreloadTrajectory.getInitialPose())), 
         scorePreloadCommand, 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 29.5)),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_CENTER_LINE_SHOOTING_POSITION)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_CENTER_LINE_SHOOTING_POSITION),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -183,8 +183,8 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveBackToScoreOneCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 29.5)),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_CENTER_LINE_SHOOTING_POSITION)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_CENTER_LINE_SHOOTING_POSITION),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
@@ -193,8 +193,8 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveBackToScoreTwoCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 29.5)),
-        new ShooterRevUpCommand(shooterSubsystem),
+        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_CENTER_LINE_SHOOTING_POSITION)),
+        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_CENTER_LINE_SHOOTING_POSITION),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition()),
