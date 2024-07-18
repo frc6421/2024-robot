@@ -106,6 +106,18 @@ public static class TrajectoryConstants {
   public static final Translation2d RED_CENTER_SCORE = new Translation2d(Units.inchesToMeters(503), Units.inchesToMeters(260));
   public static final Translation2d BLUE_CENTER_SCORE = new Translation2d(Units.inchesToMeters(145), Units.inchesToMeters(260));
 
+
+  // amp auto constants slay slay slay
+  public static final Translation2d BLUE_AMP_START = new Translation2d(Units.inchesToMeters(0)+CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(276));
+  public static final Translation2d RED_AMP_START = new Translation2d(Units.inchesToMeters(648)-CENTER_OF_ROBOT_LENGTH, Units.inchesToMeters(276));
+
+  public static final Translation2d BLUE_AMP = new Translation2d(Units.inchesToMeters(73), Units.inchesToMeters(323)-CENTER_OF_ROBOT_LENGTH);
+  public static final Translation2d RED_AMP = new Translation2d(Units.inchesToMeters(579), Units.inchesToMeters(323)-CENTER_OF_ROBOT_LENGTH);
+
+
+
+
+
   public static final double RPM_AT_CENTER_SCORE = 4400;
   public static final double RPM_AT_CENTER_LINE_SHOOTING_POSITION = 4300;
   public static final double RPM_AT_FOUR_PIECE_SCORE = 3650;
@@ -115,7 +127,6 @@ public static class TrajectoryConstants {
   public static final double DEGREE_AT_CENTER_LINE_SHOOTING_POSITION = 29.5;
   public static final double DEGREE_AT_FOUR_PIECE_SCORE = 45.5;
   public static final double DEGREE_AT_SUBWOOFER = 52;
-
 
   }
 
