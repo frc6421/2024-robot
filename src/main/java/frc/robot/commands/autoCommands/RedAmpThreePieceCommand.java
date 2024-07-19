@@ -47,7 +47,7 @@ import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class BlueAmpThreePieceCommand extends SequentialCommandGroup {
+public class RedAmpThreePieceCommand extends SequentialCommandGroup {
   private DriveSubsystem driveSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private TransitionSubsystem transitionSubsystem;
@@ -57,7 +57,7 @@ public class BlueAmpThreePieceCommand extends SequentialCommandGroup {
 
   private Field2d field;
   /** Creates a new BlueTwoPieceCommand. */
-  public BlueAmpThreePieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle, TransitionArmSubsystem armSubsystem) {
+  public RedAmpThreePieceCommand(DriveSubsystem drive, IntakeSubsystem intake, TransitionSubsystem transition, ShooterSubsystem shooter, ShooterAngleSubsystem shooterAngle, TransitionArmSubsystem armSubsystem) {
 
     driveSubsystem = drive;
     intakeSubsystem = intake;
@@ -79,44 +79,44 @@ public class BlueAmpThreePieceCommand extends SequentialCommandGroup {
 
     // robot leaves start zone and moves to pick up note at podium
     Trajectory driveToAmpTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.BLUE_AMP_START, new Rotation2d(Units.degreesToRadians(180))),
-        new Pose2d(TrajectoryConstants.BLUE_AMP, new Rotation2d(Units.degreesToRadians(270)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.RED_AMP_START, new Rotation2d(Units.degreesToRadians(0))),
+        new Pose2d(TrajectoryConstants.RED_AMP, new Rotation2d(Units.degreesToRadians(270)))), reverseConfig);
 
     Trajectory driveToFirstNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.BLUE_AMP, new Rotation2d(Units.degreesToRadians(270))),
-        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(12), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(0)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.RED_AMP, new Rotation2d(Units.degreesToRadians(270))),
+        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(12), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreNote1Trajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE3.plus(new Translation2d(Units.inchesToMeters(12), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.BLUE_AMP, new Rotation2d(Units.degreesToRadians(270)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE11.minus(new Translation2d(Units.inchesToMeters(12), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_AMP, new Rotation2d(Units.degreesToRadians(270)))), reverseConfig);
 
     Trajectory driveToSecondNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.BLUE_AMP, new Rotation2d(Units.degreesToRadians(270))),
-        new Pose2d(TrajectoryConstants.NOTE3, new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.NOTE8_BLUE.plus(new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(0)))), forwardConfig);
+        new Pose2d(TrajectoryConstants.RED_AMP, new Rotation2d(Units.degreesToRadians(270))),
+        new Pose2d(TrajectoryConstants.NOTE11, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE8_RED.plus(new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(180)))), forwardConfig);
 
     Trajectory driveToScoreNote2Trajectory = TrajectoryGenerator.generateTrajectory(List.of(
-        new Pose2d(TrajectoryConstants.NOTE8_BLUE.plus(new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.NOTE3, new Rotation2d(Units.degreesToRadians(0))),
-        new Pose2d(TrajectoryConstants.BLUE_AMP, new Rotation2d(Units.degreesToRadians(270)))), reverseConfig);
+        new Pose2d(TrajectoryConstants.NOTE8_RED.plus(new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(0))), new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.NOTE11, new Rotation2d(Units.degreesToRadians(180))),
+        new Pose2d(TrajectoryConstants.RED_AMP, new Rotation2d(Units.degreesToRadians(270)))), reverseConfig);
 
 
 
     // Simulation
-    // field = new Field2d();
+    field = new Field2d();
 
-    // if (RobotBase.isSimulation()) {
-    //    SmartDashboard.putData(field);
+    if (RobotBase.isSimulation()) {
+       SmartDashboard.putData(field);
 
-    //    field.setRobotPose(driveToAmpTrajectory.getInitialPose());
+       field.setRobotPose(driveToAmpTrajectory.getInitialPose());
       
-    //    field.getObject("Drive to Amp Trajectory").setTrajectory(driveToAmpTrajectory);
-    //   field.getObject("Drive to Note1 Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-    //   field.getObject("Drive to Score Note1 Trajectory").setTrajectory(driveToScoreNote1Trajectory);
-    //   field.getObject("Drive to Note2 Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-    //   field.getObject("Drive to Score Note2 Trajectory").setTrajectory(driveToScoreNote2Trajectory);
+       field.getObject("Drive to Amp Trajectory").setTrajectory(driveToAmpTrajectory);
+      field.getObject("Drive to Note1 Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+      field.getObject("Drive to Score Note1 Trajectory").setTrajectory(driveToScoreNote1Trajectory);
+      field.getObject("Drive to Note2 Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+      field.getObject("Drive to Score Note2 Trajectory").setTrajectory(driveToScoreNote2Trajectory);
 
-    //  }
+     }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,

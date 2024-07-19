@@ -36,15 +36,21 @@
           "style": "Line"
         },
         "Drive to Amp Trajectory": {
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to Note1 Trajectory": {
-          "style": "Line"
+          "arrows": false,
+          "style": "Box/Image"
         },
         "Drive to Note2 Trajectory": {
-          "style": "Line"
+          "arrows": false,
+          "style": "Track"
         },
         "Drive to Score Note1 Trajectory": {
+          "style": "Track"
+        },
+        "Drive to Score Note2 Trajectory": {
+          "arrows": false,
           "style": "Line"
         },
         "Drive to first Trajectory": {
