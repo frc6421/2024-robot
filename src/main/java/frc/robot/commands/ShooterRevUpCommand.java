@@ -26,6 +26,8 @@ public class ShooterRevUpCommand extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterSubsystem = shooterSubsystem;
 
+    this.rpm = rpm;
+
     addRequirements(shooterSubsystem);
 
     time = new Timer();
@@ -34,6 +36,8 @@ public class ShooterRevUpCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    System.out.println("Initial Target Shooter Velocity: " + this.rpm + " @ " + Timer.getMatchTime());
 
     if (DriverStation.isAutonomous()) {
       shooterVelocity = rpm;
