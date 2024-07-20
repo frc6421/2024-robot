@@ -50,6 +50,7 @@ import frc.robot.commands.ShuttleVisionCommand;
 import frc.robot.Constants.ClimberStates;
 import frc.robot.commands.SpeakerVisionCommand;
 import frc.robot.commands.TrapVisionCommand;
+import frc.robot.commands.autoCommands.BlueAmpThreePieceCommand;
 import frc.robot.commands.autoCommands.BlueCenterLineFourPieceCommand;
 import frc.robot.commands.autoCommands.BlueCenterLineThreePieceCommand;
 import frc.robot.commands.autoCommands.BlueFivePieceCommand;
@@ -57,6 +58,7 @@ import frc.robot.commands.autoCommands.BlueFourPieceCommand;
 import frc.robot.commands.autoCommands.BlueTwoPieceCommand;
 import frc.robot.commands.autoCommands.FlipBlueCenterLineFourPieceCommand;
 import frc.robot.commands.autoCommands.FlipRedCenterLineFourPieceCommand;
+import frc.robot.commands.autoCommands.RedAmpThreePieceCommand;
 import frc.robot.commands.autoCommands.RedCenterLineFourPieceCommand;
 import frc.robot.commands.autoCommands.RedCenterLineThreePieceCommand;
 import frc.robot.commands.autoCommands.RedFivePieceCommand;
@@ -115,6 +117,8 @@ public class RobotContainer {
   private final FlipRedCenterLineFourPieceCommand flipRedCenterLineFourPiece;
   private final BlueFivePieceCommand blueFivePiece;
   private final RedFivePieceCommand redFivePiece;
+  private final BlueAmpThreePieceCommand blueAmpThreePiece;
+  private final RedAmpThreePieceCommand redAmpThreePiece;
 
   
   public static RobotStates robotState;
@@ -163,6 +167,9 @@ public class RobotContainer {
     flipRedCenterLineFourPiece = new FlipRedCenterLineFourPieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     blueFivePiece = new BlueFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
     redFivePiece = new RedFivePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem);
+    blueAmpThreePiece = new BlueAmpThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem, armSubsystem);
+    redAmpThreePiece = new RedAmpThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem, armSubsystem);
+
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
@@ -183,6 +190,9 @@ public class RobotContainer {
     autoChooser.addOption("Red Side 3.5 Piece Skip Wing", flipRedCenterLineFourPiece);
     autoChooser.addOption("Blue 5 Piece", blueFivePiece);
     autoChooser.addOption("Red 5 Piece", redFivePiece);
+    autoChooser.addOption("Blue Amp", blueAmpThreePiece);
+    autoChooser.addOption("Red Amp", redAmpThreePiece);
+
 
     // Telemetry
     driveSubsystem.registerTelemetry(telemetry::telemeterize);
