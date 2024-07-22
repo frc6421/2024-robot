@@ -241,21 +241,21 @@ public class RobotContainer {
     // BARF STATE \\ 
     driverController.leftTrigger().onTrue(new InstantCommand(() -> robotState = RobotStates.BARF));
     driverController.leftTrigger().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
-    driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
-    driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
-    driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
+    driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED), transitionSubsystem));
+    driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake(), intakeSubsystem));
+    driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0), transitionSubsystem));
     driverController.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
 
     // Scores
     driverController.rightBumper().onTrue(new SelectCommand<RobotStates>(Map.ofEntries(
-      Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 
+      Map.entry(RobotStates.AMP, new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor(), shooterSubsystem), 
           new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 0))
         .andThen(new WaitCommand(0.3))
-        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED)))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.AMP_TRANSITION_SPEED), transitionSubsystem))
         .andThen(new WaitCommand(0.4))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
-        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor(), shooterSubsystem))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
@@ -263,10 +263,10 @@ public class RobotContainer {
       Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()))
         .andThen(new WaitCommand(0.1))
         .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
-        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem))
         .andThen(new WaitCommand(0.4))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
-        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor(), shooterSubsystem))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
@@ -274,10 +274,10 @@ public class RobotContainer {
       Map.entry(RobotStates.SHUTTLE, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()))
         .andThen(new WaitCommand(0.1))
         .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
-        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem))
         .andThen(new WaitCommand(0.4))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
-        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor(), shooterSubsystem))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
@@ -285,10 +285,10 @@ public class RobotContainer {
       Map.entry(RobotStates.ONE, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 37.5))
         .andThen(new WaitCommand(0.1))
         .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
-        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem))
         .andThen(new WaitCommand(0.4))
-        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
-        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor(), shooterSubsystem))
         .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
@@ -336,7 +336,7 @@ public class RobotContainer {
     //   .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
     //   .andThen(new WaitCommand(0.5))
     //   .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0))
-    //   .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0))
+    //   .andThen(new InstantCommand(() -> shooterSubsystem.setShooterMotorVelocity(0), shooterSubsystem)
     //   .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES))
     //   .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0)))
     //   .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE)))));
@@ -348,7 +348,7 @@ public class RobotContainer {
     // testingcontroller.leftTrigger().onTrue(new InstantCommand(() -> robotState = RobotStates.BARF));
     // testingcontroller.leftTrigger().whileTrue(new RunCommand(() -> intakeSubsystem.setIntakeVoltage(IntakeConstants.INTAKE_OUT_SPEED), intakeSubsystem));
     // testingcontroller.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(-1.0 * TransitionConstants.TRANSITION_SPEED)));
-    // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake()));
+    // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> intakeSubsystem.stopIntake(), intakeSubsystem));
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
 

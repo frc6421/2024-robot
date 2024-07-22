@@ -136,6 +136,7 @@ public class TransitionSubsystem extends SubsystemBase {
       super.initSendable(builder);
       builder.addBooleanProperty("Note Detected In", this::isNoteDetectedIn, null);
       builder.addBooleanProperty("Note Detected Out", this::isNoteDetectedOut, null);
+      builder.addDoubleProperty("Transition Speed", () -> transitionMotor.get(), null);
   }
 }
 

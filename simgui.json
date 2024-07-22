@@ -8,6 +8,7 @@
       "/Shuffleboard/Climber Tuning/ClimberTuningCommand": "Command",
       "/Shuffleboard/Climber Tuning/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Intake/IntakeSubsystem": "Subsystem",
       "/Shuffleboard/Shooter Angle/ShooterAngleSubsystem": "Subsystem",
       "/Shuffleboard/Shooter Pivot Tuning/Chooser": "String Chooser",
       "/Shuffleboard/Shooter Pivot Tuning/ShooterPivotTuningCommand": "Command",
@@ -138,6 +139,9 @@
           },
           "open": true
         },
+        "Intake": {
+          "open": true
+        },
         "Shooter": {
           "ShooterSubsystem": {
             "open": true
@@ -164,6 +168,12 @@
           "TransitionArmSubsystem": {
             "open": true
           },
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "Field": {
           "open": true
         },
         "open": true
