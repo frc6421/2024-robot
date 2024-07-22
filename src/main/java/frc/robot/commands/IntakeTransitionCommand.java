@@ -84,7 +84,7 @@ public class IntakeTransitionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     
-    LEDSubsystem.setColor(LEDColors.HOT_PINK);
+    LEDSubsystem.setColor(LEDColors.OFF);
     intakeSubsystem.setIntakeVoltage(0);
     transitionSubsystem.setTransitionVoltage(0);
 

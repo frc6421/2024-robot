@@ -227,6 +227,7 @@ public class RobotContainer {
       Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SHUTTLE, new InstantCommand(() -> robotState = RobotStates.SHUTTLE)),
+      Map.entry(RobotStates.ONE, new InstantCommand(() -> robotState = RobotStates.ONE)),
       Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP)),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
@@ -281,6 +282,17 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
+      Map.entry(RobotStates.ONE, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 37.5))
+        .andThen(new WaitCommand(0.1))
+        .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
+        .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
+        .andThen(new WaitCommand(0.4))
+        .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition()))
+        .andThen(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()))
+        .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
+        .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES)))
+        .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
+        .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
       Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
@@ -297,10 +309,17 @@ public class RobotContainer {
     driverController.a().onFalse(new InstantCommand(() -> driveSubsystem.configNeutralMode(NeutralModeValue.Brake)));
 
     // AMP STATE \\
-    operatorController.a().onTrue(new InstantCommand(() -> robotState = RobotStates.AMP));
+    operatorController.a().onTrue(new InstantCommand(() -> robotState = RobotStates.AMP)
+            .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.RED))));
+
     
     // SHOOT STATE \\
-    operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SPEAKER));
+    operatorController.b().onTrue(new InstantCommand(() -> robotState = RobotStates.SPEAKER)
+            .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.BLUE))));
+
+    // SHOOT1 STATE \\
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> robotState = RobotStates.ONE)
+            .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.BLUE))));
     
     // CLIMB STATE \\
     operatorController.x().onTrue(new ClimberDanceCommand(climberSubsystem, armSubsystem, transitionSubsystem));

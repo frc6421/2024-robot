@@ -119,7 +119,7 @@ public static class TrajectoryConstants {
 
 
   public static final double RPM_AT_CENTER_SCORE = 4400;
-  public static final double RPM_AT_CENTER_LINE_SHOOTING_POSITION = 4300;
+  public static final double RPM_AT_CENTER_LINE_SHOOTING_POSITION = 4250; // MROC was 4300
   public static final double RPM_AT_FOUR_PIECE_SCORE = 3650;
   public static final double RPM_AT_SUBWOOFER = 3500;
 
@@ -138,7 +138,8 @@ public static class TrajectoryConstants {
     TRAP,
     CLIMB,
     BARF,
-    SHUTTLE
+    SHUTTLE,
+    ONE
   }
 
   public static enum ClimberStates {
