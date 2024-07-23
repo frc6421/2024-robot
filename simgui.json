@@ -55,8 +55,7 @@
           "style": "Line"
         },
         "Drive to first Trajectory": {
-          "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to pick up 4 Trajectory": {
           "style": "Track"
@@ -78,7 +77,7 @@
         },
         "Drive to score 4 Trajectory": {
           "arrows": false,
-          "style": "Line"
+          "style": "Track"
         },
         "Drive to score 5 Trajectory": {
           "arrows": false,
@@ -94,7 +93,7 @@
           "style": "Track"
         },
         "Drive to score second Trajectory": {
-          "style": "Track"
+          "style": "Line"
         },
         "Drive to score third Trajectory": {
           "style": "Track"
@@ -104,7 +103,7 @@
         },
         "Drive to second Trajectory": {
           "arrows": false,
-          "style": "Box/Image"
+          "style": "Track"
         },
         "Drive to third Trajectory": {
           "arrows": false,
