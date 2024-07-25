@@ -32,8 +32,8 @@ public class Cameras implements Sendable{
     private final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     
     
-    private final static Translation3d redSpeakerTranslation = aprilTagFieldLayout.getTagPose(4).get().getTranslation();
-    private final static Translation3d blueSpeakerTranslation = aprilTagFieldLayout.getTagPose(7).get().getTranslation();
+    private final static Translation2d redSpeakerTranslation = aprilTagFieldLayout.getTagPose(4).get().getTranslation().toTranslation2d();
+    private final static Translation2d blueSpeakerTranslation = aprilTagFieldLayout.getTagPose(7).get().getTranslation().toTranslation2d();
 
     private final static Transform3d robotToAmpCamera = new Transform3d(
         new Translation3d(VisionConstants.AMP_CAMERA_X, VisionConstants.AMP_CAMERA_Y, VisionConstants.AMP_CAMERA_Z),
@@ -286,11 +286,11 @@ public class Cameras implements Sendable{
   }
 
   public static double getRobotToRedSpeaker() {
-    return speakerPose3d.getTranslation().getDistance(redSpeakerTranslation);
+    return speakerPose3d.getTranslation().toTranslation2d().getDistance(redSpeakerTranslation);
   }
 
   public static double getRobotToBlueSpeaker() {
-    return speakerPose3d.getTranslation().getDistance(blueSpeakerTranslation);
+    return speakerPose3d.getTranslation().toTranslation2d().getDistance(blueSpeakerTranslation);
   }
 
   public void initSendable(SendableBuilder builder) {
