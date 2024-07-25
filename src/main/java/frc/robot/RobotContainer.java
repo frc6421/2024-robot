@@ -46,6 +46,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.ShooterRevUpCommand;
+import frc.robot.commands.ShooterTuningCommand;
 import frc.robot.commands.ShuttleVisionCommand;
 import frc.robot.Constants.ClimberStates;
 import frc.robot.commands.SpeakerVisionCommand;
@@ -83,6 +84,7 @@ public class RobotContainer {
   // Controllers \\
   private final CommandXboxController driverController; 
   private final CommandXboxController operatorController;
+  private final CommandXboxController testingController;
   //private final CommandXboxController testingcontroller;
 
   private static final int driverControllerPort = 0;
@@ -120,6 +122,8 @@ public class RobotContainer {
   private final BlueAmpThreePieceCommand blueAmpThreePiece;
   private final RedAmpThreePieceCommand redAmpThreePiece;
 
+  private final ShooterTuningCommand shooterTuningCommand;
+
   
   public static RobotStates robotState;
   public static ClimberStates climberState;
@@ -136,7 +140,7 @@ public class RobotContainer {
 
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
-    //testingcontroller = new CommandXboxController(testingcontrollerPort);
+    testingController = new CommandXboxController(testingcontrollerPort);
 
     DriverStation.silenceJoystickConnectionWarning(true);
     pdh.clearStickyFaults();
@@ -170,6 +174,7 @@ public class RobotContainer {
     blueAmpThreePiece = new BlueAmpThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem, armSubsystem);
     redAmpThreePiece = new RedAmpThreePieceCommand(driveSubsystem, intakeSubsystem, transitionSubsystem, shooterSubsystem, shooterAngleSubsystem, armSubsystem);
 
+    shooterTuningCommand = new ShooterTuningCommand(shooterAngleSubsystem, shooterSubsystem);
 
     driveSubsystem.setDefaultCommand(driveCommand);
 
@@ -352,7 +357,7 @@ public class RobotContainer {
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(0)));
     // testingcontroller.leftTrigger().onFalse(new InstantCommand(() -> robotState = RobotStates.DRIVE));
 
-    // testingcontroller.x().whileTrue(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
+    testingController.x().toggleOnTrue(shooterTuningCommand);
     // testingcontroller.x().onFalse(new InstantCommand(() -> climberSubsystem.setClimberVoltage(0)));
     // testingcontroller.b().onTrue((new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
     //     .andThen(new WaitCommand(0.6))

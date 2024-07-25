@@ -10,12 +10,15 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.VisionConstants;
 
@@ -27,6 +30,10 @@ public class Cameras implements Sendable{
     //public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
 
     private final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    
+    
+    private final static Translation3d redSpeakerTranslation = aprilTagFieldLayout.getTagPose(4).get().getTranslation();
+    private final static Translation3d blueSpeakerTranslation = aprilTagFieldLayout.getTagPose(7).get().getTranslation();
 
     private final static Transform3d robotToAmpCamera = new Transform3d(
         new Translation3d(VisionConstants.AMP_CAMERA_X, VisionConstants.AMP_CAMERA_Y, VisionConstants.AMP_CAMERA_Z),
@@ -58,13 +65,18 @@ public class Cameras implements Sendable{
     private static double speakerCameraEstimatedYaw = 0;
     private static double speakerCameraEstimatedPitch = 0;
 
-    private static double[] ampCameraPose = {0,0,0};
-    private static double[] speakerCameraPose = {0,0,0};
+    private static double[] ampCameraPose = {0,0,0,0};
+    private static double[] speakerCameraPose = {0,0,0,0};
+
+    private static Pose3d ampPose3d = new Pose3d();
+    private static Pose3d speakerPose3d = new Pose3d();
 
     public Cameras() {
       SendableRegistry.add(this, "Cameras");
 
       Shuffleboard.getTab("Cameras").add(this);
+      DataLogManager.log("tag 4 " + redSpeakerTranslation.toString());
+      DataLogManager.log("tag 7 " + blueSpeakerTranslation.toString());
     }
 
     public static boolean isTarget(PhotonCamera camera) {
@@ -248,11 +260,12 @@ public class Cameras implements Sendable{
   public static void logAmpCameraPose() {
     var estimatedPose = ampCameraPoseEstimator.update();
     if (estimatedPose.isPresent()) {
-      var pose = estimatedPose.get().estimatedPose.toPose2d();
+      ampPose3d = estimatedPose.get().estimatedPose;
       ampCameraPose = new double[] {
-        pose.getX(),
-        pose.getY(),
-        pose.getRotation().getDegrees()
+        ampPose3d.getX(),
+        ampPose3d.getY(),
+        ampPose3d.getZ(),
+        ampPose3d.getRotation().getAngle()
       };
     }
 
@@ -261,14 +274,23 @@ public class Cameras implements Sendable{
   public static void logSpeakerCameraPose() {
     var estimatedPose = speakerCameraPoseEstimator.update();
     if (estimatedPose.isPresent()) {
-      var pose = estimatedPose.get().estimatedPose.toPose2d();
+      speakerPose3d = estimatedPose.get().estimatedPose;
       speakerCameraPose = new double[] {
-        pose.getX(),
-        pose.getY(),
-        pose.getRotation().getDegrees()
+        speakerPose3d.getX(),
+        speakerPose3d.getY(),
+        speakerPose3d.getZ(),
+        speakerPose3d.getRotation().getAngle()
       };
     }
 
+  }
+
+  public static double getRobotToRedSpeaker() {
+    return speakerPose3d.getTranslation().getDistance(redSpeakerTranslation);
+  }
+
+  public static double getRobotToBlueSpeaker() {
+    return speakerPose3d.getTranslation().getDistance(blueSpeakerTranslation);
   }
 
   public void initSendable(SendableBuilder builder) {
@@ -277,6 +299,8 @@ public class Cameras implements Sendable{
     builder.addDoubleProperty("Speaker Pitch", () -> speakerCameraEstimatedPitch, null);
     builder.addDoubleProperty("Amp Yaw", () -> ampCameraEstimatedYaw, null);
     builder.addDoubleProperty("Speaker Yaw", () -> speakerCameraEstimatedYaw, null);
+    builder.addDoubleProperty("Robot to Red Speaker", Cameras::getRobotToRedSpeaker, null);
+    builder.addDoubleProperty("Robot to Blue Speaker", Cameras::getRobotToBlueSpeaker, null);
     builder.addDoubleArrayProperty("Amp Pose", () -> ampCameraPose, null);
     builder.addDoubleArrayProperty("Speaker Pose", () -> speakerCameraPose, null);
   }

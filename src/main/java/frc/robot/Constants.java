@@ -155,22 +155,22 @@ public static class TrajectoryConstants {
     // Camera Offsets from Center of Robot
 
     /** In Meters */
-    public static final double SPEAKER_CAMERA_X = Units.inchesToMeters(-1.75);
-    public static final double SPEAKER_CAMERA_Y = Units.inchesToMeters(-13.949);
-    public static final double SPEAKER_CAMERA_Z = Units.inchesToMeters(14.05);
+    public static final double SPEAKER_CAMERA_X = -0.37; //Units.inchesToMeters(0); // -13.949
+    public static final double SPEAKER_CAMERA_Y = Units.inchesToMeters(-1.75); // -1.75
+    public static final double SPEAKER_CAMERA_Z = 0.41; //Units.inchesToMeters(0); // 14.05
 
     /** In Radians */
-    public static final double SPEAKER_CAMERA_PITCH = Units.degreesToRadians(61);
+    public static final double SPEAKER_CAMERA_PITCH = Units.degreesToRadians(-29); //29
     public static final double SPEAKER_CAMERA_YAW = Units.degreesToRadians(180);
 
 
     /** In Meters */
-    public static final double AMP_CAMERA_X = Units.inchesToMeters(1.75);
-    public static final double AMP_CAMERA_Y = Units.inchesToMeters(-14.237);
-    public static final double AMP_CAMERA_Z = Units.inchesToMeters(14.995);
+    public static final double AMP_CAMERA_X = -0.36; // -14.237
+    public static final double AMP_CAMERA_Y = Units.inchesToMeters(1.75); // 1.75
+    public static final double AMP_CAMERA_Z = 0.39; // 14.995
 
     /** In Radians */
-    public static final double AMP_CAMERA_PITCH = Units.degreesToRadians(28);
+    public static final double AMP_CAMERA_PITCH = Units.degreesToRadians(-62); //62
     public static final double AMP_CAMERA_YAW = Units.degreesToRadians(180);
 
     /** In degrees */
