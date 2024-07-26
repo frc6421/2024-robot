@@ -103,20 +103,20 @@ public class RedAmpThreePieceCommand extends SequentialCommandGroup {
 
 
     // Simulation
-    field = new Field2d();
+    // field = new Field2d();
 
-    if (RobotBase.isSimulation()) {
-       SmartDashboard.putData(field);
+    // if (RobotBase.isSimulation()) {
+    //    SmartDashboard.putData(field);
 
-       field.setRobotPose(driveToAmpTrajectory.getInitialPose());
+    //    field.setRobotPose(driveToAmpTrajectory.getInitialPose());
       
-       field.getObject("Drive to Amp Trajectory").setTrajectory(driveToAmpTrajectory);
-      field.getObject("Drive to Note1 Trajectory").setTrajectory(driveToFirstNoteTrajectory);
-      field.getObject("Drive to Score Note1 Trajectory").setTrajectory(driveToScoreNote1Trajectory);
-      field.getObject("Drive to Note2 Trajectory").setTrajectory(driveToSecondNoteTrajectory);
-      field.getObject("Drive to Score Note2 Trajectory").setTrajectory(driveToScoreNote2Trajectory);
+    //    field.getObject("Drive to Amp Trajectory").setTrajectory(driveToAmpTrajectory);
+    //   field.getObject("Drive to Note1 Trajectory").setTrajectory(driveToFirstNoteTrajectory);
+    //   field.getObject("Drive to Score Note1 Trajectory").setTrajectory(driveToScoreNote1Trajectory);
+    //   field.getObject("Drive to Note2 Trajectory").setTrajectory(driveToSecondNoteTrajectory);
+    //   field.getObject("Drive to Score Note2 Trajectory").setTrajectory(driveToScoreNote2Trajectory);
 
-     }
+    //  }
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.THETA_P, AutoConstants.THETA_I, AutoConstants.THETA_D,

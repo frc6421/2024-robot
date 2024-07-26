@@ -94,7 +94,7 @@ public class FlipBlueCenterLineFourPieceCommand extends SequentialCommandGroup {
 
  Trajectory driveToScoreFourthNoteTrajectory = TrajectoryGenerator.generateTrajectory(List.of(
         new Pose2d(TrajectoryConstants.NOTE6_BLUE.plus(new Translation2d(Units.inchesToMeters(12), 0)), new Rotation2d(Units.degreesToRadians(-60))),
-        new Pose2d(TrajectoryConstants.BLUE_CENTER_OF_STAGE, new Rotation2d(0))), reverseConfig);
+        new Pose2d(TrajectoryConstants.BLUE_CENTER_SCORE, new Rotation2d(Units.degreesToRadians(10)))), reverseConfig);
 
      //Simulation
     //  field = new Field2d();
