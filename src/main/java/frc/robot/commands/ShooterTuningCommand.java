@@ -23,7 +23,7 @@ public class ShooterTuningCommand extends Command {
 
     addRequirements(shooterSubsystem, shooterAngleSubsystem);
 
-    Shuffleboard.getTab("Shooter Tuning").add(this);
+    //  Shuffleboard.getTab("Shooter Tuning").add(this);
   }
 
   // Called when the command is initially scheduled.

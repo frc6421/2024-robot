@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.units.Angle;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -14,12 +17,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Cameras;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.RobotStates;
+import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.VisionConstants;
 
 import com.revrobotics.RelativeEncoder;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+
+import javax.swing.text.html.Option;
 
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -136,58 +142,38 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public double getTargetAngle() {
+
+   double angle = AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES;
+
+   if (RobotContainer.robotState.equals(RobotStates.SHUTTLE)) {
+      angle = AngleConstants.SHOOTER_PIVOT_SHUTTLE_ANGLE;
+   } else {
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
-
     if (allianceColor.isPresent()) {
+      double distance = allianceColor.get().equals(Alliance.Red) ? Cameras.getRobotToRedSpeaker() 
+      : Cameras.getRobotToBlueSpeaker();
+      DataLogManager.log("Shooter Angle - Calculated Distance: " + distance);
 
-      if (RobotContainer.robotState.equals(RobotStates.SHUTTLE)) {
-
-        return AngleConstants.SHOOTER_PIVOT_SHUTTLE_ANGLE;
-
-      } else {
-
-        targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
-
-        double pitchAngle = Cameras.getPitch(Cameras.speakerCamera, targetTagID);
-
-        if (pitchAngle > VisionConstants.SPEAKER_PITCH_ARRAY[0]) {
-
-          if(DriverStation.isAutonomous()) {
-
-            return 28.5; 
-
-          } else {
-
-            return VisionConstants.SHOOTER_PIVOT_ARRAY[0];
-
-          }
-          
-
-        } else if (pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1]) {
-
-          return VisionConstants.SHOOTER_PIVOT_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1];
-
-        } else {
-
-          if(targetTagID == 4) {
-
-            return (-0.0096 * Math.pow(pitchAngle, 2) + 0.9242 * pitchAngle + 40.386); //39.886
-
-          } else {
-
-            return (-0.0094 * Math.pow(pitchAngle, 2) + 0.9388 * pitchAngle + 39.683); //39.883
-
-          } 
-
-        }
-
+      if (distance < 1.3) {
+        DataLogManager.log("*** ShooterAngle - Distance too short too shoot! ***");
+        angle = TrajectoryConstants.DEGREE_AT_SUBWOOFER;
+      } else if (distance > 4) {
+        DataLogManager.log("*** ShooterAngle - Distance too long too shoot! ***");
+        angle = TrajectoryConstants.DEGREE_AT_SUBWOOFER;
       }
 
-    } else {
-
-      return VisionConstants.SHOOTER_PIVOT_ARRAY[0];
-
+     else {
+      angle = -0.4167 * distance * distance * distance
+       + 5.886 * distance * distance
+       - 31.414 * distance 
+       + 85.603;
     }
+
+   } else {
+    DataLogManager.log("*** Shooter Angle - No Alliance Present! ***");
+   }
+  }
+  return angle;
 
   }
 

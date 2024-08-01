@@ -198,6 +198,6 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
       builder.addDoubleProperty("1. Arm Target Angle", () -> targetArmAngle, null);
       builder.addDoubleProperty("2. Left Arm Actual Angle", this::getEncoderLeftDegree, null);
-      builder.addDoubleProperty("3. Right Arm Actual Angle", this::getEncoderRightDegree, null);
+      // builder.addDoubleProperty("3. Right Arm Actual Angle", this::getEncoderRightDegree, null);
   }
 }

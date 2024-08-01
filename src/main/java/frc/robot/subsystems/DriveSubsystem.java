@@ -292,5 +292,4 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     Cameras.logSpeakerCameraPose();
   }
 
-
 }

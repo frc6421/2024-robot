@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -169,57 +170,39 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getTargetRPM() {
-    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+   double rpm = 0;
 
-    if (allianceColor.isPresent()) {
 
       if (RobotContainer.robotState.equals(RobotStates.SHUTTLE)) {
 
-        return ShooterConstants.SHOOTER_SHUTTLE_RPM;
+        rpm = ShooterConstants.SHOOTER_SHUTTLE_RPM;
 
       } else {
+        Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+        
+        if (allianceColor.isPresent()) {
+      double distance = allianceColor.get().equals(Alliance.Red) ? Cameras.getRobotToRedSpeaker() 
+      : Cameras.getRobotToBlueSpeaker();
+      DataLogManager.log("Shooter - Calculated Distance: " + distance);
 
-        targetTagID = allianceColor.get().equals(Alliance.Red) ? 4 : 7;
-
-        double pitchAngle = Cameras.getPitch(Cameras.speakerCamera, targetTagID);
-
-        if (pitchAngle > VisionConstants.SPEAKER_PITCH_ARRAY[0]) {
-
-          if(DriverStation.isAutonomous()) {
-
-            return 4670;
-            
-          } else {
-
-            return VisionConstants.SHOOTER_RPM_ARRAY[0];
-
-          }
-
-        } else if (pitchAngle < VisionConstants.SPEAKER_PITCH_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1]) {
-
-          return VisionConstants.SHOOTER_RPM_ARRAY[VisionConstants.SPEAKER_PITCH_ARRAY.length - 1];
-
-        } else {
-
-          if(targetTagID == 4) {
-
-            return (0.007 * Math.pow(pitchAngle, 4) - 0.1335 * Math.pow(pitchAngle, 3) + 0.3034 * Math.pow(pitchAngle, 2) - 20.564 * pitchAngle + 3824.6);
-
-          } else {
-
-            return (0.0054 * Math.pow(pitchAngle, 4) - 0.1195 * Math.pow(pitchAngle, 3) + 0.7534 * Math.pow(pitchAngle, 2) - 23.165 * pitchAngle + 3812.6);
-          }
-
-        }
-
+      if (distance < 1.3) {
+        DataLogManager.log("*** Shooter - Distance too short too shoot! ***");
+        rpm = 3500;
+      } else if (distance > 4) {
+        DataLogManager.log("*** Shooter - Distance too long too shoot! ***");
+        rpm = 4550;
+      } else {
+        rpm = 11.319 * distance * distance * distance
+        - 48.78 * distance * distance
+        + 371.44 * distance
+        + 3057.6;
       }
 
-    } else {
-
-      return VisionConstants.SHOOTER_RPM_ARRAY[0];
-
-    }
-
+        } else {
+          DataLogManager.log("*** Shooter - No Alliance Present ***");
+        }
+      }
+    return rpm;
   }
 
   @Override
@@ -232,7 +215,7 @@ public class ShooterSubsystem extends SubsystemBase {
       super.initSendable(builder);
       builder.addDoubleProperty("1. Target Shooter RPM", () -> this.targetShooterRPM, null);
       builder.addDoubleProperty("2. Top Shooter RPM", this::getTopMotorVelocity, null);
-      builder.addDoubleProperty("3. Bottom Shooter RPM", this::getBottomMotorVelocity, null);
+      // builder.addDoubleProperty("3. Bottom Shooter RPM", this::getBottomMotorVelocity, null);
   }
 
 }

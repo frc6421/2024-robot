@@ -1,5 +1,6 @@
 {
   "download": {
+    "deleteAfter": false,
     "localDir": "C:\\Users\\dmiro\\Downloads",
     "serverTeam": "10.64.21.2"
   }

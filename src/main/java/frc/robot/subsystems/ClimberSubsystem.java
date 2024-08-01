@@ -156,7 +156,7 @@ public class ClimberSubsystem extends SubsystemBase {
     leftClimberEncoder.setPosition(0);
     rightClimberEncoder.setPosition(0);
 
-    Shuffleboard.getTab("Climber Numbers").add(this);
+    // Shuffleboard.getTab("Climber Numbers").add(this);
     
     // SmartDashboard.putNumber("Left Climb Position", getClimberLeftMotorPosition());
     // SmartDashboard.putNumber("Right Climb Position", getClimberRightMotorPosition());

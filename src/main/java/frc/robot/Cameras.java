@@ -19,6 +19,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.VisionConstants;
 
@@ -68,8 +69,11 @@ public class Cameras implements Sendable{
     private static double[] ampCameraPose = {0,0,0,0};
     private static double[] speakerCameraPose = {0,0,0,0};
 
-    private static Pose3d ampPose3d = new Pose3d();
-    private static Pose3d speakerPose3d = new Pose3d();
+    public static Pose3d ampPose3d = new Pose3d();
+    public static Pose3d speakerPose3d = new Pose3d();
+
+    public static double ampTimeStamp = 0;
+    public static double speakerTimeStamp = 0;
 
     public Cameras() {
       SendableRegistry.add(this, "Cameras");
@@ -256,11 +260,14 @@ public class Cameras implements Sendable{
         return 1.0;
 
     }
-
+  /*
+   * Logs the estimated pose  and time stamp of the ampCamera
+   */
   public static void logAmpCameraPose() {
     var estimatedPose = ampCameraPoseEstimator.update();
     if (estimatedPose.isPresent()) {
       ampPose3d = estimatedPose.get().estimatedPose;
+      ampTimeStamp = Timer.getFPGATimestamp();
       ampCameraPose = new double[] {
         ampPose3d.getX(),
         ampPose3d.getY(),
@@ -271,9 +278,12 @@ public class Cameras implements Sendable{
 
   }
 
-  public static void logSpeakerCameraPose() {
+  /*
+   * Logs the estimated pose and time stamp of the speakerCamera
+   */  public static void logSpeakerCameraPose() {
     var estimatedPose = speakerCameraPoseEstimator.update();
     if (estimatedPose.isPresent()) {
+      speakerTimeStamp = Timer.getFPGATimestamp();
       speakerPose3d = estimatedPose.get().estimatedPose;
       speakerCameraPose = new double[] {
         speakerPose3d.getX(),
