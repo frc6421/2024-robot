@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
+import org.photonvision.PhotonCamera;
+
 import com.ctre.phoenix6.StatusCode;
 
 import com.ctre.phoenix6.Utils;
@@ -17,7 +19,10 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -26,10 +31,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Cameras;
+import frc.robot.Constants;
+import frc.robot.Telemetry;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -42,6 +50,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private double m_lastSimTime;
   public SwerveDriveKinematics kinematics;
   public ApplyModuleStates autoDriveRequest;
+  public SwerveDrivePoseEstimator swerveDrivePoseEstimator;
 
 
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
@@ -221,7 +230,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       DriverStation.reportError("Unable to open field layout: " + fieldLayoutJSON, ex.getStackTrace());
     }
 
-
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, m_fieldRelativeOffset, m_modulePositions, getPose2d());
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -285,8 +294,75 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public Pose2d getPose2d() {
     return getState().Pose;
   }
+  /**
+   * Determines if the vision odometry is valid for updating, and updates it accordingly
+   */
+  public void filterOdometry(double standardDeviation, Pose3d pose3d, PhotonCamera camera) {
+    double time = Timer.getFPGATimestamp();
+    double[] pastCameraPoseArray;
+    double[] cameraPoseArray;
+    Pose2d cameraPose2d;
 
-  @Override
+    camera.getCameraMatrix();
+    if (camera == Cameras.ampCamera) {
+      pastCameraPoseArray = Cameras.previousAmpCameraPose;
+      cameraPoseArray = Cameras.ampCameraPose;
+      cameraPose2d = Cameras.ampPose3d.toPose2d();
+    } else {
+      pastCameraPoseArray = Cameras.previousSpeakerCameraPose;
+      cameraPoseArray = Cameras.speakerCameraPose;
+      cameraPose2d = Cameras.speakerPose3d.toPose2d();
+    }
+    // Is the robot in Teleop Enabled?
+    if (!DriverStation.isTeleopEnabled()) {
+      return;
+    }
+    // Check if the pose is the same as last pose
+    for(int x = 0; x < 4; x++) {
+      if (cameraPoseArray[x] == pastCameraPoseArray[x]) {
+        return;
+      }
+    }
+
+    // Check if the pose says we are in the field
+    if (pose3d.getX() > Constants.VisionConstants.MAXIMUM_X_POSE ||
+      pose3d.getY() > Constants.VisionConstants.MAXIMUM_Y_POSE ||
+      pose3d.getZ() > Constants.VisionConstants.MAXIMUM_Z_POSE ||
+      pose3d.getX() < 0 ||
+      pose3d.getY() < 0 ||
+      pose3d.getZ() < 0) {
+        return;
+    }
+
+    // Is the tag reliable enough?
+    if (isTagReliable(camera)) {
+      standardDeviation = standardDeviation / Constants.VisionConstants.TAG_DISTANCE_WEIGHT;
+    } else {
+      standardDeviation = standardDeviation * Constants.VisionConstants.TAG_DISTANCE_WEIGHT;
+    }
+    
+
+    // Set the new odometry with the vixion cooridnates and the drive train rotations
+    Pose2d mixedPose2d = new Pose2d(pose3d.getX(), pose3d.getY(), Telemetry.robotRotations); 
+    swerveDrivePoseEstimator.addVisionMeasurement(mixedPose2d, time);
+    
+    
+  }
+
+  public boolean isTagReliable(PhotonCamera camera) {
+    var bestTarget = camera.getLatestResult().getBestTarget();
+    int targetID = bestTarget.getFiducialId();
+    Translation2d cameraTranslation2d = Cameras.ampPose3d.getTranslation().toTranslation2d();
+    Translation2d targetTranslation2d = Cameras.aprilTagFieldLayout.getTagPose(targetID).get().getTranslation().toTranslation2d();
+    if (cameraTranslation2d.getDistance(targetTranslation2d) 
+     < Constants.VisionConstants.APRILTAG_METERS_LIMIT) { 
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+    @Override
   public void periodic() {
     Cameras.logAmpCameraPose();
     Cameras.logSpeakerCameraPose();

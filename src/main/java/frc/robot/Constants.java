@@ -207,6 +207,18 @@ public static class TrajectoryConstants {
     /** In degrees */
     public static final double TRAP_YAW_ANGLE = 10.5;
 
+
+    //TODO add values to all values below this
+    /** In poses */
+    public static final double MAXIMUM_X_POSE = 0;
+    public static final double MAXIMUM_Y_POSE = 0;
+    public static final double MAXIMUM_Z_POSE = 0;
+
+    /** In Meters */
+    public static final double APRILTAG_METERS_LIMIT = 0;
+
+    public static final double STARTING_STANDARD_DEVIATION = 0.1;
+    public static final double TAG_DISTANCE_WEIGHT = 2;
   }
 
 }

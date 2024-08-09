@@ -30,7 +30,7 @@ public class Cameras implements Sendable{
     public static PhotonCamera speakerCamera = new PhotonCamera("Camera1");
     //public static PhotonCamera noteCamera = new PhotonCamera("Camera7");
 
-    private final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    public final static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     
     
     private final static Translation2d redSpeakerTranslation = aprilTagFieldLayout.getTagPose(4).get().getTranslation().toTranslation2d();
@@ -66,8 +66,11 @@ public class Cameras implements Sendable{
     private static double speakerCameraEstimatedYaw = 0;
     private static double speakerCameraEstimatedPitch = 0;
 
-    private static double[] ampCameraPose = {0,0,0,0};
-    private static double[] speakerCameraPose = {0,0,0,0};
+    public static double[] ampCameraPose = {0,0,0,0};
+    public static double[] speakerCameraPose = {0,0,0,0};
+
+    public static double[] previousAmpCameraPose = {0,0,0,0};
+    public static double[] previousSpeakerCameraPose = {0,0,0,0};
 
     public static Pose3d ampPose3d = new Pose3d();
     public static Pose3d speakerPose3d = new Pose3d();
@@ -264,6 +267,7 @@ public class Cameras implements Sendable{
    * Logs the estimated pose  and time stamp of the ampCamera
    */
   public static void logAmpCameraPose() {
+    previousAmpCameraPose = ampCameraPose;
     var estimatedPose = ampCameraPoseEstimator.update();
     if (estimatedPose.isPresent()) {
       ampPose3d = estimatedPose.get().estimatedPose;
@@ -272,7 +276,7 @@ public class Cameras implements Sendable{
         ampPose3d.getX(),
         ampPose3d.getY(),
         ampPose3d.getZ(),
-        ampPose3d.getRotation().getAngle()
+        ampPose3d.getRotation().getAngle(),
       };
     }
 
@@ -281,6 +285,7 @@ public class Cameras implements Sendable{
   /*
    * Logs the estimated pose and time stamp of the speakerCamera
    */  public static void logSpeakerCameraPose() {
+    previousSpeakerCameraPose = speakerCameraPose;
     var estimatedPose = speakerCameraPoseEstimator.update();
     if (estimatedPose.isPresent()) {
       speakerTimeStamp = Timer.getFPGATimestamp();

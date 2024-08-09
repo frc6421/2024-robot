@@ -4,6 +4,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -43,12 +44,15 @@ public class Telemetry {
     private final DoublePublisher velocityY = driveStats.getDoubleTopic("Velocity Y").publish();
     private final DoublePublisher speed = driveStats.getDoubleTopic("Speed").publish();
     private final DoublePublisher odomPeriod = driveStats.getDoubleTopic("Odometry Period").publish();
+    public static double[] robotPoseArray;
+    public static Rotation2d robotRotations;
 
     
 
     /* Keep a reference of the last pose to calculate the speeds */
     private Pose2d lastPose = new Pose2d();
     private double lastTime = Utils.getCurrentTimeSeconds();
+
 
     /* Mechanisms to represent the swerve module states */
     private final Mechanism2d[] moduleMechanisms = new Mechanism2d[] {
@@ -88,12 +92,14 @@ public class Telemetry {
   public void telemeterize(SwerveDriveState state) {
     /* Telemeterize the pose */
     Pose2d pose = state.Pose;
-    fieldTypePub.set("Field2d");
-    fieldPub.set(new double[] {
+    robotRotations = pose.getRotation();
+    robotPoseArray = new double[] {
         pose.getX(),
         pose.getY(),
-        pose.getRotation().getDegrees() 
-    });
+        pose.getRotation().getDegrees()
+    };
+    fieldTypePub.set("Field2d");
+    fieldPub.set(robotPoseArray);
     /* Telemeterize the robot's general speeds */
     double currentTime = Utils.getCurrentTimeSeconds();
     double diffTime = currentTime - lastTime;
