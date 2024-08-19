@@ -46,14 +46,14 @@ public class Cameras implements Sendable{
         new Rotation3d(0, VisionConstants.SPEAKER_CAMERA_PITCH, VisionConstants.SPEAKER_CAMERA_YAW)
     );
 
-    private final static PhotonPoseEstimator ampCameraPoseEstimator = new PhotonPoseEstimator(
+    public final static PhotonPoseEstimator ampCameraPoseEstimator = new PhotonPoseEstimator(
       aprilTagFieldLayout, 
       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
       ampCamera, 
       robotToAmpCamera
     );
 
-    private final static PhotonPoseEstimator speakerCameraPoseEstimator = new PhotonPoseEstimator(
+    public final static PhotonPoseEstimator speakerCameraPoseEstimator = new PhotonPoseEstimator(
       aprilTagFieldLayout, 
       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
       speakerCamera, 

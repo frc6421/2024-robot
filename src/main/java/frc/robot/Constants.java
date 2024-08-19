@@ -4,7 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -217,8 +221,13 @@ public static class TrajectoryConstants {
     /** In Meters */
     public static final double APRILTAG_METERS_LIMIT = 0;
 
-    public static final double STARTING_STANDARD_DEVIATION = 0.1;
-    public static final double TAG_DISTANCE_WEIGHT = 2;
+    /**No Metric */
+    public static final double STARTING_STANDARD_DEVIATION = 0;
+    public static final double TAG_DISTANCE_WEIGHT = 0;
+    public static final double MAXIMUM_AMBIGUITY = 0;
+
+    public static final  Matrix<N3, N1> SD_HIGH_CONFIDENCE = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10));
+    public static final  Matrix<N3, N1> SD_LOW_CONFIDENCE = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(10));
   }
 
 }
