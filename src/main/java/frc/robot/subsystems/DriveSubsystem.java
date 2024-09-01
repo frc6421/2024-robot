@@ -18,6 +18,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -47,6 +49,12 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
 
   private final String fieldLayoutJSON = "Hallway_Field.json";
+
+  private boolean hasAppliedOperatorPerspective = false;
+
+  private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
+  private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
+  
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -290,6 +298,18 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public void periodic() {
     Cameras.logAmpCameraPose();
     Cameras.logSpeakerCameraPose();
+    setDriverPerspective();
   }
 
-}
+  private void setDriverPerspective(){
+      if(!hasAppliedOperatorPerspective || DriverStation.isDisabled()){
+        DriverStation.getAlliance().ifPresent((allianceColor)->{
+          this.setOperatorPerspectiveForward(
+                   allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
+                            : BlueAlliancePerspectiveRotation);
+           hasAppliedOperatorPerspective = true;
+       });
+      }
+    }
+ }
+
