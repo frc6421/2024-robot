@@ -5,9 +5,12 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import javax.swing.text.html.Option;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.StatusCode;
 
@@ -34,11 +37,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -63,7 +69,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
 
-  private final String fieldLayoutJSON = "Hallway_Field.json";
+  public final String fieldLayoutJSON = "Hallway_Field.json";
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -239,6 +245,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     }
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, m_fieldRelativeOffset, m_modulePositions, getPose2d());
+    Shuffleboard.getTab("Drive");
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -309,92 +316,91 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     // Is the robot in Teleop Enabled?
     if (DriverStation.isAutonomousEnabled()) {
+      DataLogManager.log("Autonomous");
       return;
     } 
-    //Checks to see if the PoseEstimators are empty or not
-    if (!(Cameras.ampCameraPoseEstimator.update().isPresent() && Cameras.speakerCameraPoseEstimator.update().isPresent())){
-      return;
-    }
 
     Matrix<N3, N1> standardDeviation;
     double time = Timer.getFPGATimestamp();
-    //double[] pastCameraPoseArray;
-    //double[] cameraPoseArray;
     Pose3d cameraPose3d;
-    PhotonPoseEstimator cameraPoseEstimator;
+    Optional<EstimatedRobotPose> cameraEstimatedPose;
 
-    if (camera == Cameras.ampCamera) {
-      cameraPoseEstimator = Cameras.ampCameraPoseEstimator;
-      cameraPose3d = cameraPoseEstimator.update().get().estimatedPose;
-      //pastCameraPoseArray = Cameras.previousAmpCameraPose;
-      // cameraPoseArray = new double[] {
-      //   cameraPose3d.getX(), 
-      //   cameraPose3d.getY(), 
-      //   cameraPose3d.getZ(), 
-      //   cameraPose3d.getRotation().toRotation2d().getDegrees(), 
-      // };
-      
-    } else {
-      cameraPoseEstimator = Cameras.speakerCameraPoseEstimator;
-      cameraPose3d = cameraPoseEstimator.update().get().estimatedPose;
-      //pastCameraPoseArray = Cameras.previousSpeakerCameraPose;
-      // cameraPoseArray = new double[] {
-      //   cameraPose3d.getX(), 
-      //   cameraPose3d.getY(), 
-      //   cameraPose3d.getZ(), 
-      //   cameraPose3d.getRotation().toRotation2d().getDegrees(), 
-      // };
+    if(!camera.isConnected()) {
+      DataLogManager.log("No Camera Connected");
+      return;
     }
+
+    // if (camera == Cameras.ampCamera) {
+    //   cameraEstimatedPose = Cameras.ampCameraPoseEstimator.update();
+    //   DataLogManager.log("Amp");
+    // } else {
+      cameraEstimatedPose = Cameras.speakerCameraPoseEstimator.update();
+    //}
     
-    // Check if the pose is the same as last pose
-    // for(int x = 0; x < 4; x++) {
-    //   if (cameraPoseArray[x] == pastCameraPoseArray[x]) {
-    //     return;
-    //   }
-    // }
+    //Checks to see if the PoseEstimators are empty or not
+    if (!(cameraEstimatedPose.isPresent())){
+      DataLogManager.log("No Pose Present");
+      return;
+    } else {
+      DataLogManager.log(cameraEstimatedPose.get().estimatedPose.toString());
+    }
+
+    cameraPose3d = cameraEstimatedPose.get().estimatedPose;
 
     // Check if the pose says we are in the field
     if (cameraPose3d.getX() > Constants.VisionConstants.MAXIMUM_X_POSE ||
       cameraPose3d.getY() > Constants.VisionConstants.MAXIMUM_Y_POSE ||
-      cameraPose3d.getZ() > Constants.VisionConstants.MAXIMUM_Z_POSE ||
       cameraPose3d.getX() < 0 ||
-      cameraPose3d.getY() < 0 ||
-      cameraPose3d.getZ() < 0) {
+      cameraPose3d.getY() < 0) {
+        DataLogManager.log("Out of Field");
         return;
     }
 
     // Is the tag reliable enough?
-    if (isTagReliable(camera) && cameraPoseEstimator.getFieldTags().getTags().size() >= 2) {
+    if (isTagReliable(camera) && cameraEstimatedPose.get().targetsUsed.size() >= 2) {
       standardDeviation = Constants.VisionConstants.SD_HIGH_CONFIDENCE;
+      DataLogManager.log("High Confidence SD");
     } else {
       standardDeviation = Constants.VisionConstants.SD_LOW_CONFIDENCE;
+      DataLogManager.log("Low Confidence SD");
     }
     
+    // Log the camera pose
+    // if (camera == Cameras.ampCamera) {
+    // Cameras.logAmpCameraPose(cameraPose3d);
 
-    // Set the new odometry with the vixion cooridnates and the drive train rotations
+    // } else {
+    Cameras.logSpeakerCameraPose(cameraPose3d);
+    //}
+
+    // Set the new odometry with the vision cooridnates and the drive train rotations
     addVisionMeasurement(new Pose2d(cameraPose3d.getX(), cameraPose3d.getY(), getPigeon2().getRotation2d()), time, standardDeviation);
     
     
   }
 
   public boolean isTagReliable(PhotonCamera camera) {
-    var bestTarget = camera.getLatestResult().getBestTarget();
+    if(camera.getLatestResult().hasTargets()) {
+    PhotonTrackedTarget bestTarget = camera.getLatestResult().getBestTarget();
     int targetID = bestTarget.getFiducialId();
     Translation2d cameraTranslation2d = Cameras.ampPose3d.getTranslation().toTranslation2d();
     Translation2d targetTranslation2d = Cameras.aprilTagFieldLayout.getTagPose(targetID).get().getTranslation().toTranslation2d();
+
     if (cameraTranslation2d.getDistance(targetTranslation2d) 
-     < Constants.VisionConstants.APRILTAG_METERS_LIMIT
-     && bestTarget.getPoseAmbiguity() > Constants.VisionConstants.MAXIMUM_AMBIGUITY) { 
+     < Constants.VisionConstants.APRILTAG_POSES_LIMIT
+     && bestTarget.getPoseAmbiguity() < Constants.VisionConstants.MAXIMUM_AMBIGUITY) { 
       return true;
     } else {
       return false;
     }
   }
+  return false;
+  }
 
     @Override
   public void periodic() {
-    Cameras.logAmpCameraPose();
-    Cameras.logSpeakerCameraPose();
+    filterOdometry(Cameras.ampCamera);
+    filterOdometry(Cameras.speakerCamera);
   }
 
 }

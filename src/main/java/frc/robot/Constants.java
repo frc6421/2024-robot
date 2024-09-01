@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -214,12 +215,12 @@ public static class TrajectoryConstants {
 
     //TODO add values to all values below this
     /** In poses */
-    public static final double MAXIMUM_X_POSE = 0;
-    public static final double MAXIMUM_Y_POSE = 0;
-    public static final double MAXIMUM_Z_POSE = 0;
+    public static final double MAXIMUM_X_POSE = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getFieldLength();
+    public static final double MAXIMUM_Y_POSE = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getFieldLength();
+    public static final double MAXIMUM_Z_POSE = 0.25;
 
     /** In Meters */
-    public static final double APRILTAG_METERS_LIMIT = 0;
+    public static final double APRILTAG_POSES_LIMIT = 0;
 
     /**No Metric */
     public static final double STARTING_STANDARD_DEVIATION = 0;

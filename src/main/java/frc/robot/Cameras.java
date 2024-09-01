@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.subsystems.DriveSubsystem;
 
 /** Includes camera setup and all methods for getting camera data */
 public class Cameras implements Sendable{
@@ -266,38 +267,25 @@ public class Cameras implements Sendable{
   /*
    * Logs the estimated pose  and time stamp of the ampCamera
    */
-  public static void logAmpCameraPose() {
-    previousAmpCameraPose = ampCameraPose;
-    var estimatedPose = ampCameraPoseEstimator.update();
-    if (estimatedPose.isPresent()) {
-      ampPose3d = estimatedPose.get().estimatedPose;
-      ampTimeStamp = Timer.getFPGATimestamp();
+  public static void logAmpCameraPose(Pose3d pose) {
       ampCameraPose = new double[] {
-        ampPose3d.getX(),
-        ampPose3d.getY(),
-        ampPose3d.getZ(),
-        ampPose3d.getRotation().getAngle(),
-      };
-    }
+        pose.getX(),
+        pose.getY(),
+        pose.getZ(),
+        pose.getRotation().getAngle(),
+    };
 
   }
 
   /*
    * Logs the estimated pose and time stamp of the speakerCamera
-   */  public static void logSpeakerCameraPose() {
-    previousSpeakerCameraPose = speakerCameraPose;
-    var estimatedPose = speakerCameraPoseEstimator.update();
-    if (estimatedPose.isPresent()) {
-      speakerTimeStamp = Timer.getFPGATimestamp();
-      speakerPose3d = estimatedPose.get().estimatedPose;
-      speakerCameraPose = new double[] {
-        speakerPose3d.getX(),
-        speakerPose3d.getY(),
-        speakerPose3d.getZ(),
-        speakerPose3d.getRotation().getAngle()
-      };
-    }
-
+   */  public static void logSpeakerCameraPose(Pose3d pose) {
+    speakerCameraPose = new double[] {
+        pose.getX(),
+        pose.getY(),
+        pose.getZ(),
+        pose.getRotation().getAngle(),
+    };
   }
 
   public static double getRobotToRedSpeaker() {
