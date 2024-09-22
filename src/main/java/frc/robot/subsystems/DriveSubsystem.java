@@ -5,11 +5,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import javax.swing.text.html.Option;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.StatusCode;
@@ -22,7 +19,6 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackType;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
@@ -30,6 +26,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -37,21 +34,18 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Cameras;
 import frc.robot.Constants;
-import frc.robot.Telemetry;
-import frc.robot.Constants.VisionConstants;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -70,6 +64,12 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private AprilTagFieldLayout hallwayAprilTagFieldLayout;
 
   public final String fieldLayoutJSON = "Hallway_Field.json";
+
+  private boolean hasAppliedOperatorPerspective = false;
+
+  private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
+  private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
+  
 
   public class DriveConstants {
     // Both sets of gains need to be tuned to your individual robot.
@@ -399,8 +399,20 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     @Override
   public void periodic() {
+    setDriverPerspective();
     filterOdometry(Cameras.ampCamera);
     filterOdometry(Cameras.speakerCamera);
   }
 
-}
+  private void setDriverPerspective(){
+      if(!hasAppliedOperatorPerspective || DriverStation.isDisabled()){
+        DriverStation.getAlliance().ifPresent((allianceColor)->{
+          this.setOperatorPerspectiveForward(
+                   allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
+                            : BlueAlliancePerspectiveRotation);
+           hasAppliedOperatorPerspective = true;
+       });
+      }
+    }
+ }
+

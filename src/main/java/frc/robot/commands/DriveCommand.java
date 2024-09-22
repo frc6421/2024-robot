@@ -37,8 +37,6 @@ public class DriveCommand extends Command {
   private final SlewRateLimiter xDriveSlew;
   private final SlewRateLimiter yDriveSlew;
 
-  private int invert = 1;
-
   private boolean isCoast = false;
 
   /** Creates a new DriveCommand. */
@@ -75,8 +73,6 @@ public class DriveCommand extends Command {
   public void execute() {
     Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
 
-    invert = (allianceColor.isPresent() && allianceColor.get().equals(Alliance.Red)) ? -1 : 1;
-
     double xSpeed = xDriveSlew.calculate(-driverController.getLeftY() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
     double ySpeed = yDriveSlew.calculate(-driverController.getLeftX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC);
     double rotationalSpeed = -driverController.getRightX() * DriveConstants.SPEED_AT_12_VOLTS_METERS_PER_SEC;
@@ -100,8 +96,8 @@ public class DriveCommand extends Command {
     //   }
 
       driveSubsystem.setControl(
-        driveRequest.withVelocityX(xSpeed * invert)
-            .withVelocityY(ySpeed * invert)
+        driveRequest.withVelocityX(xSpeed)
+            .withVelocityY(ySpeed)
             .withRotationalRate(rotationalSpeed));
       
     //}
