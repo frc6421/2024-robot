@@ -53,7 +53,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   private boolean hasAppliedOperatorPerspective = false;
 
   private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
-  private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
+  private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
   
 
   public class DriveConstants {
