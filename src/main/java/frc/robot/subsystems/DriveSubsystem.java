@@ -339,10 +339,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     
     //Checks to see if the PoseEstimators are empty or not
     if (!(cameraEstimatedPose.isPresent())){
-      DataLogManager.log("No Pose Present");
       return;
-    } else {
-      DataLogManager.log(cameraEstimatedPose.get().estimatedPose.toString());
     }
 
     cameraPose3d = cameraEstimatedPose.get().estimatedPose;
@@ -352,17 +349,14 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       cameraPose3d.getY() > Constants.VisionConstants.MAXIMUM_Y_POSE ||
       cameraPose3d.getX() < 0 ||
       cameraPose3d.getY() < 0) {
-        DataLogManager.log("Out of Field");
         return;
     }
 
     // Is the tag reliable enough?
     if (isTagReliable(camera) && cameraEstimatedPose.get().targetsUsed.size() >= 2) {
       standardDeviation = Constants.VisionConstants.SD_HIGH_CONFIDENCE;
-      DataLogManager.log("High Confidence SD");
     } else {
       standardDeviation = Constants.VisionConstants.SD_LOW_CONFIDENCE;
-      DataLogManager.log("Low Confidence SD");
     }
     
     // Log the camera pose
@@ -376,7 +370,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Set the new odometry with the vision cooridnates and the drive train rotations
     addVisionMeasurement(new Pose2d(cameraPose3d.getX(), cameraPose3d.getY(), getPigeon2().getRotation2d()), time, standardDeviation);
     
-    
+    Cameras.speakerPose3d = cameraPose3d;
   }
 
   public boolean isTagReliable(PhotonCamera camera) {

@@ -157,7 +157,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
       if (distance < 1.3) {
         DataLogManager.log("*** ShooterAngle - Distance too short too shoot! ***");
         angle = TrajectoryConstants.DEGREE_AT_SUBWOOFER;
-      } else if (distance > 4) {
+      } else if (distance > 10) {
         DataLogManager.log("*** ShooterAngle - Distance too long too shoot! ***");
         angle = TrajectoryConstants.DEGREE_AT_SUBWOOFER;
       }

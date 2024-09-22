@@ -140,19 +140,9 @@ public static class TrajectoryConstants {
     INTAKE,
     SPEAKER,
     AMP,
-    TRAP,
-    CLIMB,
     BARF,
     SHUTTLE,
-    ONE
-  }
-
-  public static enum ClimberStates {
-    PREPARE_CLIMB, // Raise both arms up to middle position, drive backwards.
-    //ARMS_HIGH // Raise both arms to the climbing position
-    CLIMB // Lower climber arms
-    // PREPARE_TRAP, // Raise transition arm to trap degree
-    // SCORE_TRAP // Spit out note
+    SUBWOOFER
   }
     
   public static class VisionConstants {

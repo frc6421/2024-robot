@@ -46,7 +46,6 @@ import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.commands.ShooterTuningCommand;
 import frc.robot.commands.ShuttleVisionCommand;
-import frc.robot.Constants.ClimberStates;
 import frc.robot.commands.SpeakerVisionCommand;
 import frc.robot.commands.autoCommands.BlueAmpThreePieceCommand;
 import frc.robot.commands.autoCommands.BlueCenterLineFourPieceCommand;
@@ -122,8 +121,6 @@ public class RobotContainer {
 
   
   public static RobotStates robotState;
-  public static ClimberStates climberState;
-
   private SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -174,8 +171,6 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand(driveCommand);
 
     robotState = RobotStates.DRIVE;
-    climberState = ClimberStates.PREPARE_CLIMB;
-
     autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("Blue 2 Piece", blueTwoPiece);
@@ -227,11 +222,9 @@ public class RobotContainer {
       Map.entry(RobotStates.AMP, new AmpVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SPEAKER, new SpeakerVisionCommand(driveSubsystem)),
       Map.entry(RobotStates.SHUTTLE, new InstantCommand(() -> robotState = RobotStates.SHUTTLE)),
-      Map.entry(RobotStates.ONE, new InstantCommand(() -> robotState = RobotStates.ONE)),
-      Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP)),
+      Map.entry(RobotStates.SUBWOOFER, new InstantCommand(() -> robotState = RobotStates.SUBWOOFER)),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
-      Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
       Map.entry(RobotStates.INTAKE, new InstantCommand(() -> robotState = RobotStates.INTAKE))),
     () -> robotState));
 
@@ -282,7 +275,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> AngleConstants.MINIMUM_SOFT_LIMIT_DEGREES), shooterAngleSubsystem))
         .andThen(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, 0))
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
-      Map.entry(RobotStates.ONE, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> 37.5), shooterAngleSubsystem)
+      Map.entry(RobotStates.SUBWOOFER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> Constants.TrajectoryConstants.DEGREE_AT_SUBWOOFER), shooterAngleSubsystem)
         .andThen(new WaitCommand(0.1))
         .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem))
@@ -295,9 +288,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.DRIVE, new InstantCommand(() -> robotState = RobotStates.DRIVE)),
       Map.entry(RobotStates.BARF, new InstantCommand(() -> robotState = RobotStates.BARF)),
-      Map.entry(RobotStates.CLIMB, new InstantCommand(() -> robotState = RobotStates.CLIMB)),
-      Map.entry(RobotStates.INTAKE, new InstantCommand(() -> robotState = RobotStates.INTAKE)),
-      Map.entry(RobotStates.TRAP, new InstantCommand(() -> robotState = RobotStates.TRAP))),
+      Map.entry(RobotStates.INTAKE, new InstantCommand(() -> robotState = RobotStates.INTAKE))),
       () -> robotState));
 
     // AMP STATE \\
@@ -314,6 +305,12 @@ public class RobotContainer {
     // Blocker up \\
     operatorController.b().onTrue(new ArmCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION - 2, 0));
 
+    // SUBWOOFER STATE \\
+    driverController.x().onTrue(new InstantCommand(() -> robotState = RobotStates.SUBWOOFER)
+              .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE))));
+
+    // GYRO RESET \\
+    operatorController.start().onTrue(new InstantCommand(() -> driveSubsystem.getPigeon2().reset()));
 
     // Testing Controller
     // testingcontroller.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))

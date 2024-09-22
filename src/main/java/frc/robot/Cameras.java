@@ -83,8 +83,6 @@ public class Cameras implements Sendable{
       SendableRegistry.add(this, "Cameras");
 
       Shuffleboard.getTab("Cameras").add(this);
-      DataLogManager.log("tag 4 " + redSpeakerTranslation.toString());
-      DataLogManager.log("tag 7 " + blueSpeakerTranslation.toString());
     }
 
     public static boolean isTarget(PhotonCamera camera) {
