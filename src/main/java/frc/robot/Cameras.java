@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -290,6 +291,10 @@ public class Cameras implements Sendable{
     return speakerPose3d.getTranslation().toTranslation2d().getDistance(redSpeakerTranslation);
   }
 
+  public static double getRobotToRedSpeakerInches() {
+    return Units.metersToInches(getRobotToRedSpeaker());
+  }
+
   public static double getRobotToBlueSpeaker() {
     return speakerPose3d.getTranslation().toTranslation2d().getDistance(blueSpeakerTranslation);
   }
@@ -300,7 +305,8 @@ public class Cameras implements Sendable{
     builder.addDoubleProperty("Speaker Pitch", () -> speakerCameraEstimatedPitch, null);
     builder.addDoubleProperty("Amp Yaw", () -> ampCameraEstimatedYaw, null);
     builder.addDoubleProperty("Speaker Yaw", () -> speakerCameraEstimatedYaw, null);
-    builder.addDoubleProperty("Robot to Red Speaker", Cameras::getRobotToRedSpeaker, null);
+    builder.addDoubleProperty("Robot to Red Speaker Inches", Cameras::getRobotToRedSpeakerInches, null);
+    builder.addDoubleProperty("Robot to Red Speaker Meters", Cameras::getRobotToRedSpeaker, null);
     builder.addDoubleProperty("Robot to Blue Speaker", Cameras::getRobotToBlueSpeaker, null);
     builder.addDoubleArrayProperty("Amp Pose", () -> ampCameraPose, null);
     builder.addDoubleArrayProperty("Speaker Pose", () -> speakerCameraPose, null);

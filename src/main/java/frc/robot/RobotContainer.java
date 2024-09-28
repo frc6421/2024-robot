@@ -255,7 +255,8 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> robotState = RobotStates.DRIVE))),
       Map.entry(RobotStates.SPEAKER, new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle()), shooterAngleSubsystem)
         .andThen(new WaitCommand(0.1))
-        .andThen(new ShooterRevUpCommand(shooterSubsystem, 0))
+        .andThen(new InstantCommand (() -> shooterSubsystem.setShooterMotorVelocity(5400)))
+        .andThen(new WaitCommand(0.8))
         .andThen(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem))
         .andThen(new WaitCommand(0.4))
         .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem))
@@ -309,6 +310,9 @@ public class RobotContainer {
     driverController.x().onTrue(new InstantCommand(() -> robotState = RobotStates.SUBWOOFER)
               .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE))));
 
+    // Shooter testing \\ TODO Remove when done
+    driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)));
+    driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.stopTransition()));
     // GYRO RESET \\
     operatorController.start().onTrue(new InstantCommand(() -> driveSubsystem.getPigeon2().reset()));
 

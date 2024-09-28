@@ -70,6 +70,6 @@ public class ShooterRevUpCommand extends Command {
   public boolean isFinished() {
     return ((shooterSubsystem.getBottomMotorVelocity() >= shooterVelocity - velocityErrorRange && 
     shooterSubsystem.getTopMotorVelocity() >= shooterVelocity + topShooterOffset - velocityErrorRange))
-    || time.hasElapsed(0.7);
+    || time.hasElapsed(0.7); 
   }
 }

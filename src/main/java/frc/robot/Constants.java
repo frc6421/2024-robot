@@ -132,6 +132,7 @@ public static class TrajectoryConstants {
   public static final double DEGREE_AT_CENTER_LINE_SHOOTING_POSITION = 29.5;
   public static final double DEGREE_AT_FOUR_PIECE_SCORE = 45.5;
   public static final double DEGREE_AT_SUBWOOFER = 52;
+  public static final double DEGREE_AT_LONGEST = 22;
 
   }
 

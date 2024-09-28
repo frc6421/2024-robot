@@ -23,7 +23,7 @@ public class ShooterTuningCommand extends Command {
 
     addRequirements(shooterSubsystem, shooterAngleSubsystem);
 
-    //  Shuffleboard.getTab("Shooter Tuning").add(this);
+    Shuffleboard.getTab("Shooter Tuning").add(this);
   }
 
   // Called when the command is initially scheduled.
@@ -35,7 +35,8 @@ public class ShooterTuningCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
