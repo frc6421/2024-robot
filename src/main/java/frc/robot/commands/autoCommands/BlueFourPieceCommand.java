@@ -180,8 +180,8 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose()), driveSubsystem), 
         // shoot preload
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_SUBWOOFER), shooterAngleSubsystem),
-        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_SUBWOOFER),
+        new InstantCommand(() -> shooterAngleSubsystem.getTargetAngle(), shooterAngleSubsystem),
+        new ShooterRevUpCommand(shooterSubsystem, 5400),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem),
@@ -190,8 +190,8 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveToScoreFirstNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_FOUR_PIECE_SCORE)),
-        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_FOUR_PIECE_SCORE),
+        new InstantCommand(() -> shooterAngleSubsystem.getTargetAngle()),
+        new ShooterRevUpCommand(shooterSubsystem, 5400),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem),
@@ -200,8 +200,8 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToSecondNoteCommand, driveToScoreSecondNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_FOUR_PIECE_SCORE)),
-        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_FOUR_PIECE_SCORE),
+        new InstantCommand(() -> shooterAngleSubsystem.getTargetAngle()),
+        new ShooterRevUpCommand(shooterSubsystem, 5400),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem),
@@ -210,8 +210,8 @@ public class BlueFourPieceCommand extends SequentialCommandGroup {
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToThirdNoteCommand, driveToScoreThirdNoteCommand), 
           new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem))), 
-        new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_FOUR_PIECE_SCORE)),
-        new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_FOUR_PIECE_SCORE),
+        new InstantCommand(() -> shooterAngleSubsystem.getTargetAngle()),
+        new ShooterRevUpCommand(shooterSubsystem, 5400),
         new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED), transitionSubsystem),
         new WaitCommand(0.2),
         new InstantCommand(() -> transitionSubsystem.stopTransition(), transitionSubsystem),

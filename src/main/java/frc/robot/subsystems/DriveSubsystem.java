@@ -314,15 +314,16 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
    */
   public void filterOdometry(PhotonCamera camera) {
 
-    // Is the robot in Teleop Enabled?
+    //Is the robot in Teleop Enabled?
     if (DriverStation.isAutonomousEnabled()) {
       DataLogManager.log("Autonomous");
+      Cameras.speakerPose2d = getPose2d();
       return;
     } 
 
     Matrix<N3, N1> standardDeviation;
     double time = Timer.getFPGATimestamp();
-    Pose3d cameraPose3d;
+    Pose2d cameraPose2d;
     Optional<EstimatedRobotPose> cameraEstimatedPose;
 
     if(!camera.isConnected()) {
@@ -342,13 +343,13 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
       return;
     }
 
-    cameraPose3d = cameraEstimatedPose.get().estimatedPose;
+    cameraPose2d = cameraEstimatedPose.get().estimatedPose.toPose2d();
 
     // Check if the pose says we are in the field
-    if (cameraPose3d.getX() > Constants.VisionConstants.MAXIMUM_X_POSE ||
-      cameraPose3d.getY() > Constants.VisionConstants.MAXIMUM_Y_POSE ||
-      cameraPose3d.getX() < 0 ||
-      cameraPose3d.getY() < 0) {
+    if (cameraPose2d.getX() > Constants.VisionConstants.MAXIMUM_X_POSE ||
+      cameraPose2d.getY() > Constants.VisionConstants.MAXIMUM_Y_POSE ||
+      cameraPose2d.getX() < 0 ||
+      cameraPose2d.getY() < 0) {
         return;
     }
 
@@ -364,20 +365,20 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Cameras.logAmpCameraPose(cameraPose3d);
 
     // } else {
-    Cameras.logSpeakerCameraPose(cameraPose3d);
+    //Cameras.logSpeakerCameraPose(cameraPose2d);
     //}
 
     // Set the new odometry with the vision cooridnates and the drive train rotations
-    addVisionMeasurement(new Pose2d(cameraPose3d.getX(), cameraPose3d.getY(), getPigeon2().getRotation2d()), time, standardDeviation);
+    addVisionMeasurement(new Pose2d(cameraPose2d.getX(), cameraPose2d.getY(), getPigeon2().getRotation2d()), time, standardDeviation);
     
-    Cameras.speakerPose3d = cameraPose3d;
+    Cameras.speakerPose2d = cameraPose2d;
   }
 
   public boolean isTagReliable(PhotonCamera camera) {
     if(camera.getLatestResult().hasTargets()) {
     PhotonTrackedTarget bestTarget = camera.getLatestResult().getBestTarget();
     int targetID = bestTarget.getFiducialId();
-    Translation2d cameraTranslation2d = Cameras.ampPose3d.getTranslation().toTranslation2d();
+    Translation2d cameraTranslation2d = Cameras.ampPose3d.getTranslation();
     Translation2d targetTranslation2d = Cameras.aprilTagFieldLayout.getTagPose(targetID).get().getTranslation().toTranslation2d();
 
     if (cameraTranslation2d.getDistance(targetTranslation2d) 
