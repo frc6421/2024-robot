@@ -173,18 +173,18 @@ public class RobotContainer {
     robotState = RobotStates.DRIVE;
     autoChooser = new SendableChooser<>();
 
-    autoChooser.setDefaultOption("Blue 2 Piece", blueTwoPiece);
-    autoChooser.addOption("Red 2 Piece", redTwoPiece);
+    // autoChooser.setDefaultOption("Blue 2 Piece", blueTwoPiece);
+    // autoChooser.addOption("Red 2 Piece", redTwoPiece);
     autoChooser.addOption("Blue Wing 4 Piece", blueFourPiece);
     autoChooser.addOption("Red Wing 4 Piece", redFourPiece);
     autoChooser.addOption("Blue Center Line Stage 3 Piece", blueCenterLineThreePiece);
     autoChooser.addOption("Red Center Line Stage 3 Piece", redCenterLineThreePiece);
-    autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
-    autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
+    // autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
+    // autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
     autoChooser.addOption("Blue Side 3.5 Piece Skip Wing", flipBlueCenterLineFourPiece);
     autoChooser.addOption("Red Side 3.5 Piece Skip Wing", flipRedCenterLineFourPiece);
-    autoChooser.addOption("Blue 5 Piece", blueFivePiece);
-    autoChooser.addOption("Red 5 Piece", redFivePiece);
+    // autoChooser.addOption("Blue 5 Piece", blueFivePiece);
+    // autoChooser.addOption("Red 5 Piece", redFivePiece);
     autoChooser.addOption("Blue Amp", blueAmpThreePiece);
     autoChooser.addOption("Red Amp", redAmpThreePiece);
 
@@ -316,7 +316,7 @@ public class RobotContainer {
     // Shooter testing \\ TODO Remove when done
     // driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)));
     // driverController.leftTrigger().onFalse(new InstantCommand(() -> transitionSubsystem.stopTransition()));
-    
+
     // Testing Controller
     // testingcontroller.rightBumper().onTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED))
     //   .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.OFF)))
