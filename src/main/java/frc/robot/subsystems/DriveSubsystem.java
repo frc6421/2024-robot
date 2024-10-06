@@ -318,6 +318,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     if (DriverStation.isAutonomousEnabled()) {
       DataLogManager.log("Autonomous");
       Cameras.speakerPose2d = getPose2d();
+      Cameras.logSpeakerCameraPose(Cameras.speakerPose2d);
       return;
     } 
 
@@ -365,7 +366,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Cameras.logAmpCameraPose(cameraPose3d);
 
     // } else {
-    //Cameras.logSpeakerCameraPose(cameraPose2d);
+    Cameras.logSpeakerCameraPose(cameraPose2d);
     //}
 
     // Set the new odometry with the vision cooridnates and the drive train rotations

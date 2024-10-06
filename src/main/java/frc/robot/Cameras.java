@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -279,17 +282,26 @@ public class Cameras implements Sendable{
 
   /*
    * Logs the estimated pose and time stamp of the speakerCamera
-   */  public static void logSpeakerCameraPose(Pose3d pose) {
+   */  public static void logSpeakerCameraPose(Pose2d pose) {
     speakerCameraPose = new double[] {
         pose.getX(),
         pose.getY(),
-        pose.getZ(),
-        pose.getRotation().getAngle(),
+        pose.getRotation().getDegrees()
     };
   }
 
   public static double getRobotToRedSpeaker() {
-    return speakerPose2d.getTranslation().getDistance(redSpeakerTranslation);
+    Optional<EstimatedRobotPose> cameraEstimatedPose;
+
+    cameraEstimatedPose = Cameras.speakerCameraPoseEstimator.update();
+    //}
+    
+    //Checks to see if the PoseEstimators are empty or not
+    if (!(cameraEstimatedPose.isPresent())){
+      return speakerPose2d.getTranslation().getDistance(redSpeakerTranslation);
+    } else {
+      return cameraEstimatedPose.get().estimatedPose.toPose2d().getTranslation().getDistance(redSpeakerTranslation);
+    }
   }
 
   public static double getRobotToRedSpeakerInches() {

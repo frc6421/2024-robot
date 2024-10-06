@@ -165,7 +165,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
      else {
       angle = 2.4492 * distance * distance
        - 23.307 * distance
-       + 78.295;
+       + 78.295
+       + 0.5;
     }
 
    } else {
