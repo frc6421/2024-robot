@@ -10,6 +10,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -74,8 +75,8 @@ public class Cameras implements Sendable{
     public static double[] previousAmpCameraPose = {0,0,0,0};
     public static double[] previousSpeakerCameraPose = {0,0,0,0};
 
-    public static Pose3d ampPose3d = new Pose3d();
-    public static Pose3d speakerPose3d = new Pose3d();
+    public static Pose2d ampPose3d = new Pose2d();
+    public static Pose2d speakerPose2d = new Pose2d();
 
     public static double ampTimeStamp = 0;
     public static double speakerTimeStamp = 0;
@@ -288,7 +289,7 @@ public class Cameras implements Sendable{
   }
 
   public static double getRobotToRedSpeaker() {
-    return speakerPose3d.getTranslation().toTranslation2d().getDistance(redSpeakerTranslation);
+    return speakerPose2d.getTranslation().getDistance(redSpeakerTranslation);
   }
 
   public static double getRobotToRedSpeakerInches() {
@@ -296,7 +297,7 @@ public class Cameras implements Sendable{
   }
 
   public static double getRobotToBlueSpeaker() {
-    return speakerPose3d.getTranslation().toTranslation2d().getDistance(blueSpeakerTranslation);
+    return speakerPose2d.getTranslation().getDistance(blueSpeakerTranslation);
   }
 
   public void initSendable(SendableBuilder builder) {
