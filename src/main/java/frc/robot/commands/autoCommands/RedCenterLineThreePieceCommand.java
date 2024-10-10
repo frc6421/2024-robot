@@ -185,7 +185,7 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
         // score pre-loaded piece 
         new ParallelDeadlineGroup( 
           new SequentialCommandGroup(driveToFirstNoteCommand, driveBackToScoreOneCommand), 
-          new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.BLUE)), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.HOT_PINK)), new ShooterRevUpCommand(shooterSubsystem, 5400))), 
+          new SequentialCommandGroup(new WaitCommand(AutoConstants.AUTO_INTAKE_DELAY), new IntakeTransitionCommand(transitionSubsystem, intakeSubsystem), new ShooterRevUpCommand(shooterSubsystem, 5400))), 
         new ShooterRevUpCommand(shooterSubsystem, 5400),
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
         new WaitCommand(0.1),

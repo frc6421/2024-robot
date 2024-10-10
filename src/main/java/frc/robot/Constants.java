@@ -108,8 +108,8 @@ public static class TrajectoryConstants {
   public static final Translation2d BLUE_FOUR_PIECE_START = new Translation2d(Units.inchesToMeters(30), Units.inchesToMeters(266));
   public static final Translation2d RED_FOUR_PIECE_START = new Translation2d(Units.inchesToMeters(618), Units.inchesToMeters(266));
 
-  public static final Translation2d RED_CENTER_SCORE = new Translation2d(Units.inchesToMeters(503), Units.inchesToMeters(260));
-  public static final Translation2d BLUE_CENTER_SCORE = new Translation2d(Units.inchesToMeters(145), Units.inchesToMeters(260));
+  public static final Translation2d RED_CENTER_SCORE = new Translation2d(Units.inchesToMeters(473), Units.inchesToMeters(260));
+  public static final Translation2d BLUE_CENTER_SCORE = new Translation2d(Units.inchesToMeters(175), Units.inchesToMeters(260));
 
 
   // amp auto constants slay slay slay

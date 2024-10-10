@@ -181,8 +181,8 @@ public class RobotContainer {
     autoChooser.addOption("Red Center Line Stage 3 Piece", redCenterLineThreePiece);
     // autoChooser.addOption("Blue Center Line 4 Piece", blueCenterLineFourPiece);
     // autoChooser.addOption("Red Center Line 4 Piece", redCenterLineFourPiece);
-    autoChooser.addOption("Blue Side 3.5 Piece Skip Wing", flipBlueCenterLineFourPiece);
-    autoChooser.addOption("Red Side 3.5 Piece Skip Wing", flipRedCenterLineFourPiece);
+    autoChooser.addOption("Blue Skip Wing 4 Piece", flipBlueCenterLineFourPiece);
+    autoChooser.addOption("Red Skip Wing 4 Piece", flipRedCenterLineFourPiece);
     // autoChooser.addOption("Blue 5 Piece", blueFivePiece);
     // autoChooser.addOption("Red 5 Piece", redFivePiece);
     autoChooser.addOption("Blue Amp", blueAmpThreePiece);
