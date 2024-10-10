@@ -14,18 +14,11 @@ import frc.robot.subsystems.ShooterAngleSubsystem.AngleConstants;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 import frc.robot.subsystems.TransitionSubsystem.TransitionConstants;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 
 import com.ctre.phoenix.unmanaged.Unmanaged;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -45,7 +38,6 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.commands.ShooterTuningCommand;
-import frc.robot.commands.ShuttleVisionCommand;
 import frc.robot.commands.SpeakerVisionCommand;
 import frc.robot.commands.autoCommands.BlueAmpThreePieceCommand;
 import frc.robot.commands.autoCommands.BlueCenterLineFourPieceCommand;
@@ -63,9 +55,6 @@ import frc.robot.commands.autoCommands.RedFourPieceCommand;
 import frc.robot.commands.autoCommands.RedTwoPieceCommand;
 import frc.robot.Constants.RobotStates;
 import frc.robot.subsystems.DriveSubsystem;
-
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a

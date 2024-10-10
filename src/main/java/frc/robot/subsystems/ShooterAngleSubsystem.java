@@ -4,28 +4,21 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.units.Angle;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Cameras;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.RobotStates;
 import frc.robot.Constants.TrajectoryConstants;
-import frc.robot.Constants.VisionConstants;
 
 import com.revrobotics.RelativeEncoder;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
-
-import javax.swing.text.html.Option;
 
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
