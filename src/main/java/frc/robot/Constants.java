@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -181,6 +184,12 @@ public static class TrajectoryConstants {
     /** In degrees */
     public static final double AMP_FAR_YAW_ANGLE = 2.40;
 
+    /** Odometry Offset based on Vision */
+
+    /** In Meters */
+    public static final Transform2d ODOMETRY_BLUE_OFFSET = new Transform2d(0.3, 0.0, new Rotation2d());
+    public static final Transform2d ODOMETRY_RED_OFFSET = new Transform2d(0.0, 0.0, new Rotation2d());;
+
     /** In degrees */
     // Only first and last values are used to check edge cases with equation
     public static final double[] SPEAKER_PITCH_ARRAY = {16.71, 9.21, 3.83, -0.51, -3.90, -6.56, -8.68, -10.56, -12.12, -13.37, -14.49, -15.59, -16.39};
@@ -205,7 +214,7 @@ public static class TrajectoryConstants {
 
 
     //TODO add values to all values below this
-    /** In poses */
+    /** In meters */
     public static final double MAXIMUM_X_POSE = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getFieldLength();
     public static final double MAXIMUM_Y_POSE = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField().getFieldLength();
     public static final double MAXIMUM_Z_POSE = 0.25;

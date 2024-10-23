@@ -64,10 +64,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
   public final String fieldLayoutJSON = "Hallway_Field.json";
 
-  private boolean hasAppliedOperatorPerspective = false;
+ // private boolean hasAppliedOperatorPerspective = false;
 
-  private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
-  private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
+  // private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
+ // private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
   
 
   public class DriveConstants {
@@ -81,6 +81,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
         .withKS(0).withKV(1.5).withKA(0);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
+
     private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
         .withKP(0.156).withKI(0).withKD(0)
         .withKS(0.26).withKV(0.14).withKA(0);
@@ -365,6 +366,15 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     // Cameras.logAmpCameraPose(cameraPose3d);
 
     // } else {
+    Optional<DriverStation.Alliance> allianceColor = DriverStation.getAlliance();
+    if (allianceColor.isPresent()) {
+      if (allianceColor.get().equals(Alliance.Red)) { 
+        cameraPose2d.plus(Constants.VisionConstants.ODOMETRY_RED_OFFSET);
+      } 
+      else {
+        cameraPose2d.plus(Constants.VisionConstants.ODOMETRY_BLUE_OFFSET);
+      }
+    }
     Cameras.logSpeakerCameraPose(cameraPose2d);
     //}
 
@@ -394,20 +404,20 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
 
     @Override
   public void periodic() {
-    setDriverPerspective();
+  //  setDriverPerspective();
     filterOdometry(Cameras.ampCamera);
     filterOdometry(Cameras.speakerCamera);
   }
 
-  private void setDriverPerspective(){
-      if(!hasAppliedOperatorPerspective || DriverStation.isDisabled()){
-        DriverStation.getAlliance().ifPresent((allianceColor)->{
-          this.setOperatorPerspectiveForward(
-                   allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
-                            : BlueAlliancePerspectiveRotation);
-           hasAppliedOperatorPerspective = true;
-       });
-      }
-    }
+ // private void setDriverPerspective(){
+   //   if(!hasAppliedOperatorPerspective || DriverStation.isDisabled()){
+     //   DriverStation.getAlliance().ifPresent((allianceColor)->{
+       //   this.setOperatorPerspectiveForward(
+         //          allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
+           //                 : BlueAlliancePerspectiveRotation);
+          // hasAppliedOperatorPerspective = true;
+      // });
+      //}
+    //}
  }
 
