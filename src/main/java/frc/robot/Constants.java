@@ -187,8 +187,8 @@ public static class TrajectoryConstants {
     /** Odometry Offset based on Vision */
 
     /** In Meters */
-    public static final Transform2d ODOMETRY_BLUE_OFFSET = new Transform2d(0.3, 0.0, new Rotation2d());
-    public static final Transform2d ODOMETRY_RED_OFFSET = new Transform2d(0.0, 0.0, new Rotation2d());;
+    public static final Transform2d ODOMETRY_BLUE_OFFSET = new Transform2d(0.0, 0.0, new Rotation2d());
+    public static final Transform2d ODOMETRY_RED_OFFSET = new Transform2d(-0.1, 0.0, new Rotation2d());
 
     /** In degrees */
     // Only first and last values are used to check edge cases with equation

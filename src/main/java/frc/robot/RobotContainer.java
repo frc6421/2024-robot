@@ -300,7 +300,7 @@ public class RobotContainer {
               .andThen(new InstantCommand(() -> LEDSubsystem.setColor(LEDColors.PURPLE))));
 
     // GYRO RESET \\
-    operatorController.start().onTrue(new InstantCommand(() -> driveSubsystem.getPigeon2().reset()));
+    operatorController.y().onTrue(new InstantCommand(() -> driveSubsystem.getPigeon2().reset()));
 
     // Shooter testing \\ TODO Remove when done
     // driverController.leftTrigger().whileTrue(new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)));
