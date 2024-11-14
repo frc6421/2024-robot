@@ -174,6 +174,7 @@ public class RedAmpThreePieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToAmpTrajectory.getInitialPose())), 
+      new InstantCommand(() -> driveSubsystem.setGyroAngleCommand(driveToAmpTrajectory.getInitialPose().getRotation().getDegrees())),
       driveToAmpCommand,
       // amp preload
       new ParallelCommandGroup(new InstantCommand(() -> shooterSubsystem.stopShooterMotor()), 

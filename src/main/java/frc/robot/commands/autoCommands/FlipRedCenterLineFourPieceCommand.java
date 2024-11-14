@@ -180,6 +180,7 @@ public class FlipRedCenterLineFourPieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToSecondNoteTrajectory.getInitialPose())), 
+        new InstantCommand(() -> driveSubsystem.setGyroAngleCommand(driveToSecondNoteTrajectory.getInitialPose().getRotation().getDegrees())),
         // shoot preload
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),
         new ShooterRevUpCommand(shooterSubsystem, 5400),

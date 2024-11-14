@@ -309,6 +309,10 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
   public Pose2d getPose2d() {
     return getState().Pose;
   }
+
+  public Command setGyroAngleCommand(double angle){
+    return this.runOnce(()-> getPigeon2().setYaw(angle));
+  }
   /**
    * Determines if the vision odometry is valid for updating, and updates it accordingly
    */

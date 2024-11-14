@@ -174,6 +174,7 @@ public class RedCenterLineThreePieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(scorePreloadTrajectory.getInitialPose())), 
+        new InstantCommand(() -> driveSubsystem.setGyroAngleCommand(scorePreloadTrajectory.getInitialPose().getRotation().getDegrees())),
         new ShooterRevUpCommand(shooterSubsystem, 5400),
         scorePreloadCommand, 
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> shooterAngleSubsystem.getTargetAngle())),

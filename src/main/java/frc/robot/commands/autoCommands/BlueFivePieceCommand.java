@@ -207,6 +207,7 @@ public class BlueFivePieceCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new InstantCommand(() -> driveSubsystem.seedFieldRelative(driveToFirstNoteTrajectory.getInitialPose())), 
+        new InstantCommand(() -> driveSubsystem.setGyroAngleCommand(driveToFirstNoteTrajectory.getInitialPose().getRotation().getDegrees())),
         // shoot preload
         new InstantCommand(() -> shooterAngleSubsystem.setAngle(() -> TrajectoryConstants.DEGREE_AT_SUBWOOFER)),
         new ShooterRevUpCommand(shooterSubsystem, TrajectoryConstants.RPM_AT_SUBWOOFER),
