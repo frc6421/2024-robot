@@ -15,6 +15,11 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransitionArmSubsystem extends SubsystemBase{
@@ -49,6 +54,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final double ARM_EXTENDED_CLIMB = 105;
 
     public static final double ARM_AMP_POSITION = 96;
+
+    public static final double ARM_METERS_LENGTH = 0.572;
   }
 
   // fields
@@ -63,6 +70,12 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
   private double targetArmAngle = TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT;
 
+  //Mechanism2d
+  private final Mechanism2d arm2d = new Mechanism2d(3, 3);
+  private final MechanismRoot2d armRoot = arm2d.getRoot("Arm Joint", 1.5, 1.5);
+  private final MechanismLigament2d armLigament;
+
+  private final ShuffleboardTab transitionArmShuffleboardTab;
   /** Creates a new transitionArm. */
   public TransitionArmSubsystem() {
 
@@ -136,12 +149,17 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armRightEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
       armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
-      Shuffleboard.getTab("Transition Arm").add(this);
+      //Mechanism2d
+      armLigament = armRoot.append(new MechanismLigament2d("Arm", TransitionArmConstants.ARM_METERS_LENGTH, getArmMotorPositionDeg()));
+
+      transitionArmShuffleboardTab = Shuffleboard.getTab("Transition Arm");
+      transitionArmShuffleboardTab.add(this);
+      transitionArmShuffleboardTab.add("Arm Mechanism2d", arm2d);
   }
 
   @Override
   public void periodic() {
-    
+    armLigament.setAngle(targetArmAngle);
   }
 
   /**

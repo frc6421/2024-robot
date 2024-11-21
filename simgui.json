@@ -15,12 +15,18 @@
       "/Shuffleboard/Shooter Tuning/ShooterTuningCommand": "Command",
       "/Shuffleboard/Shooter Tuning/TuneShooter": "Command",
       "/Shuffleboard/Shooter/ShooterSubsystem": "Subsystem",
+      "/Shuffleboard/Transition Arm/Arm Mechanism2d": "Mechanism2d",
       "/Shuffleboard/Transition Arm/TransitionArmSubsystem": "Subsystem",
       "/Shuffleboard/Transition/TransitionSubsystem": "Subsystem",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/ShooterAngleSubsystem": "Subsystem"
     },
     "windows": {
+      "/Shuffleboard/Transition Arm/Arm Mechanism2d": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "1 Preload": {
           "style": "Track"
@@ -128,14 +134,26 @@
   },
   "NetworkTables": {
     "transitory": {
+      "Drive": {
+        "open": true
+      },
       "Shuffleboard": {
         ".metadata": {
+          "Competition": {
+            "Robot State": {
+              "open": true
+            },
+            "open": true
+          },
           "open": true
         },
         "Cameras": {
           "Cameras": {
             "open": true
           },
+          "open": true
+        },
+        "Competition": {
           "open": true
         },
         "Intake": {
@@ -160,8 +178,7 @@
         "Transition": {
           "TransitionSubsystem": {
             "open": true
-          },
-          "open": true
+          }
         },
         "Transition Arm": {
           "TransitionArmSubsystem": {
