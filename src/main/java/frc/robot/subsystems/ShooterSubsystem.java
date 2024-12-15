@@ -45,7 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Creating the objects for the motors and their encoders, respectively
-  private TalonFX topShooterMotor;
+  public TalonFX topShooterMotor;
   private TalonFX bottomShooterMotor;
 
   private TalonFXConfiguration topShooterConfig;

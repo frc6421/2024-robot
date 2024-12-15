@@ -38,6 +38,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.ShooterRevUpCommand;
 import frc.robot.commands.ShooterTuningCommand;
+import frc.robot.commands.SimulationCommand;
 import frc.robot.commands.SpeakerVisionCommand;
 import frc.robot.commands.autoCommands.BlueAmpThreePieceCommand;
 import frc.robot.commands.autoCommands.BlueCenterLineFourPieceCommand;
@@ -69,12 +70,13 @@ public class RobotContainer {
   // Controllers \\
   private final CommandXboxController driverController; 
   private final CommandXboxController operatorController;
-  //private final CommandXboxController testingController;
+  private final CommandXboxController simulationController;
   //private final CommandXboxController testingcontroller;
 
   private static final int driverControllerPort = 0;
   private static final int operatorControllerPort = 1;
   //private static final int testingcontrollerPort = 2;
+  private static final int simulationControllerPort = 3;
 
   // Subsystems \\
   private final DriveSubsystem driveSubsystem;
@@ -122,6 +124,7 @@ public class RobotContainer {
 
     driverController = new CommandXboxController(driverControllerPort);
     operatorController = new CommandXboxController(operatorControllerPort);
+    simulationController = new CommandXboxController(simulationControllerPort);
     //testingController = new CommandXboxController(testingcontrollerPort);
 
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -332,6 +335,11 @@ public class RobotContainer {
     // testingcontroller.b().onTrue((new InstantCommand(() -> transitionSubsystem.setTransitionVoltage(TransitionConstants.TRANSITION_SPEED)))
     //     .andThen(new WaitCommand(0.6))
     //     .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));
+
+    // Simulation controller
+    simulationController.b().onTrue(new SimulationCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 6)
+    .andThen(new WaitCommand(.75))
+    .andThen(new SimulationCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, -6)));
   }
 
   /**

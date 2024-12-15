@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -13,14 +15,23 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.SimulationCommand;
 
 public class TransitionArmSubsystem extends SubsystemBase{
   
@@ -58,6 +69,10 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final double ARM_METERS_LENGTH = 0.572;
   }
 
+  public static class ArmSimulationConstants {
+
+  }
+
   // fields
   private final CANSparkFlex armMotorRight;
   private final CANSparkFlex armMotorLeft;
@@ -76,6 +91,11 @@ public class TransitionArmSubsystem extends SubsystemBase{
   private final MechanismLigament2d armLigament;
 
   private final ShuffleboardTab transitionArmShuffleboardTab;
+
+  public final static DCMotorSim armSim = new DCMotorSim(DCMotor.getKrakenX60Foc(1), TransitionArmConstants.ARM_GEAR_RATIO, 0.001);
+  public final static TalonFXSimState armMotorSim = new TalonFXSimState(new com.ctre.phoenix6.hardware.TalonFX(44));
+
+  //Simulation
   /** Creates a new transitionArm. */
   public TransitionArmSubsystem() {
 
@@ -150,16 +170,24 @@ public class TransitionArmSubsystem extends SubsystemBase{
       armLeftEncoder.setPosition(TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT);
 
       //Mechanism2d
-      armLigament = armRoot.append(new MechanismLigament2d("Arm", TransitionArmConstants.ARM_METERS_LENGTH, getArmMotorPositionDeg()));
+      armLigament = armRoot.append(new MechanismLigament2d("Arm", TransitionArmConstants.ARM_METERS_LENGTH, Units.radiansToDegrees(armSim.getAngularPositionRad())));
 
       transitionArmShuffleboardTab = Shuffleboard.getTab("Transition Arm");
       transitionArmShuffleboardTab.add(this);
       transitionArmShuffleboardTab.add("Arm Mechanism2d", arm2d);
+
+      armSim.setInputVoltage(0); 
   }
 
   @Override
   public void periodic() {
-    armLigament.setAngle(targetArmAngle);
+  }
+
+  @Override
+  public void simulationPeriodic() {
+
+    armSim.update(.020);
+    armLigament.setAngle(Units.radiansToDegrees(armSim.getAngularPositionRad()));
   }
 
   /**
@@ -215,6 +243,7 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
       builder.addDoubleProperty("1. Arm Target Angle", () -> targetArmAngle, null);
       builder.addDoubleProperty("2. Left Arm Actual Angle", this::getEncoderLeftDegree, null);
+      builder.addDoubleProperty("Sim Position", () -> Units.radiansToDegrees(armSim.getAngularPositionRad()), null);
       // builder.addDoubleProperty("3. Right Arm Actual Angle", this::getEncoderRightDegree, null);
   }
 }

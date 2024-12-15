@@ -197,6 +197,9 @@
     }
   },
   "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
     "Server": {
       "Publishers": {
         "open": true
@@ -206,5 +209,8 @@
       }
     },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

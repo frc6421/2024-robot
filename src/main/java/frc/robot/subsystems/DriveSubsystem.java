@@ -243,8 +243,11 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open field layout: " + fieldLayoutJSON, ex.getStackTrace());
     }
-
-    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, m_fieldRelativeOffset, m_modulePositions, getPose2d());
+    if (Utils.isSimulation()) {
+      swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, m_fieldRelativeOffset, m_modulePositions, new Pose2d());
+    } else {
+      swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, m_fieldRelativeOffset, m_modulePositions, getPose2d());
+    }
     Shuffleboard.getTab("Drive");
   }
 
@@ -328,7 +331,7 @@ public class DriveSubsystem extends SwerveDrivetrain implements Subsystem {
     Optional<EstimatedRobotPose> cameraEstimatedPose;
 
     if(!camera.isConnected()) {
-      DataLogManager.log("No Camera Connected");
+      // DataLogManager.log("No Camera Connected");
       return;
     }
 
