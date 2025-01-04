@@ -125,10 +125,7 @@
         "right": 2961,
         "top": 79,
         "units": "inches",
-        "width": 16.541748046875,
-        "window": {
-          "visible": true
-        }
+        "width": 16.541748046875
       }
     }
   },
@@ -207,10 +204,6 @@
       "Subscribers": {
         "open": true
       }
-    },
-    "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
+    }
   }
 }

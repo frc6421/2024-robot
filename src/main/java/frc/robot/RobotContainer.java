@@ -337,9 +337,9 @@ public class RobotContainer {
     //     .andThen(new InstantCommand(() -> transitionSubsystem.stopTransition())));
 
     // Simulation controller
-    simulationController.b().onTrue(new SimulationCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 6)
+    simulationController.b().onTrue(new SimulationCommand(armSubsystem, TransitionArmConstants.ARM_AMP_POSITION, 12)
     .andThen(new WaitCommand(.75))
-    .andThen(new SimulationCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, -6)));
+    .andThen(new SimulationCommand(armSubsystem, TransitionArmConstants.ARM_REVERSE_SOFT_LIMIT, -12)));
   }
 
   /**

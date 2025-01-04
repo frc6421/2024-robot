@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -67,6 +68,11 @@ public class TransitionArmSubsystem extends SubsystemBase{
     public static final double ARM_AMP_POSITION = 96;
 
     public static final double ARM_METERS_LENGTH = 0.572;
+
+    public static final double ARM_MASS_KG = 5;
+
+    public static final double ARM_INERTIA = (ARM_MASS_KG * ARM_METERS_LENGTH * ARM_METERS_LENGTH) / 3;
+
   }
 
   public static class ArmSimulationConstants {
@@ -92,8 +98,8 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
   private final ShuffleboardTab transitionArmShuffleboardTab;
 
-  public final static DCMotorSim armSim = new DCMotorSim(DCMotor.getKrakenX60Foc(1), TransitionArmConstants.ARM_GEAR_RATIO, 0.001);
-  public final static TalonFXSimState armMotorSim = new TalonFXSimState(new com.ctre.phoenix6.hardware.TalonFX(44));
+  public final DCMotorSim armSim = new DCMotorSim(DCMotor.getKrakenX60(1), TransitionArmConstants.ARM_GEAR_RATIO, TransitionArmConstants.ARM_INERTIA);
+  public final TalonFXSimState armMotorSim = new TalonFXSimState(new com.ctre.phoenix6.hardware.TalonFX(44));
 
   //Simulation
   /** Creates a new transitionArm. */
@@ -185,7 +191,6 @@ public class TransitionArmSubsystem extends SubsystemBase{
 
   @Override
   public void simulationPeriodic() {
-
     armSim.update(.020);
     armLigament.setAngle(Units.radiansToDegrees(armSim.getAngularPositionRad()));
   }

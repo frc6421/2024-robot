@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.TransitionArmSubsystem;
 import frc.robot.subsystems.TransitionArmSubsystem.TransitionArmConstants;
 
@@ -30,13 +31,14 @@ public class SimulationCommand extends Command{
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(armSubsystem);
 
-    motorSim = TransitionArmSubsystem.armMotorSim;
+    this.motorSim = armSubsystem.armMotorSim;
 
-    sim = TransitionArmSubsystem.armSim;
+    this.sim = armSubsystem.armSim;
 
     goPos = position;
 
     armVoltage = voltage;
+
   }
 
   // Called when the command is initially scheduled.
